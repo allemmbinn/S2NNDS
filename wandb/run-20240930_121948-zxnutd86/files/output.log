@@ -1,0 +1,81 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0093[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 4799[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 186[0m
+[34mSampling Verification Time: 5.13796716700017[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.51767380303295818, -0.51766380303295811]
+x2 : [0.44417131061287812, 0.44418131061287808][0m
+[34mTotal Verification Time: 10.277568613993935[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 104[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 399[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 584[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 81[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 27[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 500 : Total No of Violations: 41[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 600 : Total No of Violations: 749[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 700 : Total No of Violations: 1000[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 800 : Total No of Violations: 1139[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 900 : Total No of Violations: 1267[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[34mSampling Verification Time: 36.0951591720077[0m
+===========Verifying==========
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.50697765625000013, -0.50696765625000006]
+x2 : [0.0017033704254341467, 0.0017133704254341468][0m
+Not a Lyapunov Function. Found counterexamples:
+x1 : [-0.50697765625000013, -0.50696765625000006]
+x2 : [0.0017033704254341467, 0.0017133704254341468]
+Not a Barrier Function. Found counterexamples in Unsafe Domain:
+x1 : [-0.55991710937499983, -0.55990710937499977]
+x2 : [0.15990710937500002, 0.15991710937500003]
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 314, in trainBarrierCertificate
+    x_unsafe = x_unsafe.to('cpu')
+UnboundLocalError: local variable 'x_unsafe' referenced before assignment
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 314, in trainBarrierCertificate
+    x_unsafe = x_unsafe.to('cpu')
+UnboundLocalError: local variable 'x_unsafe' referenced before assignment

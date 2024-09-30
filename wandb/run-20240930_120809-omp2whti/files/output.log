@@ -1,0 +1,83 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0068[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 7626[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 383[0m
+[34mSampling Verification Time: 5.8446468920010375[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.56800670898437522, -0.56799670898437515]
+x2 : [0.05444930731071343, 0.054459307310713426][0m
+[34mTotal Verification Time: 19.686682621002547[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 266[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 100 : Total No of Violations: 26[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 71[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 160[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 335[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 500 : Total No of Violations: 173[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 600 : Total No of Violations: 88[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 700 : Total No of Violations: 30[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 800 : Total No of Violations: 34[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 900 : Total No of Violations: 34[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations: 5[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 201, in trainBarrierCertificate
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 42, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 15, in Tune
+    v += x[r][j]**2
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/_tensor.py", line 36, in wrapped
+    try:
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 201, in trainBarrierCertificate
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 42, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 15, in Tune
+    v += x[r][j]**2
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/_tensor.py", line 36, in wrapped
+    try:
+KeyboardInterrupt

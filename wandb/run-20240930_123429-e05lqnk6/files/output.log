@@ -1,0 +1,125 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0078[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 9073[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 784[0m
+[34mSampling Verification Time: 5.319026012002723[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34mTotal Verification Time: 16.27546947299561[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 297[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 482[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 192[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 1195[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 699[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 500 : Total No of Violations: 421[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 600 : Total No of Violations: 305[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 700 : Total No of Violations: 192[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 800 : Total No of Violations: 118[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 900 : Total No of Violations: 24[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[34mSampling Verification Time: 36.64017460300238[0m
+===========Verifying==========
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.95925454444389846, -0.95925280079139008]
+x2 : [0.21928869673819834, 0.21929036506869193][0m
+[33mNot a Barrier Function. Found counterexamples in Boundary Domain: [0m
+[33mx1 : [-0.755859375, -0.75585365295410156]
+x2 : [0.011708027954101563, 0.011718027954101562][0m
+===========Verifying==========
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.00025158203125000007, -0.00024158203125000004]
+x2 : [0.010217273176144208, 0.010227273176144207][0m
+[33mNot a Barrier Function. Found counterexamples in Unsafe Domain: [0m
+[33mx1 : [-0.51429824829101556, -0.51429595947265616]
+x2 : [0.14007720947265628, 0.14008178710937502][0m
+===========Verifying==========
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.0078867721557617197, 0.0078886985778808608]
+x2 : [-0.0097303643842752453, -0.009729187855864645][0m
+[33mNot a Barrier Function. Found counterexamples in Unsafe Domain: [0m
+[33mx1 : [-0.55991710937499983, -0.55990710937499977]
+x2 : [0.16005359375000003, 0.16006359375000004][0m
+===========Verifying==========
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.37899158203125011, 0.37900158203125006]
+x2 : [0.37849841796875011, 0.37850841796875007][0m
+[33mNot a Barrier Function. Found counterexamples in Unsafe Domain: [0m
+[33mx1 : [-0.35001415527343743, -0.35000415527343748]
+x2 : [0.25001085739875095, 0.25002085739875091][0m
+===========Verifying==========
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.078043212890625019, 0.078044176101684598]
+x2 : [0.047835950851440441, 0.047836914062500013][0m
+[33mNot a Barrier Function. Found counterexamples in Unsafe Domain: [0m
+[33mx1 : [-0.40996030642299741, -0.40995030642299746]
+x2 : [0.16881304709458433, 0.16882304709458434][0m
+[34mTotal Verification Time: 127.1014829120104[0m
+Traceback (most recent call last):
+  File "main.py", line 354, in <module>
+    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Plotter.py", line 135, in lyapunovBarrierPlot
+    plt.show()
+  File "/usr/lib/python3/dist-packages/matplotlib/pyplot.py", line 269, in show
+    return _show(*args, **kw)
+  File "/usr/lib/python3/dist-packages/matplotlib/cbook/deprecation.py", line 413, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/lib/python3/dist-packages/matplotlib/backend_bases.py", line 3309, in show
+    cls.mainloop()
+  File "/usr/lib/python3/dist-packages/matplotlib/backends/_backend_tk.py", line 981, in mainloop
+    managers[0].window.mainloop()
+  File "/usr/lib/python3.8/tkinter/__init__.py", line 1429, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "main.py", line 354, in <module>
+    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Plotter.py", line 135, in lyapunovBarrierPlot
+    plt.show()
+  File "/usr/lib/python3/dist-packages/matplotlib/pyplot.py", line 269, in show
+    return _show(*args, **kw)
+  File "/usr/lib/python3/dist-packages/matplotlib/cbook/deprecation.py", line 413, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/lib/python3/dist-packages/matplotlib/backend_bases.py", line 3309, in show
+    cls.mainloop()
+  File "/usr/lib/python3/dist-packages/matplotlib/backends/_backend_tk.py", line 981, in mainloop
+    managers[0].window.mainloop()
+  File "/usr/lib/python3.8/tkinter/__init__.py", line 1429, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt

@@ -1,0 +1,21 @@
+{"time":"2024-09-30T11:25:27.264044774+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-09-30T11:25:27.264050742+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/wandb/run-20240930_112527-hbthx7f3/logs/debug-core.log"}
+{"time":"2024-09-30T11:25:27.27704395+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-09-30T11:25:27.279178689+05:30","level":"INFO","msg":"created new stream","id":"hbthx7f3"}
+{"time":"2024-09-30T11:25:27.279189943+05:30","level":"INFO","msg":"stream: started","id":"hbthx7f3"}
+{"time":"2024-09-30T11:25:27.279204743+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"hbthx7f3"}}
+{"time":"2024-09-30T11:25:27.279239427+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"hbthx7f3"}}
+{"time":"2024-09-30T11:25:27.279236131+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"hbthx7f3"}}
+{"time":"2024-09-30T11:25:29.014500116+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-09-30T11:25:29.014906186+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-09-30T11:25:35.219107171+05:30","level":"INFO","msg":"stream: closing","id":"hbthx7f3"}
+{"time":"2024-09-30T11:25:35.219221009+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-09-30T11:25:35.220484309+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-09-30T11:25:35.565449283+05:30","level":"WARN","msg":"No job ingredients found, not creating job artifact"}
+{"time":"2024-09-30T11:25:35.565458768+05:30","level":"WARN","msg":"No source type found, not creating job artifact"}
+{"time":"2024-09-30T11:25:35.565462052+05:30","level":"INFO","msg":"sender: sendDefer: no job artifact to save"}
+{"time":"2024-09-30T11:25:37.431321198+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-09-30T11:25:38.134722037+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"hbthx7f3"}}
+{"time":"2024-09-30T11:25:38.134782798+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"hbthx7f3"}}
+{"time":"2024-09-30T11:25:38.134778665+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"hbthx7f3"}}
+{"time":"2024-09-30T11:25:38.134839653+05:30","level":"INFO","msg":"stream: closed","id":"hbthx7f3"}

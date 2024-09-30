@@ -1,0 +1,1899 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0075[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 3482[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 675[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 125[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 59[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 400 : Total No of Violations: 44[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 500 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 600 : Total No of Violations: 11[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 700 : Total No of Violations: 80[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 800 : Total No of Violations: 49[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 900 : Total No of Violations: 6[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations: 17[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1100 : Total No of Violations: 12[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1200 : Total No of Violations: 40[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1300 : Total No of Violations: 79[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1400 : Total No of Violations: 21[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1500 : Total No of Violations: 134[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1600 : Total No of Violations: 83[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1700 : Total No of Violations: 133[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1800 : Total No of Violations: 163[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1900 : Total No of Violations: 183[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations: 103[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2100 : Total No of Violations: 110[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2200 : Total No of Violations: 97[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2300 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2400 : Total No of Violations: 193[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2500 : Total No of Violations: 223[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 2600 : Total No of Violations: 97[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2700 : Total No of Violations: 116[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2800 : Total No of Violations: 43[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2900 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3100 : Total No of Violations: 22[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 3200 : Total No of Violations: 87[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3300 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3400 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3500 : Total No of Violations: 4[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3600 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3700 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3800 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3900 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4000 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4100 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4200 : Total No of Violations: 6[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4300 : Total No of Violations: 6[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4400 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4500 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4600 : Total No of Violations: 15[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4700 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4800 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4900 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5000 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5100 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5200 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5300 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5400 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5500 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5600 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5700 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5800 : Total No of Violations: 3[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5900 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6000 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6100 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6200 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6300 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6400 : Total No of Violations: 4[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6500 : Total No of Violations: 8[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6600 : Total No of Violations: 8[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6700 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6800 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6900 : Total No of Violations: 1[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7000 : Total No of Violations: 2[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7100 : Total No of Violations: 2[0m
+[32mEpoch 7200 : Lyapunov is certified with eta: 0.01[0m
+[34mCompleted with Sampling Based Training. Proceeding with SMT Verification[0m
+[34mSampling Verification Time: 217.606477348[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.063222468261718762, -0.063212468261718752]
+x2 : [0.0079780932617187512, 0.0079880932617187508][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0099052900286501488, -0.0098952900286501493]
+x2 : [0.0023375292968750008, 0.0023475292968750004][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0098856517390979483, -0.0098756517390979487]
+x2 : [0.0022142382812500006, 0.0022242382812500002][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010253253220289553, -0.010243253220289553]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010234670347508882, -0.010224670347508883]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010232864383036323, -0.010222864383036323]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010195491277689766, -0.010185491277689767]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010176516331227898, -0.010166516331227898]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010168045376951332, -0.010158045376951332]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010175152615294208, -0.010165152615294208]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010134420715756959, -0.010124420715756959]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.01013007998078853, -0.010120079980788531]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010105797435722437, -0.010095797435722437]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010089455741486158, -0.010079455741486158]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010076174004813183, -0.010066174004813183]
+x2 : [0.0028306933593750007, 0.0028406933593750003][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.010148005445640575, -0.010138005445640575]
+x2 : [0.0028306933593750007, 0.0028406933593750003][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.01021030335454143, -0.01020030335454143]
+x2 : [0.0029231616210937507, 0.0029331616210937503][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.65227483525813745, -0.65227478693048924]
+x2 : [0.4374775465984988, 0.43747759873382674][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.70770084852732884, -0.70770080019968051]
+x2 : [0.48581956019865691, 0.48581961233398485][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.65860923677461647, -0.65860918844696825]
+x2 : [0.4375908366660789, 0.43759086273374287][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.69503194883907427, -0.69503190051142605]
+x2 : [0.4670766491331142, 0.46707670126844214][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.66811083904933499, -0.66811079072168678]
+x2 : [0.44098505505528385, 0.44098508112294776][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.01023080106984179, -0.01022080106984179]
+x2 : [0.0027074023437500009, 0.0027174023437500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.01039339383769468, -0.01038339383769468]
+x2 : [0.0029231616210937507, 0.0029331616210937503][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.66652694870432549, -0.66652690037667717]
+x2 : [0.43844225870641601, 0.43844228477407998][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.95052895902656687, -0.9505189590265668]
+x2 : [0.28689445832134702, 0.28690445832134698][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.6791991346726638, -0.67919604170317327]
+x2 : [0.43734282891114157, 0.4373461655721288][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.95390501854807552, -0.95390153124305865]
+x2 : [0.22037311155903055, 0.2203797848810049][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.69440034449100507, -0.69440028429031386]
+x2 : [0.42218098925008563, 0.42218104138541351][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.59771213806152357, -0.5977021380615235]
+x2 : [0.35532937516832813, 0.35533937516832809][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.001918716430664063, -0.0019110107421875006]
+x2 : [0.010944085116712673, 0.010948611245078323][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.00025158203125000007, -0.00024158203125000004]
+x2 : [0.010217273176144208, 0.010227273176144207][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.70770084852732884, -0.70770080019968051]
+x2 : [0.43777654270414645, 0.4377765948394744][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.0004902744293212892, -0.0004893112182617189]
+x2 : [0.010453051152376927, 0.010453966937996897][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.94638683593750028, -0.94637683593750022]
+x2 : [0.10890361462142685, 0.10891361462142686][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.94391963897589104, -0.94390963897589097]
+x2 : [0.12301101727520725, 0.12302101727520726][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.97856434593438524, -0.97855434593438517]
+x2 : [-0.05456608046230306, -0.054556080462303064][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.00010283279526512426, -9.2832795265124256e-05]
+x2 : [0.010050826342107305, 0.010060826342107304][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.96487548828125025, -0.96487356185913109]
+x2 : [-0.054455975641207022, -0.054454307310713428][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-3.0792032294884099e-05, -2.9099382139337616e-05]
+x2 : [0.010930763416024761, 0.010931745485216963][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.00026699340820312504, -0.00025699340820312501]
+x2 : [0.010231925746063745, 0.010241925746063744][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.94490234375000015, -0.94489463806152352]
+x2 : [0.085411847949732972, 0.085418521271707334][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.96228516503321437, -0.96228469472359368]
+x2 : [0.074290756879475145, 0.074291591044721939][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.0028896331787109384, 0.0028901147842407236]
+x2 : [0.024234149456024173, 0.024234390258789068][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.96339599609375015, -0.96339587569236773]
+x2 : [-0.054659616232080599, -0.054659511961424753][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.97770473625884347, -0.97769721130491161]
+x2 : [0.054667853613892696, 0.054674526935867052][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.0034560012817382822, 0.0034564828872680675]
+x2 : [0.019842147827148438, 0.019842629432678224][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-3.8528442382812509e-06, -3.3712387084960947e-06]
+x2 : [-0.020220208168029791, -0.020219726562500005][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-3.5822753906250007e-05, -2.5822753906250007e-05]
+x2 : [0.010023117090601446, 0.010033117090601446][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.00098632812500000023, 0.00099403381347656266]
+x2 : [-0.010391897456103506, -0.01038284519937221][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.0034548541259765636, 0.0034648541259765632]
+x2 : [0.016138417358398435, 0.016148417358398438][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.99344693988430099, -0.9934459992650595]
+x2 : [0.054667853613892696, 0.054668687779139497][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.0019726562500000005, 0.0019731069499186139]
+x2 : [0.01155515994911855, 0.011556336477529152][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.96067318237304711, -0.96066318237304704]
+x2 : [-0.052977829832407251, -0.052967829832407255][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-1.0090843812206809, -1.0090827445549806]
+x2 : [0.04284272707534071, 0.042844395405834304][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.96269207275390656, -0.96268207275390649]
+x2 : [-0.054646160325995286, -0.054636160325995289][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.58394207275390642, -0.58393207275390635]
+x2 : [0.35536274177819999, 0.35537274177819994][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-2.8179563802852308e-05, -1.8179563802852308e-05]
+x2 : [0.010023401465497234, 0.010033401465497234][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.0019726562500000005, 0.0019795299417455208]
+x2 : [0.01155515994911855, 0.011564572176403363][0m
+[34m===========Verifying==========[0m
+[32mSatisfy conditions[0m
+[32mtanh((0.51306420564651489 + 0.57948178052902222 * tanh((-5.9684796333312988 - 5.5307941436767578 * x1 - 3.1290991306304932 * x2)) + 0.93603342771530151 * tanh((-5.7351417541503906 + 5.8126740455627441 * x1 - 2.3871829509735107 * x2)) + 1.6082568168640137 * tanh((-3.5478150844573975 - 3.3640937805175781 * x1 + 1.3531768321990967 * x2)) - 0.60860937833786011 * tanh((-1.7359558343887329 + 0.023849150165915489 * x1 + 0.023165205493569374 * x2)) + 1.0739619731903076 * tanh((-1.5865359306335449 - 0.55745691061019897 * x1 - 1.4606910943984985 * x2)) + 0.63841569423675537 * tanh((-1.2254402637481689 + 1.143498420715332 * x1 - 1.1756312847137451 * x2)) - 0.7504999041557312 * tanh((-1.194011926651001 + 0.026094919070601463 * x1 + 0.026662837713956833 * x2)) - 0.84480589628219604 * tanh((-1.0769439935684204 + 0.026925200596451759 * x1 + 0.028232423588633537 * x2)) - 0.57267510890960693 * tanh((-0.63752692937850952 + 0.026192577555775642 * x1 + 0.043971963226795197 * x2)) + 0.46033501625061035 * tanh((-0.62811094522476196 - 4.4488158226013184 * x1 + 1.4119873046875 * x2)) - 0.62614995241165161 * tanh((-0.61349523067474365 + 0.026017243042588234 * x1 + 0.045579761266708374 * x2)) + 0.46117299795150757 * tanh((-0.49906641244888306 + 1.1498289108276367 * x1 + 1.502131462097168 * x2)) + 0.56060659885406494 * tanh((-0.36388656497001648 - 0.96910744905471802 * x1 - 0.78333824872970581 * x2)) + 0.29896193742752075 * tanh((-0.19808703660964966 + 3.743912935256958 * x1 - 1.899685263633728 * x2)) - 0.066060855984687805 * tanh((-0.03697749599814415 - 0.23006522655487061 * x1 + 0.7840118408203125 * x2)) - 0.02239932119846344 * tanh((-0.0063531184569001198 - 0.48638400435447693 * x1 + 1.4062908887863159 * x2)) - 6.7296336055733263e-05 * tanh((-0.0001225146115757525 - 0.0033225740771740675 * x1 + 0.016625441610813141 * x2)) - 9.7863558039534837e-05 * tanh((-4.8692883865442127e-05 + 0.0028003484476357698 * x1 + 0.0094908960163593292 * x2)) - 0.00011170617653988302 * tanh((-2.1814345018356107e-05 + 0.0059637841768562794 * x1 + 0.0062325992621481419 * x2)) - 0.85106110572814941 * tanh((0.87848961353302002 - 0.36562550067901611 * x1 - 0.79386520385742188 * x2)) + 1.0411053895950317 * tanh((0.93235862255096436 - 0.02804112434387207 * x1 - 0.031033651903271675 * x2)) + 0.88618654012680054 * tanh((0.94566833972930908 - 0.027693275362253189 * x1 - 0.030821321532130241 * x2)) + 0.94330745935440063 * tanh((0.98713958263397217 - 0.027601173147559166 * x1 - 0.029837882146239281 * x2)) + 0.78987783193588257 * tanh((1.1267441511154175 - 0.026534201577305794 * x1 - 0.027514167129993439 * x2)) - 0.34360390901565552 * tanh((1.2350656986236572 - 0.51742160320281982 * x1 - 1.0218956470489502 * x2)) + 0.62885111570358276 * tanh((1.2683855295181274 - 0.025353439152240753 * x1 - 0.025998733937740326 * x2)) + 0.71515947580337524 * tanh((1.2791826725006104 - 0.025604331865906715 * x1 - 0.025771483778953552 * x2)) + 0.78031563758850098 * tanh((1.2827616930007935 - 0.02576892264187336 * x1 - 0.025664009153842926 * x2)) + 0.75645929574966431 * tanh((1.3339157104492188 - 0.025493286550045013 * x1 - 0.025221146643161774 * x2)) - 0.71438634395599365 * tanh((1.3425108194351196 - 0.50688576698303223 * x1 - 1.1288330554962158 * x2)) - 0.57244426012039185 * tanh((1.7827339172363281 - 0.95103740692138672 * x1 + 1.6110590696334839 * x2)) - 0.86842399835586548 * tanh((2.7816977500915527 - 1.1702144145965576 * x1 - 2.5645620822906494 * x2)))) is a Lyapunov function with Epsilon: 0.001[0m
+[34mTotal Verification Time: 2029.2595351310001[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 609[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 6200[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 5415[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 4665[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 2945[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 500 : Total No of Violations: 1856[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 600 : Total No of Violations: 1732[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 700 : Total No of Violations: 1614[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 800 : Total No of Violations: 1506[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 900 : Total No of Violations: 1421[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations: 1343[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1100 : Total No of Violations: 1191[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1200 : Total No of Violations: 830[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1300 : Total No of Violations: 136[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1400 : Total No of Violations: 457[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1500 : Total No of Violations: 435[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1600 : Total No of Violations: 405[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1700 : Total No of Violations: 366[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1800 : Total No of Violations: 304[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1900 : Total No of Violations: 279[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations: 257[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2100 : Total No of Violations: 233[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2200 : Total No of Violations: 214[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2300 : Total No of Violations: 185[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2400 : Total No of Violations: 172[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2500 : Total No of Violations: 165[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2600 : Total No of Violations: 157[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2700 : Total No of Violations: 146[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2800 : Total No of Violations: 139[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2900 : Total No of Violations: 126[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations: 132[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3100 : Total No of Violations: 100[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3200 : Total No of Violations: 84[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3300 : Total No of Violations: 76[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3400 : Total No of Violations: 49[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3500 : Total No of Violations: 36[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3600 : Total No of Violations: 22[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3700 : Total No of Violations: 116[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 3800 : Total No of Violations: 109[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 3900 : Total No of Violations: 96[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4000 : Total No of Violations: 96[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4100 : Total No of Violations: 95[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4200 : Total No of Violations: 92[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4300 : Total No of Violations: 90[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4400 : Total No of Violations: 85[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4500 : Total No of Violations: 82[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4600 : Total No of Violations: 81[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4700 : Total No of Violations: 78[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4800 : Total No of Violations: 73[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 4900 : Total No of Violations: 77[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5000 : Total No of Violations: 76[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5100 : Total No of Violations: 67[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5200 : Total No of Violations: 66[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5300 : Total No of Violations: 62[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5400 : Total No of Violations: 61[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5500 : Total No of Violations: 57[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5600 : Total No of Violations: 61[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5700 : Total No of Violations: 47[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5800 : Total No of Violations: 49[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 5900 : Total No of Violations: 49[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6000 : Total No of Violations: 44[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6100 : Total No of Violations: 43[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6200 : Total No of Violations: 41[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6300 : Total No of Violations: 38[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6400 : Total No of Violations: 41[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6500 : Total No of Violations: 38[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6600 : Total No of Violations: 40[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6700 : Total No of Violations: 35[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6800 : Total No of Violations: 39[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6900 : Total No of Violations: 37[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 7000 : Total No of Violations: 33[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 7100 : Total No of Violations: 35[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 7200 : Total No of Violations: 31[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 7300 : Total No of Violations: 31[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7400 : Total No of Violations: 39[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 7500 : Total No of Violations: 34[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7600 : Total No of Violations: 629[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7700 : Total No of Violations: 701[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7800 : Total No of Violations: 654[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7900 : Total No of Violations: 693[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8000 : Total No of Violations: 640[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8100 : Total No of Violations: 590[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8200 : Total No of Violations: 594[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8300 : Total No of Violations: 615[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8400 : Total No of Violations: 657[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8500 : Total No of Violations: 669[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8600 : Total No of Violations: 664[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8700 : Total No of Violations: 632[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8800 : Total No of Violations: 642[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 8900 : Total No of Violations: 60[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 9000 : Total No of Violations: 45[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9100 : Total No of Violations: 727[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9200 : Total No of Violations: 696[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9300 : Total No of Violations: 705[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9400 : Total No of Violations: 686[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9500 : Total No of Violations: 648[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9600 : Total No of Violations: 707[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9700 : Total No of Violations: 722[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9800 : Total No of Violations: 713[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9900 : Total No of Violations: 700[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10000 : Total No of Violations: 706[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10100 : Total No of Violations: 744[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10200 : Total No of Violations: 784[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10300 : Total No of Violations: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10400 : Total No of Violations: 770[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10500 : Total No of Violations: 680[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10600 : Total No of Violations: 739[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10700 : Total No of Violations: 739[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10800 : Total No of Violations: 711[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10900 : Total No of Violations: 725[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11000 : Total No of Violations: 676[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11100 : Total No of Violations: 687[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11200 : Total No of Violations: 738[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11300 : Total No of Violations: 700[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11400 : Total No of Violations: 755[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11500 : Total No of Violations: 755[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11600 : Total No of Violations: 685[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11700 : Total No of Violations: 729[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11800 : Total No of Violations: 690[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11900 : Total No of Violations: 711[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12000 : Total No of Violations: 677[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12100 : Total No of Violations: 636[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12200 : Total No of Violations: 664[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12300 : Total No of Violations: 617[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12400 : Total No of Violations: 611[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12500 : Total No of Violations: 529[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12600 : Total No of Violations: 541[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12700 : Total No of Violations: 413[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12800 : Total No of Violations: 396[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12900 : Total No of Violations: 389[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13000 : Total No of Violations: 394[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13100 : Total No of Violations: 377[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13200 : Total No of Violations: 391[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13300 : Total No of Violations: 279[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13400 : Total No of Violations: 261[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13500 : Total No of Violations: 215[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13600 : Total No of Violations: 295[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13700 : Total No of Violations: 190[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13800 : Total No of Violations: 247[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13900 : Total No of Violations: 191[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14000 : Total No of Violations: 176[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14100 : Total No of Violations: 253[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14200 : Total No of Violations: 202[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14300 : Total No of Violations: 199[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14400 : Total No of Violations: 179[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14500 : Total No of Violations: 185[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14600 : Total No of Violations: 219[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14700 : Total No of Violations: 160[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14800 : Total No of Violations: 172[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14900 : Total No of Violations: 118[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15000 : Total No of Violations: 177[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15100 : Total No of Violations: 173[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15200 : Total No of Violations: 176[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15300 : Total No of Violations: 190[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15400 : Total No of Violations: 144[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15500 : Total No of Violations: 174[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15600 : Total No of Violations: 147[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15700 : Total No of Violations: 147[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15800 : Total No of Violations: 23[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15900 : Total No of Violations: 154[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16000 : Total No of Violations: 98[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16100 : Total No of Violations: 117[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16200 : Total No of Violations: 115[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16300 : Total No of Violations: 80[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16400 : Total No of Violations: 85[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16500 : Total No of Violations: 91[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16600 : Total No of Violations: 78[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16700 : Total No of Violations: 75[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16800 : Total No of Violations: 75[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16900 : Total No of Violations: 55[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17000 : Total No of Violations: 47[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17100 : Total No of Violations: 34[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17200 : Total No of Violations: 39[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17300 : Total No of Violations: 37[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17400 : Total No of Violations: 28[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17500 : Total No of Violations: 28[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17600 : Total No of Violations: 21[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17700 : Total No of Violations: 1371[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17800 : Total No of Violations: 1220[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17900 : Total No of Violations: 1105[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18000 : Total No of Violations: 1221[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18100 : Total No of Violations: 1071[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18200 : Total No of Violations: 1061[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18300 : Total No of Violations: 1090[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18400 : Total No of Violations: 1149[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18500 : Total No of Violations: 22[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18600 : Total No of Violations: 1052[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18700 : Total No of Violations: 1104[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18800 : Total No of Violations: 1017[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18900 : Total No of Violations: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19000 : Total No of Violations: 1020[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19100 : Total No of Violations: 38[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19200 : Total No of Violations: 827[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19300 : Total No of Violations: 811[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19400 : Total No of Violations: 955[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19500 : Total No of Violations: 41[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19600 : Total No of Violations: 873[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19700 : Total No of Violations: 846[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19800 : Total No of Violations: 804[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19900 : Total No of Violations: 780[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20000 : Total No of Violations: 780[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20100 : Total No of Violations: 814[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20200 : Total No of Violations: 801[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20300 : Total No of Violations: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20400 : Total No of Violations: 758[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20500 : Total No of Violations: 748[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20600 : Total No of Violations: 710[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20700 : Total No of Violations: 1117[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20800 : Total No of Violations: 826[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20900 : Total No of Violations: 779[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21000 : Total No of Violations: 686[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21100 : Total No of Violations: 744[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21200 : Total No of Violations: 684[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21300 : Total No of Violations: 635[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21400 : Total No of Violations: 711[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21500 : Total No of Violations: 805[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21600 : Total No of Violations: 691[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21700 : Total No of Violations: 861[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21800 : Total No of Violations: 581[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21900 : Total No of Violations: 519[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22000 : Total No of Violations: 524[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22100 : Total No of Violations: 661[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22200 : Total No of Violations: 594[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22300 : Total No of Violations: 543[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22400 : Total No of Violations: 479[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22500 : Total No of Violations: 582[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22600 : Total No of Violations: 457[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22700 : Total No of Violations: 388[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22800 : Total No of Violations: 391[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22900 : Total No of Violations: 486[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23000 : Total No of Violations: 548[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23100 : Total No of Violations: 413[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23200 : Total No of Violations: 427[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23300 : Total No of Violations: 417[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23400 : Total No of Violations: 376[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23500 : Total No of Violations: 434[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23600 : Total No of Violations: 349[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23700 : Total No of Violations: 446[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23800 : Total No of Violations: 651[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23900 : Total No of Violations: 331[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24000 : Total No of Violations: 387[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24100 : Total No of Violations: 419[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24200 : Total No of Violations: 349[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24300 : Total No of Violations: 490[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24400 : Total No of Violations: 409[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24500 : Total No of Violations: 374[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24600 : Total No of Violations: 459[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24700 : Total No of Violations: 391[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24800 : Total No of Violations: 396[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24900 : Total No of Violations: 520[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25000 : Total No of Violations: 362[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25100 : Total No of Violations: 366[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25200 : Total No of Violations: 370[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25300 : Total No of Violations: 337[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25400 : Total No of Violations: 363[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25500 : Total No of Violations: 343[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25600 : Total No of Violations: 328[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25700 : Total No of Violations: 362[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25800 : Total No of Violations: 320[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25900 : Total No of Violations: 339[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26000 : Total No of Violations: 311[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26100 : Total No of Violations: 316[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26200 : Total No of Violations: 320[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26300 : Total No of Violations: 327[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26400 : Total No of Violations: 351[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26500 : Total No of Violations: 308[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26600 : Total No of Violations: 289[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26700 : Total No of Violations: 274[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26800 : Total No of Violations: 290[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26900 : Total No of Violations: 275[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27000 : Total No of Violations: 275[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27100 : Total No of Violations: 320[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27200 : Total No of Violations: 293[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27300 : Total No of Violations: 252[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27400 : Total No of Violations: 327[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27500 : Total No of Violations: 266[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27600 : Total No of Violations: 317[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27700 : Total No of Violations: 251[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27800 : Total No of Violations: 247[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27900 : Total No of Violations: 254[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28000 : Total No of Violations: 264[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28100 : Total No of Violations: 268[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28200 : Total No of Violations: 27[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28300 : Total No of Violations: 331[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28400 : Total No of Violations: 218[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28500 : Total No of Violations: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28600 : Total No of Violations: 403[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28700 : Total No of Violations: 302[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28800 : Total No of Violations: 237[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28900 : Total No of Violations: 231[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29000 : Total No of Violations: 258[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29100 : Total No of Violations: 225[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29200 : Total No of Violations: 245[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29300 : Total No of Violations: 241[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29400 : Total No of Violations: 269[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29500 : Total No of Violations: 263[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29600 : Total No of Violations: 367[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29700 : Total No of Violations: 255[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29800 : Total No of Violations: 227[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29900 : Total No of Violations: 37[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30000 : Total No of Violations: 268[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30100 : Total No of Violations: 302[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30200 : Total No of Violations: 243[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30300 : Total No of Violations: 227[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30400 : Total No of Violations: 209[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30500 : Total No of Violations: 295[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30600 : Total No of Violations: 228[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30700 : Total No of Violations: 287[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30800 : Total No of Violations: 203[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30900 : Total No of Violations: 247[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31000 : Total No of Violations: 206[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31100 : Total No of Violations: 191[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31200 : Total No of Violations: 233[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31300 : Total No of Violations: 193[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31400 : Total No of Violations: 254[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31500 : Total No of Violations: 196[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31600 : Total No of Violations: 245[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31700 : Total No of Violations: 191[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31800 : Total No of Violations: 198[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31900 : Total No of Violations: 205[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32000 : Total No of Violations: 204[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32100 : Total No of Violations: 199[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32200 : Total No of Violations: 192[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32300 : Total No of Violations: 247[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32400 : Total No of Violations: 277[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32500 : Total No of Violations: 191[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32600 : Total No of Violations: 185[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32700 : Total No of Violations: 190[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32800 : Total No of Violations: 214[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32900 : Total No of Violations: 189[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33000 : Total No of Violations: 193[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33100 : Total No of Violations: 181[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33200 : Total No of Violations: 193[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33300 : Total No of Violations: 31[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33400 : Total No of Violations: 179[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33500 : Total No of Violations: 176[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33600 : Total No of Violations: 166[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33700 : Total No of Violations: 213[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33800 : Total No of Violations: 27[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33900 : Total No of Violations: 207[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34000 : Total No of Violations: 176[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34100 : Total No of Violations: 193[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34200 : Total No of Violations: 237[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34300 : Total No of Violations: 24[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34400 : Total No of Violations: 207[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34500 : Total No of Violations: 182[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34600 : Total No of Violations: 163[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34700 : Total No of Violations: 237[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34800 : Total No of Violations: 173[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34900 : Total No of Violations: 190[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35000 : Total No of Violations: 188[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35100 : Total No of Violations: 163[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35200 : Total No of Violations: 239[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35300 : Total No of Violations: 174[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35400 : Total No of Violations: 190[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35500 : Total No of Violations: 199[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35600 : Total No of Violations: 195[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35700 : Total No of Violations: 203[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35800 : Total No of Violations: 162[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35900 : Total No of Violations: 166[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36000 : Total No of Violations: 191[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36100 : Total No of Violations: 192[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36200 : Total No of Violations: 162[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36300 : Total No of Violations: 197[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36400 : Total No of Violations: 162[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36500 : Total No of Violations: 157[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36600 : Total No of Violations: 150[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36700 : Total No of Violations: 202[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36800 : Total No of Violations: 157[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36900 : Total No of Violations: 187[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37000 : Total No of Violations: 180[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37100 : Total No of Violations: 193[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37200 : Total No of Violations: 186[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37300 : Total No of Violations: 189[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37400 : Total No of Violations: 151[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37500 : Total No of Violations: 140[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37600 : Total No of Violations: 154[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37700 : Total No of Violations: 159[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37800 : Total No of Violations: 141[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37900 : Total No of Violations: 147[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38000 : Total No of Violations: 175[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38100 : Total No of Violations: 137[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38200 : Total No of Violations: 152[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38300 : Total No of Violations: 155[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38400 : Total No of Violations: 148[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38500 : Total No of Violations: 151[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38600 : Total No of Violations: 135[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38700 : Total No of Violations: 145[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38800 : Total No of Violations: 138[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38900 : Total No of Violations: 141[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39000 : Total No of Violations: 134[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39100 : Total No of Violations: 149[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39200 : Total No of Violations: 186[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39300 : Total No of Violations: 127[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39400 : Total No of Violations: 170[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39500 : Total No of Violations: 151[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39600 : Total No of Violations: 135[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39700 : Total No of Violations: 126[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39800 : Total No of Violations: 191[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39900 : Total No of Violations: 176[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40000 : Total No of Violations: 180[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40100 : Total No of Violations: 129[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m

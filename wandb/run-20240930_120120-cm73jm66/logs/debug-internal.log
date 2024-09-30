@@ -1,0 +1,21 @@
+{"time":"2024-09-30T12:01:20.232252849+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-09-30T12:01:20.232260133+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/wandb/run-20240930_120120-cm73jm66/logs/debug-core.log"}
+{"time":"2024-09-30T12:01:20.281201515+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-09-30T12:01:20.28468302+05:30","level":"INFO","msg":"created new stream","id":"cm73jm66"}
+{"time":"2024-09-30T12:01:20.284703525+05:30","level":"INFO","msg":"stream: started","id":"cm73jm66"}
+{"time":"2024-09-30T12:01:20.284733733+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"cm73jm66"}}
+{"time":"2024-09-30T12:01:20.284753921+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"cm73jm66"}}
+{"time":"2024-09-30T12:01:20.284773566+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"cm73jm66"}}
+{"time":"2024-09-30T12:01:20.895849271+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-09-30T12:01:20.896317006+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-09-30T12:03:30.865133784+05:30","level":"INFO","msg":"stream: closing","id":"cm73jm66"}
+{"time":"2024-09-30T12:03:30.86516082+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-09-30T12:03:30.866755406+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-09-30T12:03:31.300703527+05:30","level":"WARN","msg":"No job ingredients found, not creating job artifact"}
+{"time":"2024-09-30T12:03:31.30071765+05:30","level":"WARN","msg":"No source type found, not creating job artifact"}
+{"time":"2024-09-30T12:03:31.300722859+05:30","level":"INFO","msg":"sender: sendDefer: no job artifact to save"}
+{"time":"2024-09-30T12:03:32.160617836+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-09-30T12:03:32.937845113+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"cm73jm66"}}
+{"time":"2024-09-30T12:03:32.937918775+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"cm73jm66"}}
+{"time":"2024-09-30T12:03:32.937910516+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"cm73jm66"}}
+{"time":"2024-09-30T12:03:32.938033769+05:30","level":"INFO","msg":"stream: closed","id":"cm73jm66"}
