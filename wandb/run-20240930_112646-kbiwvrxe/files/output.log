@@ -1,0 +1,44 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0106[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 33659[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 360[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 249[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 101[0m
+[34mSampling Verification Time: 71.2869189310004[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.033535156250000003, 0.033536119461059576]
+x2 : [0.0011481475830078126, 0.0011491107940673829][0m
+[34mTotal Verification Time: 96.12105656199856[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 418[0m
+[33mViolation of Barrier in Initial Domain[0m
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 266, in barrierVerify
+    x_init, flag_init = process_data(INIT[0], INIT[1],
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 257, in process_data
+    storage_tensor = torch.cat((storage_tensor, data_batch[violation_indices[0][i]].unsqueeze(0)), dim=0)
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:0! (when checking argument for argument tensors in method wrapper_CUDA_cat)
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 266, in barrierVerify
+    x_init, flag_init = process_data(INIT[0], INIT[1],
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 257, in process_data
+    storage_tensor = torch.cat((storage_tensor, data_batch[violation_indices[0][i]].unsqueeze(0)), dim=0)
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:0! (when checking argument for argument tensors in method wrapper_CUDA_cat)

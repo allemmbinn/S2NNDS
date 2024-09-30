@@ -1,0 +1,17 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+Traceback (most recent call last):
+  File "main.py", line 347, in <module>
+    mp.trainInitialDynamics()
+  File "main.py", line 81, in trainInitialDynamics
+    optimizer_f.step()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/optim/optimizer.py", line 389, in wrapper
+    for post_hook in chain(self._optimizer_step_post_hooks.values(), _global_optimizer_post_hooks.values()):
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "main.py", line 347, in <module>
+    mp.trainInitialDynamics()
+  File "main.py", line 81, in trainInitialDynamics
+    optimizer_f.step()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/optim/optimizer.py", line 389, in wrapper
+    for post_hook in chain(self._optimizer_step_post_hooks.values(), _global_optimizer_post_hooks.values()):
+KeyboardInterrupt

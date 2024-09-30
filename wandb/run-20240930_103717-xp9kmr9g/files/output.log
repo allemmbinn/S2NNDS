@@ -1,0 +1,33 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0084[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 213271[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 12239[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 12392[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 13442[0m
+[34mSampling Verification Time: 152.2374080689915[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.82271767370074067, -0.82271713369536403]
+x2 : [0.54840082696061532, 0.54840156550727981][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.00025158203125000007, -0.00024158203125000004]
+x2 : [0.010217273176144208, 0.010227273176144207][0m
+[34mTotal Verification Time: 192.4181524359883[0m
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 201, in trainBarrierCertificate
+    lyapunov_risk = loss.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+UnboundLocalError: local variable 'loss' referenced before assignment
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 201, in trainBarrierCertificate
+    lyapunov_risk = loss.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+UnboundLocalError: local variable 'loss' referenced before assignment

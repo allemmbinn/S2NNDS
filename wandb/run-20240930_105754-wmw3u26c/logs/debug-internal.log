@@ -1,0 +1,10 @@
+{"time":"2024-09-30T10:57:54.230510876+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-09-30T10:57:54.230526814+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/wandb/run-20240930_105754-wmw3u26c/logs/debug-core.log"}
+{"time":"2024-09-30T10:57:54.244058785+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-09-30T10:57:54.247274471+05:30","level":"INFO","msg":"created new stream","id":"wmw3u26c"}
+{"time":"2024-09-30T10:57:54.247304821+05:30","level":"INFO","msg":"stream: started","id":"wmw3u26c"}
+{"time":"2024-09-30T10:57:54.247326971+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"wmw3u26c"}}
+{"time":"2024-09-30T10:57:54.247391712+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"wmw3u26c"}}
+{"time":"2024-09-30T10:57:54.247513344+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"wmw3u26c"}}
+{"time":"2024-09-30T10:57:54.78148851+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-09-30T10:57:54.782284736+05:30","level":"INFO","msg":"Starting system monitor"}

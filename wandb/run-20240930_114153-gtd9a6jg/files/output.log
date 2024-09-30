@@ -1,0 +1,37 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0071[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 7098[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 25[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 35[0m
+[34mSampling Verification Time: 44.19236654699489[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.030571171875000008, 0.030581171875000011]
+x2 : [-0.030581171875000011, -0.030571171875000008][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.00219341552734375, -0.0021834155273437504]
+x2 : [0.0099133141680107315, 0.0099233141680107311][0m
+[34mTotal Verification Time: 58.79605503399216[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 26[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 2312[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 3053[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 1788[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m

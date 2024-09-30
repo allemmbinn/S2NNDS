@@ -1,0 +1,39 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0080[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 4687[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 36[0m
+[34mSampling Verification Time: 14.822082170998328[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34mTotal Verification Time: 23.308679567999206[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 32[0m
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 275, in barrierVerify
+    x_init, flag_init = process_data(INIT[0], INIT[1],
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 252, in process_data
+    violation_indices = condition_fn(B_out)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 276, in <lambda>
+    lambda B_out: torch.nonzero(B_out.cpu().detach().numpy() > 0),
+TypeError: nonzero(): argument 'input' (position 1) must be Tensor, not numpy.ndarray
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 275, in barrierVerify
+    x_init, flag_init = process_data(INIT[0], INIT[1],
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 252, in process_data
+    violation_indices = condition_fn(B_out)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 276, in <lambda>
+    lambda B_out: torch.nonzero(B_out.cpu().detach().numpy() > 0),
+TypeError: nonzero(): argument 'input' (position 1) must be Tensor, not numpy.ndarray

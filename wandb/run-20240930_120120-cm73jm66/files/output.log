@@ -1,0 +1,36 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0065[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 8712[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 57[0m
+[34mSampling Verification Time: 19.340109612996457[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.025577885742187504, 0.025587885742187507]
+x2 : [0.0059746142578125019, 0.0059846142578125015][0m
+[34mTotal Verification Time: 32.768020913994405[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 783[0m
+[33mViolation of Barrier in Initial Domain[0m
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 285, in barrierVerify
+    x_unsafe, flag_unsafe = process_data(UNSAFE[0], UNSAFE[1],
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 257, in process_data
+    elif len(violation_indices[0]) > 0:
+IndexError: index 0 is out of bounds for dimension 0 with size 0
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 285, in barrierVerify
+    x_unsafe, flag_unsafe = process_data(UNSAFE[0], UNSAFE[1],
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 257, in process_data
+    elif len(violation_indices[0]) > 0:
+IndexError: index 0 is out of bounds for dimension 0 with size 0

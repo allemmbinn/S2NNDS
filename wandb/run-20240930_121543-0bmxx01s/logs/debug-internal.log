@@ -1,0 +1,25 @@
+{"time":"2024-09-30T12:15:43.876541734+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-09-30T12:15:43.8765481+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/wandb/run-20240930_121543-0bmxx01s/logs/debug-core.log"}
+{"time":"2024-09-30T12:15:43.887324384+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-09-30T12:15:43.890820438+05:30","level":"INFO","msg":"created new stream","id":"0bmxx01s"}
+{"time":"2024-09-30T12:15:43.890842885+05:30","level":"INFO","msg":"stream: started","id":"0bmxx01s"}
+{"time":"2024-09-30T12:15:43.890845749+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"0bmxx01s"}}
+{"time":"2024-09-30T12:15:43.890869059+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"0bmxx01s"}}
+{"time":"2024-09-30T12:15:43.890849264+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"0bmxx01s"}}
+{"time":"2024-09-30T12:15:45.109234489+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-09-30T12:15:45.109597552+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-09-30T12:16:16.865386407+05:30","level":"ERROR","msg":"HTTP error","status":404,"method":"POST","url":"https://api.wandb.ai/files/allemmbinn_iitkgp/Worm%20with%20Obstacles/0bmxx01s/file_stream"}
+{"time":"2024-09-30T12:16:16.865511528+05:30","level":"ERROR+4","msg":"filestream: fatal error: filestream: failed to upload: 404 Not Found path=files/allemmbinn_iitkgp/Worm with Obstacles/0bmxx01s/file_stream: {\"error\":\"run Worm with Obstacles/0bmxx01s not found while streaming file\"}"}
+{"time":"2024-09-30T12:16:48.429584677+05:30","level":"INFO","msg":"stream: closing","id":"0bmxx01s"}
+{"time":"2024-09-30T12:16:48.429613236+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-09-30T12:16:48.431100053+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-09-30T12:16:49.210845286+05:30","level":"ERROR","msg":"HTTP error","status":404,"method":"POST","url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:16:49.21089824+05:30","level":"ERROR","msg":"runfiles: CreateRunFiles returned error: returned error 404 Not Found: {\"errors\":[{\"message\":\"run Worm with Obstacles/0bmxx01s not found during createRunFiles\",\"path\":[\"createRunFiles\"]}],\"data\":{\"createRunFiles\":null}}"}
+{"time":"2024-09-30T12:16:49.210845136+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:16:51.877184591+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:16:53.431539562+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2024-09-30T12:16:56.85073671+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:17:06.411145909+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:17:23.003055622+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:17:59.149513015+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}
+{"time":"2024-09-30T12:18:59.559109372+05:30","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql"}

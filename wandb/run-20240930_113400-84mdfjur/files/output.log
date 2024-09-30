@@ -1,0 +1,81 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0079[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 2820[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 35[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 31[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 44[0m
+[34mSampling Verification Time: 53.38295935399947[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [0.12828237533569337, 0.12828285694122316]
+x2 : [0.0010479736328125001, 0.0010484552383422854][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.012820339202880861, -0.012819375991821291]
+x2 : [0.00030052185058593756, 0.00030148506164550792][0m
+[34mTotal Verification Time: 73.16785764599626[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 230[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 36[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 28[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 32[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 4194[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 310, in barrierVerify
+    F_boundary = model_v(input_boundary)[1]
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/NNModels.py", line 90, in forward
+    z = layer(y)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/linear.py", line 116, in forward
+    return F.linear(input, self.weight, self.bias)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 942.00 MiB. GPU 0 has a total capacity of 5.74 GiB of which 508.25 MiB is free. Including non-PyTorch memory, this process has 4.26 GiB memory in use. Of the allocated memory 4.07 GiB is allocated by PyTorch, and 90.38 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "main.py", line 353, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 213, in trainBarrierCertificate
+    self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/Loss_Functions.py", line 310, in barrierVerify
+    F_boundary = model_v(input_boundary)[1]
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/allemmbinn/Documents/NN_DS/NNMotionPlanning/NNModels.py", line 90, in forward
+    z = layer(y)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/nn/modules/linear.py", line 116, in forward
+    return F.linear(input, self.weight, self.bias)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 942.00 MiB. GPU 0 has a total capacity of 5.74 GiB of which 508.25 MiB is free. Including non-PyTorch memory, this process has 4.26 GiB memory in use. Of the allocated memory 4.07 GiB is allocated by PyTorch, and 90.38 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
