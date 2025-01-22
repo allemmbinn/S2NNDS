@@ -1,0 +1,10 @@
+{"time":"2025-01-07T18:47:36.886988426+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-07T18:47:36.887002265+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250107_184736-pvaxs0gq/logs/debug-core.log"}
+{"time":"2025-01-07T18:47:36.897340476+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-07T18:47:36.901791275+05:30","level":"INFO","msg":"created new stream","id":"pvaxs0gq"}
+{"time":"2025-01-07T18:47:36.901826896+05:30","level":"INFO","msg":"stream: started","id":"pvaxs0gq"}
+{"time":"2025-01-07T18:47:36.901857335+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"pvaxs0gq"}}
+{"time":"2025-01-07T18:47:36.901860071+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"pvaxs0gq"}}
+{"time":"2025-01-07T18:47:36.90186021+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"pvaxs0gq"}}
+{"time":"2025-01-07T18:47:37.712655403+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-07T18:47:37.713724086+05:30","level":"INFO","msg":"Starting system monitor"}

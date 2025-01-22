@@ -1,0 +1,58 @@
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 1149[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Plotter.py:97: UserWarning: No contour levels were found within the data range.
+  contour_lines = plt.contour(X, Y, bout[:,:,0], levels=[0], colors='red')
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 49[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 92[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 300 : Total No of Violations: 262[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 76[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+Traceback (most recent call last):
+  File "barrier_main.py", line 374, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "barrier_main.py", line 206, in trainBarrierCertificate
+    barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 130, in loss_function_b
+    wandb.log({"Barrier Risk": Barrier_risk.item(), "Unsafe Set accuracy: ":acc_unsafe, "Init Set accuracy: ":acc_init, "Boundary Set accuracy: ":acc_lie})
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 452, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 403, in wrapper_fn
+    return func(self, *args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 393, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 1933, in log
+    self._log(data=data, step=step, commit=commit)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 1652, in _log
+    self._partial_history_callback(data, step, commit)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "barrier_main.py", line 374, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "barrier_main.py", line 206, in trainBarrierCertificate
+    barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 130, in loss_function_b
+    wandb.log({"Barrier Risk": Barrier_risk.item(), "Unsafe Set accuracy: ":acc_unsafe, "Init Set accuracy: ":acc_init, "Boundary Set accuracy: ":acc_lie})
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 452, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 403, in wrapper_fn
+    return func(self, *args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 393, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 1933, in log
+    self._log(data=data, step=step, commit=commit)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/wandb/sdk/wandb_run.py", line 1652, in _log
+    self._partial_history_callback(data, step, commit)
+KeyboardInterrupt

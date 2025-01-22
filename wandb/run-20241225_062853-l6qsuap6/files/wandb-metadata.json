@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-5.15.0-127-generic-x86_64-with-glibc2.29",
+  "python":  "3.8.10",
+  "startedAt":  "2024-12-25T00:58:53.226159Z",
+  "program":  "main.py",
+  "codePath":  "main.py",
+  "git":  {
+    "remote":  "https://github.com/allemmbinn/Neural-Network-Dynamical-System.git",
+    "commit":  "80e661eea1da824afd29bf1f536d575d9898c60c"
+  },
+  "email":  "allemmbinn@gmail.com",
+  "root":  "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System",
+  "host":  "ultimatelegion",
+  "username":  "allemmbinn",
+  "executable":  "/usr/bin/python3",
+  "codePathLocal":  "main.py",
+  "cpu_count":  16,
+  "cpu_count_logical":  24,
+  "gpu":  "[]",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "294677381120",
+      "used":  "190095564800"
+    }
+  },
+  "memory":  {
+    "total":  "16527056896"
+  },
+  "cpu":  {
+    "count":  16,
+    "countLogical":  24
+  },
+  "gpu_nvidia":  [
+    {
+      "memoryTotal":  "6439305216",
+      "cudaCores":  2560,
+      "architecture":  "Ada"
+    }
+  ],
+  "cudaVersion":  "12.2"
+}

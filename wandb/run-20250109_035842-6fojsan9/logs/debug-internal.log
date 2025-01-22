@@ -1,0 +1,19 @@
+{"time":"2025-01-09T03:58:42.782403203+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-09T03:58:42.782417166+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250109_035842-6fojsan9/logs/debug-core.log"}
+{"time":"2025-01-09T03:58:42.795126778+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-09T03:58:42.799230856+05:30","level":"INFO","msg":"created new stream","id":"6fojsan9"}
+{"time":"2025-01-09T03:58:42.799254615+05:30","level":"INFO","msg":"stream: started","id":"6fojsan9"}
+{"time":"2025-01-09T03:58:42.799287688+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"6fojsan9"}}
+{"time":"2025-01-09T03:58:42.799302218+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"6fojsan9"}}
+{"time":"2025-01-09T03:58:42.799308457+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"6fojsan9"}}
+{"time":"2025-01-09T03:58:43.452591546+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-09T03:58:43.453073797+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-09T04:05:08.678360517+05:30","level":"INFO","msg":"stream: closing","id":"6fojsan9"}
+{"time":"2025-01-09T04:05:08.678372839+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-09T04:05:08.679681211+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-01-09T04:05:13.224034007+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-01-09T04:05:13.68005359+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2025-01-09T04:05:13.751841871+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"6fojsan9"}}
+{"time":"2025-01-09T04:05:13.751951332+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"6fojsan9"}}
+{"time":"2025-01-09T04:05:13.751966523+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"6fojsan9"}}
+{"time":"2025-01-09T04:05:13.752146341+05:30","level":"INFO","msg":"stream: closed","id":"6fojsan9"}

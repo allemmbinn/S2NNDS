@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-5.15.0-127-generic-x86_64-with-glibc2.29",
+  "python":  "3.8.10",
+  "startedAt":  "2025-01-11T01:43:01.212912Z",
+  "program":  "barrier_main.py",
+  "codePath":  "barrier_main.py",
+  "git":  {
+    "remote":  "https://github.com/allemmbinn/Neural-Network-Dynamical-System.git",
+    "commit":  "80e661eea1da824afd29bf1f536d575d9898c60c"
+  },
+  "email":  "allemmbinn@gmail.com",
+  "root":  "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System",
+  "host":  "ultimatelegion",
+  "username":  "allemmbinn",
+  "executable":  "/usr/bin/python3",
+  "codePathLocal":  "barrier_main.py",
+  "cpu_count":  16,
+  "cpu_count_logical":  24,
+  "gpu":  "[]",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "294677381120",
+      "used":  "199298871296"
+    }
+  },
+  "memory":  {
+    "total":  "16527073280"
+  },
+  "cpu":  {
+    "count":  16,
+    "countLogical":  24
+  },
+  "gpu_nvidia":  [
+    {
+      "memoryTotal":  "6439305216",
+      "cudaCores":  2560,
+      "architecture":  "Ada"
+    }
+  ],
+  "cudaVersion":  "12.2"
+}

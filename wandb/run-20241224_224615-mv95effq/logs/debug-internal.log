@@ -1,0 +1,18 @@
+{"time":"2024-12-24T22:46:15.951979258+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-12-24T22:46:15.951986669+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20241224_224615-mv95effq/logs/debug-core.log"}
+{"time":"2024-12-24T22:46:16.000618007+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-12-24T22:46:16.006600664+05:30","level":"INFO","msg":"created new stream","id":"mv95effq"}
+{"time":"2024-12-24T22:46:16.006640356+05:30","level":"INFO","msg":"stream: started","id":"mv95effq"}
+{"time":"2024-12-24T22:46:16.006669397+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"mv95effq"}}
+{"time":"2024-12-24T22:46:16.006726326+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"mv95effq"}}
+{"time":"2024-12-24T22:46:16.006706283+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"mv95effq"}}
+{"time":"2024-12-24T22:46:16.569613678+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-12-24T22:46:16.569984206+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-12-24T22:46:16.799842213+05:30","level":"INFO","msg":"stream: closing","id":"mv95effq"}
+{"time":"2024-12-24T22:46:16.79994364+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-12-24T22:46:16.802650025+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-12-24T22:46:19.364128524+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-12-24T22:46:19.775914174+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"mv95effq"}}
+{"time":"2024-12-24T22:46:19.776021772+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"mv95effq"}}
+{"time":"2024-12-24T22:46:19.776004839+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"mv95effq"}}
+{"time":"2024-12-24T22:46:19.776173487+05:30","level":"INFO","msg":"stream: closed","id":"mv95effq"}

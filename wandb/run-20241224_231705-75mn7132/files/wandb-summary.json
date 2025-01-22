@@ -1,0 +1,1 @@
+{"_step":20235,"V_lie accuracy: ":0.994249726177437,"_timestamp":1.7350631055748858e+09,"Barrier Risk":-2.861022403521929e-05,"Boundary Set accuracy: ":1,"_wandb":{"runtime":680},"Init Set accuracy: ":1,"_runtime":680.132840259,"Unsafe Set accuracy: ":1,"V_pos accuracy: ":1,"Lyapunov Risk":0.30824044346809387,"MSE Loss":0.004320898558944464}

@@ -1,0 +1,11 @@
+{"time":"2025-01-22T20:06:31.371081564+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-22T20:06:31.371088673+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250122_200631-h92rklcn/logs/debug-core.log"}
+{"time":"2025-01-22T20:06:31.382534228+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-22T20:06:31.385588337+05:30","level":"INFO","msg":"created new stream","id":"h92rklcn"}
+{"time":"2025-01-22T20:06:31.385612382+05:30","level":"INFO","msg":"stream: started","id":"h92rklcn"}
+{"time":"2025-01-22T20:06:31.385628838+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"h92rklcn"}}
+{"time":"2025-01-22T20:06:31.385628011+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"h92rklcn"}}
+{"time":"2025-01-22T20:06:31.385624657+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"h92rklcn"}}
+{"time":"2025-01-22T20:06:31.990329363+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-22T20:06:31.990669351+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-22T21:04:12.59904282+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Gshape%20with%20Obstacles/h92rklcn/file_stream\": dial tcp 35.186.228.49:443: connect: connection timed out"}

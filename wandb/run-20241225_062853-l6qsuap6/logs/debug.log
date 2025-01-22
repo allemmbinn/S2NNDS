@@ -1,0 +1,25 @@
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Current SDK version is 0.18.2
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Configure stats pid to 168776
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Loading settings from /home/allemmbinn/.config/wandb/settings
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Loading settings from /home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/settings
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Loading settings from environment variables: {}
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Applying setup settings: {'mode': None, '_disable_service': None}
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Inferring run settings from compute environment: {'program_relpath': 'main.py', 'program_abspath': '/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/main.py', 'program': 'main.py'}
+2024-12-25 06:28:53,223 INFO    MainThread:168776 [wandb_setup.py:_flush():79] Applying login settings: {}
+2024-12-25 06:28:53,224 INFO    MainThread:168776 [wandb_init.py:_log_setup():532] Logging user logs to /home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20241225_062853-l6qsuap6/logs/debug.log
+2024-12-25 06:28:53,224 INFO    MainThread:168776 [wandb_init.py:_log_setup():533] Logging internal logs to /home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20241225_062853-l6qsuap6/logs/debug-internal.log
+2024-12-25 06:28:53,224 INFO    MainThread:168776 [wandb_init.py:init():616] calling init triggers
+2024-12-25 06:28:53,224 INFO    MainThread:168776 [wandb_init.py:init():623] wandb.init called with sweep_config: {}
+config: {'device': 'cpu', 'dim_in': 2, 'model_f': {'activation_function': 'Tanh', 'hidden_neurons': 64, 'layers': 2, 'epochs_warm': 1000, 'learning_rate': 0.01}, 'model_v': {'activation_function': 'Tanh', 'learning_rate': 0.01, 'hidden_neurons': 64, 'layers': 1, 'max_iters': 50000, 'scheduler': {'gamma': 0.9998}, 'batch_size': 10000}, 'model_b': {'activation_function': 'Tanh', 'learning_rate': 0.001, 'hidden_neurons': 32, 'layers': 2, 'max_iters': 50000, 'batch_size': 10000}, 'dataset': {'type': 'LASA', 'name': 'Wshape', 'datashape': 1000, 'path': '/home/allemmbinn/Documents/NN_DS/LASA_Datasets/'}, 'domain': {'shape': 'Rectangle', 'range': [[-1.5, 1.5], [-1.5, 1.5]], 'N': 1000, 'radius': 0.1}, 'init': {'shape': 'Circle', 'N': 1000, 'radius': 0.1}, 'unsafe': {'shape': 'Circle', 'N': 1000, 'radius': 0.15, 'centre': [-0.5, 0.25]}, 'Barrier': True, 'plots': True, 'plotting': {'range': [[-1.5, 0.5], [-0.5, 0.5]], 'contour': False, 'legend': False, 'name': 'Wshape LASA without Obstacles'}, 'hyperparameters': {'decay_vpos': 1, 'decay_lv': 1, 'decay_tune': 1, 'decay_l0': 1, 'decay_mse': 1, 'decay_init': 1, 'decay_unsafe': 1, 'decay_cut': 1, 'decay_lb': 1, 'epsilon_v': 0.001, 'epsilon_b': 0.001, 'alpha': 0.0001, 'epi_bound': 0.05, 'eta': 0.001, 'n_counter_examples': 20}, 'wandb': {'name': 'Wshape with Obstacles'}}
+2024-12-25 06:28:53,224 INFO    MainThread:168776 [wandb_init.py:init():666] starting backend
+2024-12-25 06:28:53,224 INFO    MainThread:168776 [wandb_init.py:init():670] sending inform_init request
+2024-12-25 06:28:53,225 INFO    MainThread:168776 [backend.py:_multiprocessing_setup():104] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-12-25 06:28:53,225 INFO    MainThread:168776 [wandb_init.py:init():683] backend started and connected
+2024-12-25 06:28:53,228 INFO    MainThread:168776 [wandb_init.py:init():778] updated telemetry
+2024-12-25 06:28:53,237 INFO    MainThread:168776 [wandb_init.py:init():811] communicating run to backend with 90.0 second timeout
+2024-12-25 06:28:53,956 INFO    MainThread:168776 [wandb_init.py:init():862] starting run threads in backend
+2024-12-25 06:28:54,162 INFO    MainThread:168776 [wandb_run.py:_console_start():2464] atexit reg
+2024-12-25 06:28:54,163 INFO    MainThread:168776 [wandb_run.py:_redirect():2312] redirect: wrap_raw
+2024-12-25 06:28:54,163 INFO    MainThread:168776 [wandb_run.py:_redirect():2377] Wrapping output streams.
+2024-12-25 06:28:54,163 INFO    MainThread:168776 [wandb_run.py:_redirect():2402] Redirects installed.
+2024-12-25 06:28:54,164 INFO    MainThread:168776 [wandb_init.py:init():906] run started, returning control to user process

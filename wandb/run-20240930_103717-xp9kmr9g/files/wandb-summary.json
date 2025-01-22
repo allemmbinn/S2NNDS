@@ -1,1 +1,0 @@
-{"V_lie accuracy: ":0.9981818181818182,"_timestamp":1.7276730374257498e+09,"_runtime":199.490217533,"_wandb":{"runtime":199},"MSE Loss":0.008054155856370926,"epoch":999,"mse":0.008477749322739488,"V_pos accuracy: ":1,"Lyapunov Risk":0.1788727343082428,"train_loss":0.008440246805548668,"_step":1799}

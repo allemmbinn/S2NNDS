@@ -1,0 +1,33 @@
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 1942[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Plotter.py:97: UserWarning: No contour levels were found within the data range.
+  contour_lines = plt.contour(X, Y, bout[:,:,0], levels=[0], colors='red')
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 100 : Total No of Violations: 2466[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 1781[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+Traceback (most recent call last):
+  File "barrier_main.py", line 374, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "barrier_main.py", line 205, in trainBarrierCertificate
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 42, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 15, in Tune
+    v += x[r][j]**2
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "barrier_main.py", line 374, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "barrier_main.py", line 205, in trainBarrierCertificate
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 42, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 15, in Tune
+    v += x[r][j]**2
+KeyboardInterrupt

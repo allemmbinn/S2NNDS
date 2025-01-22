@@ -1,0 +1,18 @@
+{"time":"2025-01-09T04:11:20.636813896+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-09T04:11:20.636833438+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250109_041120-mdhq3lp7/logs/debug-core.log"}
+{"time":"2025-01-09T04:11:20.647808315+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-09T04:11:20.651371585+05:30","level":"INFO","msg":"created new stream","id":"mdhq3lp7"}
+{"time":"2025-01-09T04:11:20.651396118+05:30","level":"INFO","msg":"stream: started","id":"mdhq3lp7"}
+{"time":"2025-01-09T04:11:20.651427587+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"mdhq3lp7"}}
+{"time":"2025-01-09T04:11:20.651443655+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"mdhq3lp7"}}
+{"time":"2025-01-09T04:11:20.651492379+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"mdhq3lp7"}}
+{"time":"2025-01-09T04:11:21.35741382+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-09T04:11:21.358113373+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-09T04:37:21.600418011+05:30","level":"INFO","msg":"stream: closing","id":"mdhq3lp7"}
+{"time":"2025-01-09T04:37:21.600433169+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-09T04:37:21.601805851+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-01-09T04:37:23.10637228+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-01-09T04:37:23.590299884+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"mdhq3lp7"}}
+{"time":"2025-01-09T04:37:23.590423991+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"mdhq3lp7"}}
+{"time":"2025-01-09T04:37:23.590442831+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"mdhq3lp7"}}
+{"time":"2025-01-09T04:37:23.590576499+05:30","level":"INFO","msg":"stream: closed","id":"mdhq3lp7"}

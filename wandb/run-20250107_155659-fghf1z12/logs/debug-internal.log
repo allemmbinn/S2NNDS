@@ -1,0 +1,22 @@
+{"time":"2025-01-07T15:56:59.13349576+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-07T15:56:59.133511561+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250107_155659-fghf1z12/logs/debug-core.log"}
+{"time":"2025-01-07T15:56:59.143047656+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-07T15:56:59.147483694+05:30","level":"INFO","msg":"created new stream","id":"fghf1z12"}
+{"time":"2025-01-07T15:56:59.147514698+05:30","level":"INFO","msg":"stream: started","id":"fghf1z12"}
+{"time":"2025-01-07T15:56:59.147547045+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"fghf1z12"}}
+{"time":"2025-01-07T15:56:59.147568812+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"fghf1z12"}}
+{"time":"2025-01-07T15:56:59.147599493+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"fghf1z12"}}
+{"time":"2025-01-07T15:57:00.064500698+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-07T15:57:00.064959876+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-07T16:33:16.030235077+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Wshape%20with%20Obstacles/fghf1z12/file_stream\": net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)"}
+{"time":"2025-01-07T17:37:00.133634545+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Wshape%20with%20Obstacles/fghf1z12/file_stream\": dial tcp 35.186.228.49:443: connect: connection timed out"}
+{"time":"2025-01-07T18:42:44.58149866+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Wshape%20with%20Obstacles/fghf1z12/file_stream\": dial tcp 35.186.228.49:443: connect: connection timed out"}
+{"time":"2025-01-07T18:47:09.428842749+05:30","level":"INFO","msg":"stream: closing","id":"fghf1z12"}
+{"time":"2025-01-07T18:47:09.429299095+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-07T18:47:09.431318165+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-01-07T18:47:14.385500744+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-01-07T18:47:14.431480219+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2025-01-07T18:47:14.947862715+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"fghf1z12"}}
+{"time":"2025-01-07T18:47:14.947959887+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"fghf1z12"}}
+{"time":"2025-01-07T18:47:14.947918322+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"fghf1z12"}}
+{"time":"2025-01-07T18:47:14.948149981+05:30","level":"INFO","msg":"stream: closed","id":"fghf1z12"}

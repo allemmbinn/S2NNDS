@@ -1,0 +1,13 @@
+{"time":"2025-01-22T18:18:01.574507375+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-22T18:18:01.574519127+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250122_181801-ab8afdbq/logs/debug-core.log"}
+{"time":"2025-01-22T18:18:01.585590622+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-22T18:18:01.590960631+05:30","level":"INFO","msg":"created new stream","id":"ab8afdbq"}
+{"time":"2025-01-22T18:18:01.590987545+05:30","level":"INFO","msg":"stream: started","id":"ab8afdbq"}
+{"time":"2025-01-22T18:18:01.591032801+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"ab8afdbq"}}
+{"time":"2025-01-22T18:18:01.59104913+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"ab8afdbq"}}
+{"time":"2025-01-22T18:18:01.591091684+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"ab8afdbq"}}
+{"time":"2025-01-22T18:18:02.120449884+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-22T18:18:02.12093211+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-22T20:05:40.898660177+05:30","level":"INFO","msg":"stream: closing","id":"ab8afdbq"}
+{"time":"2025-01-22T20:05:40.898702986+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-22T20:05:40.900576008+05:30","level":"INFO","msg":"Stopped system monitor"}

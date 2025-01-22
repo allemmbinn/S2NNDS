@@ -1,0 +1,648 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0069[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations: 1434[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 200 : Total No of Violations: 3306[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 400 : Total No of Violations: 139[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 600 : Total No of Violations: 474[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 800 : Total No of Violations: 159[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations: 141[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1200 : Total No of Violations: 268[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1400 : Total No of Violations: 440[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1600 : Total No of Violations: 583[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1800 : Total No of Violations: 667[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations: 805[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2200 : Total No of Violations: 865[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2400 : Total No of Violations: 1063[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2600 : Total No of Violations: 915[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2800 : Total No of Violations: 890[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations: 891[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3200 : Total No of Violations: 542[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3400 : Total No of Violations: 390[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3600 : Total No of Violations: 106[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3800 : Total No of Violations: 65[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4000 : Total No of Violations: 1184[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4200 : Total No of Violations: 118[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4400 : Total No of Violations: 157[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4600 : Total No of Violations: 697[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4800 : Total No of Violations: 85[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5000 : Total No of Violations: 331[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5200 : Total No of Violations: 125[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5400 : Total No of Violations: 562[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5600 : Total No of Violations: 321[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5800 : Total No of Violations: 192[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6000 : Total No of Violations: 767[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6200 : Total No of Violations: 98[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6400 : Total No of Violations: 263[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 6600 : Total No of Violations: 69[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6800 : Total No of Violations: 247[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7000 : Total No of Violations: 141[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7200 : Total No of Violations: 85[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7400 : Total No of Violations: 147[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7600 : Total No of Violations: 428[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7800 : Total No of Violations: 201[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8000 : Total No of Violations: 31[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8200 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8400 : Total No of Violations: 887[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8600 : Total No of Violations: 176[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8800 : Total No of Violations: 36[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9000 : Total No of Violations: 53[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9200 : Total No of Violations: 48[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9400 : Total No of Violations: 28[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9600 : Total No of Violations: 49[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9800 : Total No of Violations: 72[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10000 : Total No of Violations: 45[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10200 : Total No of Violations: 51[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10400 : Total No of Violations: 76[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10600 : Total No of Violations: 40[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10800 : Total No of Violations: 46[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11000 : Total No of Violations: 42[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11200 : Total No of Violations: 124[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11400 : Total No of Violations: 28[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11600 : Total No of Violations: 29[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11800 : Total No of Violations: 87[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12000 : Total No of Violations: 39[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12200 : Total No of Violations: 480[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12400 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12600 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12800 : Total No of Violations: 69[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13000 : Total No of Violations: 174[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13200 : Total No of Violations: 37[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13400 : Total No of Violations: 106[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13600 : Total No of Violations: 96[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13800 : Total No of Violations: 132[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14000 : Total No of Violations: 170[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14200 : Total No of Violations: 165[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14400 : Total No of Violations: 21[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14600 : Total No of Violations: 159[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14800 : Total No of Violations: 51[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15000 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15200 : Total No of Violations: 152[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15400 : Total No of Violations: 65[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15600 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15800 : Total No of Violations: 169[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16000 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16200 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16400 : Total No of Violations: 52[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16600 : Total No of Violations: 300[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16800 : Total No of Violations: 42[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17000 : Total No of Violations: 317[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17200 : Total No of Violations: 128[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17400 : Total No of Violations: 383[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17600 : Total No of Violations: 47[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17800 : Total No of Violations: 41[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18000 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18200 : Total No of Violations: 77[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18400 : Total No of Violations: 107[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18600 : Total No of Violations: 91[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18800 : Total No of Violations: 42[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19000 : Total No of Violations: 149[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19200 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 19400 : Total No of Violations: 22[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19600 : Total No of Violations: 106[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19800 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20000 : Total No of Violations: 68[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20200 : Total No of Violations: 31[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20400 : Total No of Violations: 66[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20600 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20800 : Total No of Violations: 23[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21000 : Total No of Violations: 41[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21200 : Total No of Violations: 345[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21400 : Total No of Violations: 79[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21600 : Total No of Violations: 36[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21800 : Total No of Violations: 200[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22000 : Total No of Violations: 75[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22200 : Total No of Violations: 55[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22400 : Total No of Violations: 87[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22600 : Total No of Violations: 50[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22800 : Total No of Violations: 33[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 23000 : Total No of Violations: 39[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23200 : Total No of Violations: 177[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23400 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23600 : Total No of Violations: 634[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23800 : Total No of Violations: 163[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24000 : Total No of Violations: 29[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24200 : Total No of Violations: 350[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 24400 : Total No of Violations: 51[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24600 : Total No of Violations: 71[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24800 : Total No of Violations: 85[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25000 : Total No of Violations: 83[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25200 : Total No of Violations: 34[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25400 : Total No of Violations: 56[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25600 : Total No of Violations: 27[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25800 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 26000 : Total No of Violations: 32[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26200 : Total No of Violations: 209[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26400 : Total No of Violations: 32[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26600 : Total No of Violations: 291[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26800 : Total No of Violations: 23[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 27000 : Total No of Violations: 78[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27200 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27400 : Total No of Violations: 98[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27600 : Total No of Violations: 78[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27800 : Total No of Violations: 141[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28000 : Total No of Violations: 122[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28200 : Total No of Violations: 42[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28400 : Total No of Violations: 40[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28600 : Total No of Violations: 45[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28800 : Total No of Violations: 123[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29000 : Total No of Violations: 207[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29200 : Total No of Violations: 2151[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29400 : Total No of Violations: 1564[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29600 : Total No of Violations: 210[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 29800 : Total No of Violations: 70[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30000 : Total No of Violations: 94[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30200 : Total No of Violations: 55[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30400 : Total No of Violations: 46[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30600 : Total No of Violations: 467[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30800 : Total No of Violations: 65[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 31000 : Total No of Violations: 27[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31200 : Total No of Violations: 1543[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31400 : Total No of Violations: 161[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31600 : Total No of Violations: 274[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31800 : Total No of Violations: 1134[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32000 : Total No of Violations: 602[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 32200 : Total No of Violations: 25[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32400 : Total No of Violations: 82[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32600 : Total No of Violations: 95[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32800 : Total No of Violations: 47[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33000 : Total No of Violations: 58[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33200 : Total No of Violations: 26[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33400 : Total No of Violations: 25[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33600 : Total No of Violations: 501[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 33800 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34000 : Total No of Violations: 116[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34200 : Total No of Violations: 71[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34400 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34600 : Total No of Violations: 438[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 34800 : Total No of Violations: 86[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35000 : Total No of Violations: 43[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35200 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 35400 : Total No of Violations: 64[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35600 : Total No of Violations: 100[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 35800 : Total No of Violations: 83[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36000 : Total No of Violations: 248[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36200 : Total No of Violations: 939[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36400 : Total No of Violations: 76[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36600 : Total No of Violations: 27[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 36800 : Total No of Violations: 284[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37000 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37200 : Total No of Violations: 23[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37400 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37600 : Total No of Violations: 48[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 37800 : Total No of Violations: 317[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38000 : Total No of Violations: 88[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38200 : Total No of Violations: 134[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38400 : Total No of Violations: 188[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38600 : Total No of Violations: 21[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 38800 : Total No of Violations: 34[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39000 : Total No of Violations: 106[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39200 : Total No of Violations: 216[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39400 : Total No of Violations: 63[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39600 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 39800 : Total No of Violations: 25[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40000 : Total No of Violations: 502[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40200 : Total No of Violations: 96[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40400 : Total No of Violations: 30[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40600 : Total No of Violations: 22[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 40800 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 41000 : Total No of Violations: 25[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 41200 : Total No of Violations: 39[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 41400 : Total No of Violations: 34[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 41600 : Total No of Violations: 489[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 41800 : Total No of Violations: 145[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 42000 : Total No of Violations: 43[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 42200 : Total No of Violations: 200[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 42400 : Total No of Violations: 235[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 42600 : Total No of Violations: 34[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 42800 : Total No of Violations: 91[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 43000 : Total No of Violations: 71[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 43200 : Total No of Violations: 245[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 43400 : Total No of Violations: 31[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 43600 : Total No of Violations: 35[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 43800 : Total No of Violations: 95[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 44000 : Total No of Violations: 387[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 44200 : Total No of Violations: 29[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 44400 : Total No of Violations: 25[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 44600 : Total No of Violations: 22[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 44800 : Total No of Violations: 579[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 45000 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 45200 : Total No of Violations: 255[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 45400 : Total No of Violations: 226[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 45600 : Total No of Violations: 214[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 45800 : Total No of Violations: 47[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 46000 : Total No of Violations: 41[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 46200 : Total No of Violations: 675[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 46400 : Total No of Violations: 583[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 46600 : Total No of Violations: 81[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 46800 : Total No of Violations: 190[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 47000 : Total No of Violations: 60[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 47200 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 47400 : Total No of Violations: 188[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 47600 : Total No of Violations: 20[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 47800 : Total No of Violations: 42[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 48000 : Total No of Violations: 54[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 48200 : Total No of Violations: 28[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 48400 : Total No of Violations: 24[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 48600 : Total No of Violations: 87[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 48800 : Total No of Violations: 34[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 49000 : Total No of Violations: 51[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 49200 : Total No of Violations: 100[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 49400 : Total No of Violations: 38[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 49600 : Total No of Violations: 42[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 49800 : Total No of Violations: 29[0m
+[34mSampling Verification Time: 8462.668965708[0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.50817220075823966, -0.50816220075823959]
+x2 : [0.44075456976200983, 0.44076456976200978][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.60615747421627453, -0.60614747421627446]
+x2 : [0.5465667629873372, 0.54657676298733726][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.60634305238570274, -0.60633305238570268]
+x2 : [0.49199233588108554, 0.4920023358810855][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.00093238830566406278, -0.00092468261718750024]
+x2 : [-0.010999838539314525, -0.010990426312029712][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.60625644923996957, -0.60624644923996951]
+x2 : [0.54662014956313199, 0.54663014956313205][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.25348632812500005, -0.25348247528076173]
+x2 : [0.58073881407631367, 0.58074242223286054][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.52400397779180974, -0.52400359117062345]
+x2 : [0.49007166540886155, 0.49007208249148493][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.65702445045651581, -0.65701445045651574]
+x2 : [0.44416463729090377, 0.44417463729090373][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.25256664550781255, -0.25255664550781259]
+x2 : [0.74151687796343713, 0.74152687796343719][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.68256619250880279, -0.68255619250880273]
+x2 : [0.62878208971135563, 0.6287920897113557][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.50619736581399766, -0.50619697919281137]
+x2 : [0.52607090079950414, 0.52607131788212746][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.51762431552111066, -0.51761431552111059]
+x2 : [0.64228889338744422, 0.64229889338744428][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.50579680018956008, -0.50578680018956002]
+x2 : [0.43819201412385861, 0.43820201412385856][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.70730994843254891, -0.70729994843254884]
+x2 : [0.54645998983574762, 0.54646998983574768][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.50540090009478011, -0.50539090009478005]
+x2 : [0.43776492151750007, 0.43777492151750003][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.53024363104222116, -0.5302336310422211]
+x2 : [0.62856854340817625, 0.62857854340817632][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.71957785137072694, -0.71957746474954065]
+x2 : [0.43761977177307709, 0.43762018885570048][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.5200449768440103, -0.52004420360163772]
+x2 : [0.65558715076035379, 0.65558756784297723][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.25274802684783937, -0.25274754524230958]
+x2 : [0.62401820083700277, 0.62401865185657113][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.75799253244234288, -0.75799175919997031]
+x2 : [0.44759722228998033, 0.44759763937260377][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.0038270214843750009, -0.0038170214843750013]
+x2 : [0.51276233398437499, 0.51277233398437505][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.5105426013269192, -0.51054182808454662]
+x2 : [0.5330111556528303, 0.53301157273545374][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.50520295004739013, -0.50519295004739007]
+x2 : [0.43744460206273122, 0.43745460206273118][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Derivative of Lyapunov Function. Counterexamples:[0m
+[33mx1 : [-0.5051039750236952, -0.50509397502369513]
+x2 : [0.43744460206273122, 0.43745460206273118][0m
+[34m===========Verifying==========[0m
+[33mNot Satisfied for Positive Definteness. Counterexamples: [0m
+[33mx1 : [-0.0022242382812500002, -0.0022142382812500006]
+x2 : [0.0098277123853547244, 0.009837712385354724][0m
