@@ -1,0 +1,40 @@
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 0 : Total No of Violations: 344[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Boundary Region[0m
+Traceback (most recent call last):
+  File "barrier_main.py", line 374, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "barrier_main.py", line 222, in trainBarrierCertificate
+    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Plotter.py", line 135, in lyapunovBarrierPlot
+    plt.show()
+  File "/usr/lib/python3/dist-packages/matplotlib/pyplot.py", line 269, in show
+    return _show(*args, **kw)
+  File "/usr/lib/python3/dist-packages/matplotlib/cbook/deprecation.py", line 413, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/lib/python3/dist-packages/matplotlib/backend_bases.py", line 3309, in show
+    cls.mainloop()
+  File "/usr/lib/python3/dist-packages/matplotlib/backends/_backend_tk.py", line 981, in mainloop
+    managers[0].window.mainloop()
+  File "/usr/lib/python3.8/tkinter/__init__.py", line 1429, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "barrier_main.py", line 374, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "barrier_main.py", line 222, in trainBarrierCertificate
+    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Plotter.py", line 135, in lyapunovBarrierPlot
+    plt.show()
+  File "/usr/lib/python3/dist-packages/matplotlib/pyplot.py", line 269, in show
+    return _show(*args, **kw)
+  File "/usr/lib/python3/dist-packages/matplotlib/cbook/deprecation.py", line 413, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/lib/python3/dist-packages/matplotlib/backend_bases.py", line 3309, in show
+    cls.mainloop()
+  File "/usr/lib/python3/dist-packages/matplotlib/backends/_backend_tk.py", line 981, in mainloop
+    managers[0].window.mainloop()
+  File "/usr/lib/python3.8/tkinter/__init__.py", line 1429, in mainloop
+    self.tk.mainloop(n)
+KeyboardInterrupt

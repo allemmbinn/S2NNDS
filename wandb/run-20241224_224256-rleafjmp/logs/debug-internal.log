@@ -1,0 +1,19 @@
+{"time":"2024-12-24T22:42:56.883652627+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-12-24T22:42:56.883658937+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20241224_224256-rleafjmp/logs/debug-core.log"}
+{"time":"2024-12-24T22:42:56.906501081+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-12-24T22:42:56.909283446+05:30","level":"INFO","msg":"created new stream","id":"rleafjmp"}
+{"time":"2024-12-24T22:42:56.909317578+05:30","level":"INFO","msg":"stream: started","id":"rleafjmp"}
+{"time":"2024-12-24T22:42:56.909347051+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"rleafjmp"}}
+{"time":"2024-12-24T22:42:56.909420639+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"rleafjmp"}}
+{"time":"2024-12-24T22:42:56.909411557+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"rleafjmp"}}
+{"time":"2024-12-24T22:42:57.402445936+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-12-24T22:42:57.402795439+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-12-24T22:42:57.639772099+05:30","level":"INFO","msg":"stream: closing","id":"rleafjmp"}
+{"time":"2024-12-24T22:42:57.640781778+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-12-24T22:42:57.643995729+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-12-24T22:43:02.644714761+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2024-12-24T22:43:03.879512745+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-12-24T22:43:04.340439938+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"rleafjmp"}}
+{"time":"2024-12-24T22:43:04.340419455+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"rleafjmp"}}
+{"time":"2024-12-24T22:43:04.340499405+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"rleafjmp"}}
+{"time":"2024-12-24T22:43:04.340583338+05:30","level":"INFO","msg":"stream: closed","id":"rleafjmp"}

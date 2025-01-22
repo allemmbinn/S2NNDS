@@ -65,7 +65,7 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, model_b = None):
         U = vect_out[:,:, 0]
         V = vect_out[:,:,1]
         vout = unflatten(V_out).cpu().detach().numpy()
-        if flag_barrier:
+        if flag_barrier and model_b is not None:
             B_out = model_b(input_data)
             bout = unflatten(B_out).cpu().detach().numpy()
     stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#000000')
@@ -93,7 +93,7 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, model_b = None):
     x = x.cpu().detach().numpy()
     ax.plot(x[:, 0], x[:, 1],'#ff00ff', label="Target Trajectory")
     
-    if flag_barrier:
+    if flag_barrier and model_b is not None:
         contour_lines = plt.contour(X, Y, bout[:,:,0], levels=[0], colors='red')
         contour_fills = plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
         #Create proxy artists for contours
@@ -122,7 +122,7 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, model_b = None):
     #Adding all legends
     
     if flag_legend:
-        if flag_barrier:
+        if flag_barrier and model_b is not None:
             ax.legend(handles=[arrow_proxy, contour_line_legend, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Actual Trajectory'),
                    mpl.lines.Line2D([0], [0], color='#ff00ff', label='Target Trajectory'), circle1, circle2,
                    mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,

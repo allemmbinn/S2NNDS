@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "barrier_main.py", line 364, in <module>
+    model_f=mp.model_f
+AttributeError: 'MotionPlanner' object has no attribute 'model_f'
+Traceback (most recent call last):
+  File "barrier_main.py", line 364, in <module>
+    model_f=mp.model_f
+AttributeError: 'MotionPlanner' object has no attribute 'model_f'

@@ -5,11 +5,15 @@ import Loss_Functions
 import Plotter
 import smt_verification
 from dreal import *
+
 # Load the configuration file
 config_file = os.environ.get('CONFIG_FILE', 'config.json')
 with open(config_file) as file:
     config = json.load(file)
-wandb_name = config["wandb"]["name"]
+if config["wandb"] == "None":
+    wandb_name = "LASA"
+else:
+    wandb_name = config["wandb"]["name"]
 wandb.init(project=wandb_name, config=config)
 class MotionPlanner:
     def __init__(self):
@@ -107,7 +111,16 @@ class MotionPlanner:
         ).to(self.device)      
         max_iters = config["model_v"]["max_iters"]
         optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = config["model_v"]["learning_rate"])
-        scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
+        # Provide the start factor and end factor
+        if config["model_v"]["scheduler"]["start_factor"] == "None":
+            start_factor = 1.0
+        else:
+            start_factor = config["model_v"]["scheduler"]["start_factor"]
+        if config["model_v"]["scheduler"]["end_factor"] == "None":
+            end_factor = 0.0001
+        else:
+            end_factor = config["model_v"]["scheduler"]["end_factor"]
+        scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=start_factor, end_factor=end_factor, total_iters=max_iters)
         self.model_v.train()
         # Starting with Sampling Based Verification
         start = timeit.default_timer()
@@ -117,11 +130,13 @@ class MotionPlanner:
             lyapunov_risk.backward()
             optimizer_v.step()
             scheduler_v.step()
-            if i%100 == 0:
+            if i%200 == 0:
                 self.x_domain, flag = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i)    
                 if flag:
                     print_info("Completed with Sampling Based Training. Proceeding with SMT Verification")
                     break
+            if i%5000 == 0:
+                Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center)
         stop_ = timeit.default_timer()
         print_info(f"Sampling Verification Time: {stop_ - start}")
         # SMT Verification

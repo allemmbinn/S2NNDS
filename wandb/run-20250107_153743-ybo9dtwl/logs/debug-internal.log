@@ -1,0 +1,13 @@
+{"time":"2025-01-07T15:37:43.454009375+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-07T15:37:43.454021514+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250107_153743-ybo9dtwl/logs/debug-core.log"}
+{"time":"2025-01-07T15:37:43.464807684+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-07T15:37:43.472482769+05:30","level":"INFO","msg":"created new stream","id":"ybo9dtwl"}
+{"time":"2025-01-07T15:37:43.472511581+05:30","level":"INFO","msg":"stream: started","id":"ybo9dtwl"}
+{"time":"2025-01-07T15:37:43.472559289+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"ybo9dtwl"}}
+{"time":"2025-01-07T15:37:43.472574624+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"ybo9dtwl"}}
+{"time":"2025-01-07T15:37:43.472634788+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"ybo9dtwl"}}
+{"time":"2025-01-07T15:37:44.064311185+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-07T15:37:44.064655269+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-07T15:56:50.665756856+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-07T15:56:50.665752289+05:30","level":"INFO","msg":"stream: closing","id":"ybo9dtwl"}
+{"time":"2025-01-07T15:56:50.667249923+05:30","level":"INFO","msg":"Stopped system monitor"}

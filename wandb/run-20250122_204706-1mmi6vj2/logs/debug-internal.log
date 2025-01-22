@@ -1,0 +1,13 @@
+{"time":"2025-01-22T20:47:06.258013773+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-22T20:47:06.258026356+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250122_204706-1mmi6vj2/logs/debug-core.log"}
+{"time":"2025-01-22T20:47:08.259297474+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-22T20:47:08.262474378+05:30","level":"INFO","msg":"created new stream","id":"1mmi6vj2"}
+{"time":"2025-01-22T20:47:08.262486541+05:30","level":"INFO","msg":"stream: started","id":"1mmi6vj2"}
+{"time":"2025-01-22T20:47:08.26251105+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"1mmi6vj2"}}
+{"time":"2025-01-22T20:47:08.262553461+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"1mmi6vj2"}}
+{"time":"2025-01-22T20:47:08.262542945+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"1mmi6vj2"}}
+{"time":"2025-01-22T20:47:08.920926482+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-22T20:47:08.921300536+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-22T21:29:39.101498782+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/graphql\": context deadline exceeded"}
+{"time":"2025-01-22T22:33:57.638056523+05:30","level":"INFO","msg":"api: retrying HTTP error","status":502,"url":"https://api.wandb.ai/files/allemmbinn_iitkgp/Doubled%20Bended%20with%20Obstacles/1mmi6vj2/file_stream"}
+{"time":"2025-01-22T22:50:45.250247313+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Doubled%20Bended%20with%20Obstacles/1mmi6vj2/file_stream\": context deadline exceeded"}

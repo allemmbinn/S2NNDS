@@ -1,0 +1,19 @@
+{"time":"2024-12-26T12:17:05.849624054+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-12-26T12:17:05.849637371+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20241226_121705-87whmryi/logs/debug-core.log"}
+{"time":"2024-12-26T12:17:05.857607741+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-12-26T12:17:05.861841892+05:30","level":"INFO","msg":"created new stream","id":"87whmryi"}
+{"time":"2024-12-26T12:17:05.861857109+05:30","level":"INFO","msg":"stream: started","id":"87whmryi"}
+{"time":"2024-12-26T12:17:05.86187958+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"87whmryi"}}
+{"time":"2024-12-26T12:17:05.861891576+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"87whmryi"}}
+{"time":"2024-12-26T12:17:05.861896588+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"87whmryi"}}
+{"time":"2024-12-26T12:17:06.317028909+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-12-26T12:17:06.317411633+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-12-26T12:17:12.987909679+05:30","level":"INFO","msg":"stream: closing","id":"87whmryi"}
+{"time":"2024-12-26T12:17:12.987923585+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-12-26T12:17:12.989171028+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-12-26T12:17:17.989677992+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2024-12-26T12:17:18.169573325+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-12-26T12:17:18.746824008+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"87whmryi"}}
+{"time":"2024-12-26T12:17:18.746928142+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"87whmryi"}}
+{"time":"2024-12-26T12:17:18.746954314+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"87whmryi"}}
+{"time":"2024-12-26T12:17:18.747046959+05:30","level":"INFO","msg":"stream: closed","id":"87whmryi"}

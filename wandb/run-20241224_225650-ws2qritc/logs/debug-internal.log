@@ -1,0 +1,21 @@
+{"time":"2024-12-24T22:56:50.051025751+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2024-12-24T22:56:50.051040576+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20241224_225650-ws2qritc/logs/debug-core.log"}
+{"time":"2024-12-24T22:56:52.052640296+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2024-12-24T22:56:52.058803077+05:30","level":"INFO","msg":"created new stream","id":"ws2qritc"}
+{"time":"2024-12-24T22:56:52.058831106+05:30","level":"INFO","msg":"stream: started","id":"ws2qritc"}
+{"time":"2024-12-24T22:56:52.058869388+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"ws2qritc"}}
+{"time":"2024-12-24T22:56:52.058933668+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"ws2qritc"}}
+{"time":"2024-12-24T22:56:52.058873104+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"ws2qritc"}}
+{"time":"2024-12-24T22:57:02.679895182+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-12-24T22:57:02.680355463+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-12-24T22:57:36.385618942+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Worm%20with%20Obstacles/ws2qritc/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2024-12-24T22:57:58.807704267+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Worm%20with%20Obstacles/ws2qritc/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: read udp 127.0.0.1:55752->127.0.0.53:53: i/o timeout"}
+{"time":"2024-12-24T22:58:22.754339926+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Worm%20with%20Obstacles/ws2qritc/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2024-12-24T23:02:29.517641103+05:30","level":"INFO","msg":"stream: closing","id":"ws2qritc"}
+{"time":"2024-12-24T23:02:29.517661343+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-12-24T23:02:29.518510912+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-12-24T23:02:31.081647544+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-12-24T23:02:31.488773561+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"ws2qritc"}}
+{"time":"2024-12-24T23:02:31.488850357+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"ws2qritc"}}
+{"time":"2024-12-24T23:02:31.48885297+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"ws2qritc"}}
+{"time":"2024-12-24T23:02:31.489040635+05:30","level":"INFO","msg":"stream: closed","id":"ws2qritc"}

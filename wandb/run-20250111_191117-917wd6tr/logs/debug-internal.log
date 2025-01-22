@@ -1,0 +1,20 @@
+{"time":"2025-01-11T19:11:17.54237467+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-01-11T19:11:17.542381237+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250111_191117-917wd6tr/logs/debug-core.log"}
+{"time":"2025-01-11T19:11:17.555646661+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-01-11T19:11:17.557656147+05:30","level":"INFO","msg":"created new stream","id":"917wd6tr"}
+{"time":"2025-01-11T19:11:17.557668143+05:30","level":"INFO","msg":"stream: started","id":"917wd6tr"}
+{"time":"2025-01-11T19:11:17.557681507+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"917wd6tr"}}
+{"time":"2025-01-11T19:11:17.557733583+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"917wd6tr"}}
+{"time":"2025-01-11T19:11:17.557737299+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"917wd6tr"}}
+{"time":"2025-01-11T19:11:18.143503805+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-01-11T19:11:18.144387319+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-11T19:47:04.159532743+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Gshape%20with%20Obstacles/917wd6tr/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2025-01-11T23:45:34.159796401+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Gshape%20with%20Obstacles/917wd6tr/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2025-01-12T00:16:59.000924502+05:30","level":"INFO","msg":"stream: closing","id":"917wd6tr"}
+{"time":"2025-01-12T00:16:59.000980815+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-12T00:16:59.002393189+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-01-12T00:17:00.801329973+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-01-12T00:17:01.277603164+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"917wd6tr"}}
+{"time":"2025-01-12T00:17:01.277644345+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"917wd6tr"}}
+{"time":"2025-01-12T00:17:01.277663192+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"917wd6tr"}}
+{"time":"2025-01-12T00:17:01.27770945+05:30","level":"INFO","msg":"stream: closed","id":"917wd6tr"}
