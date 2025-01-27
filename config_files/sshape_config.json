@@ -32,7 +32,7 @@
         "type" : "LASA",
         "name" : "Sshape",
         "datashape" : 1000,
-        "path" : "/home/allemmbinn/Documents/NN_DS/LASA_Datasets/"
+        "path" : "./LASA_Datasets/"
     },
     "domain": {
         "shape" : "Rectangle",
@@ -75,8 +75,5 @@
         "epi_bound" : 0.05,
         "eta" : 1e-3,
         "n_counter_examples" : 20
-    },
-    "wandb" : {
-        "name" : "S-Shape with Obstacles"
     }
 }

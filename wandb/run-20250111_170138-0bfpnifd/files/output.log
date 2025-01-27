@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "barrier_main.py", line 375, in <module>
-    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
-AttributeError: 'MotionPlanner' object has no attribute 'model_v'
-Traceback (most recent call last):
-  File "barrier_main.py", line 375, in <module>
-    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
-AttributeError: 'MotionPlanner' object has no attribute 'model_v'

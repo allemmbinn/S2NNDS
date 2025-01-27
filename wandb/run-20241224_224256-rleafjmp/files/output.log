@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "barrier_main.py", line 358, in <module>
-    hidden_f=mp.hidden_f,
-AttributeError: 'MotionPlanner' object has no attribute 'hidden_f'
-Traceback (most recent call last):
-  File "barrier_main.py", line 358, in <module>
-    hidden_f=mp.hidden_f,
-AttributeError: 'MotionPlanner' object has no attribute 'hidden_f'

@@ -22,7 +22,6 @@ from scipy.linalg import solve_continuous_lyapunov
 import math
 import json
 import argparse
-import wandb
 
 # Verifier Requirements
 from dreal import *
