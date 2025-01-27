@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "barrier_main.py", line 356, in <module>
-    model_f = NNModels.DyanmicsNet(mp.dim_in, mp.hidden_f).to(mp.device)
-AttributeError: 'MotionPlanner' object has no attribute 'hidden_f'
-Traceback (most recent call last):
-  File "barrier_main.py", line 356, in <module>
-    model_f = NNModels.DyanmicsNet(mp.dim_in, mp.hidden_f).to(mp.device)
-AttributeError: 'MotionPlanner' object has no attribute 'hidden_f'

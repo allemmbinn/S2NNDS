@@ -66,7 +66,6 @@ def loss_function_v(model_v, input_domain, X_train, y_train, iter):
     # Calcuation of Accuracy
     acc_pos = 1 - vio_pos/len(V_domain)
     acc_L = 1 - vio_lie/len(L_V)
-    wandb.log({"Lyapunov Risk": Lyapunov_risk.item(), "MSE Loss": loss_MSE.item(), "V_pos accuracy: ":acc_pos, "V_lie accuracy: ":acc_L})
     # print_info(f"{iter}) Lyapunov LOSS = {Lyapunov_risk.item():.5E}, MSE = {loss_MSE.item():.5E}, V_0_loss = {loss_vpos.item():.5E}, V_pos_loss = {loss_vpos.item():.5E}, Lv_loss = {loss_lie.item():.5E},\
     #     Circular Tuning Loss = {loss_tune.item():.5E}, Lie Violations = {vio_lie}, Positive Violations = {vio_pos}")
     return Lyapunov_risk
@@ -127,7 +126,6 @@ def loss_function_b(model_b, model_v, input_init, input_unsafe, input_domain, X_
     acc_unsafe = 1- vio_unsafe/len(B_unsafe)
     acc_init = 1-  vio_init/len(B_init)
     acc_lie = 1-vio_lie/len(L_B)
-    wandb.log({"Barrier Risk": Barrier_risk.item(), "Unsafe Set accuracy: ":acc_unsafe, "Init Set accuracy: ":acc_init, "Boundary Set accuracy: ":acc_lie})
     # print(f"{iter}) Barrier LOSS = {Barrier_risk.item():.5E}, loss_init = {loss_init.item():.5E}, loss_unsafe = {loss_unsafe.item():.5E},\
     # loss_lieb = {loss_lieb.item():.5E}, loss_cut = {loss_cut.item():.5E}, Init Violations = {vio_init}, Unsafe Violations = {vio_unsafe}, Lie Violations = {vio_lie}")
     return Barrier_risk

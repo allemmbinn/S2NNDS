@@ -1,5 +1,5 @@
 {
-    "device" : "cuda",
+    "device" : "cpu",
     "dim_in" : 2,
     "model_f": {
         "activation_function": "Tanh",
@@ -32,7 +32,7 @@
         "type" : "LASA",
         "name" : "Dbended",
         "datashape" : 1000,
-        "path" : "/home/allemmbinn/Documents/NN_DS/LASA_Datasets/"
+        "path" : "./LASA_Datasets/"
     },
     "domain": {
         "shape" : "Rectangle",
@@ -51,7 +51,7 @@
         "radius" : 0.15,
         "centre" : [-0.2,0.25]
     },
-    "Barrier" : true,
+    "Barrier" : false,
     "plots" : false,
     "plotting" : {
         "range" : [[-1,1],[-1, 1]],
@@ -75,8 +75,5 @@
         "epi_bound" : 0.05,
         "eta" : 1e-2,
         "n_counter_examples" : 20
-    },
-    "wandb" : {
-        "name" : "Doubled Bended with Obstacles"
     }
 }

@@ -28,7 +28,7 @@
         "type" : "LASA",
         "name" : "Worm",
         "datashape" : 1000,
-        "path" : "/home/allemmbinn/Documents/NN_DS/LASA_Datasets/"
+        "path" : "./LASA_Datasets/"
     },
     "domain": {
         "shape" : "Rectangle",

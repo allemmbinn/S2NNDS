@@ -10,11 +10,7 @@ from dreal import *
 config_file = os.environ.get('CONFIG_FILE', 'config.json')
 with open(config_file) as file:
     config = json.load(file)
-if config["wandb"] == "None":
-    wandb_name = "LASA"
-else:
-    wandb_name = config["wandb"]["name"]
-wandb.init(project=wandb_name, config=config)
+
 class MotionPlanner:
     def __init__(self):
         self.N_domain = config["domain"]["N"]
@@ -89,7 +85,6 @@ class MotionPlanner:
             mse = loss_fn(y_pred, torch.tensor(self.y_test).to(self.device))
             mse = float(mse)
             history.append(mse)
-            wandb.log({"DS_training_loss": loss.item()})
             if loss < best_mse:
                 best_mse = mse
                 best_weights = copy.deepcopy(self.model_f.state_dict())
@@ -190,7 +185,6 @@ class MotionPlanner:
                     name = config["dataset"]["name"]
                     file_path = f"./models/{name}_model_v.pth"
                     torch.save(self.model_v.state_dict(), file_path)
-                    wandb.save(file_path)
                     break
         stop = timeit.default_timer()
         print_info(f"Total Verification Time: {stop - start}")
@@ -346,10 +340,8 @@ class MotionPlanner:
                             name = config["dataset"]["name"]
                             file_path = f"./models/{name}_model_v.pth"
                             torch.save(self.model_v.state_dict(), file_path)
-                            wandb.save(file_path)
                             file_path = f"./models/{name}_model_b.pth"
                             torch.save(self.model_b.state_dict(), file_path)
-                            wandb.save(file_path)
                             break
         stop = timeit.default_timer()
         print_info(f"Total Verification Time: {stop - start}")
@@ -367,6 +359,5 @@ if __name__ == "__main__":
     if check_barrier:
         _ = mp.trainBarrierCertificate()
     Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
-    wandb.finish()
 
     
