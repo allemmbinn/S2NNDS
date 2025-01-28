@@ -2,7 +2,7 @@
 The official repository for the Neural Network Dynamical System based on my work at MIRMI, TUM under the guidance of Dr Abdalla Swikir
 
 ## Using Config File
-1. If `cuda` is available provide device name as `cuda` else `cpu`
-2. Change the number of layers of the Dynamical System, Lyapunov Function and Barrier Certificate as per need
+1. Tune the Hyperparameters for the various models in the function
 ## How to use
-1. `export CONFIG_FILE=./config_files/${name_of_config_file}.json`
+1. run `python main.py --lasa_name=Worm` for running the main.py with the required LASA Shape
+2. The Parameters available for LASA Datatype has been included in the `config_files` folder
