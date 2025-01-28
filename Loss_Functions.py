@@ -1,11 +1,6 @@
 from common_header import *
 from torch.utils.data import DataLoader, TensorDataset
 
-# Load the configuration file
-config_file = os.environ.get('CONFIG_FILE', 'config.json')
-with open(config_file) as file:
-    config = json.load(file)
-
 # Helper Function for Circular Tuning
 def Tune(x):
     y = []
@@ -19,8 +14,8 @@ def Tune(x):
     return y
 
 # Defining the Overall Loss Function for Lyapunov and the Dynamics Function
-def loss_function_v(model_v, input_domain, X_train, y_train, iter):
-    device = config["device"]
+def loss_function_v(model_v, input_domain, X_train, y_train, iter, config):
+    device = next(model_v.parameters()).device
     # For the domain
     input_domain = input_domain.float().to(device)
     # Zero set
@@ -71,8 +66,8 @@ def loss_function_v(model_v, input_domain, X_train, y_train, iter):
     return Lyapunov_risk
 
 # Defining the Barrier Loss Function
-def loss_function_b(model_b, model_v, input_init, input_unsafe, input_domain, X_train, iter):
-    device = config["device"]
+def loss_function_b(model_b, model_v, input_init, input_unsafe, input_domain, X_train, iter, config):
+    device = next(model_v.parameters()).device
     # For the domain
     input_domain = input_domain.float().to(device)
     # For the unsafe set
@@ -130,14 +125,13 @@ def loss_function_b(model_b, model_v, input_init, input_unsafe, input_domain, X_
     # loss_lieb = {loss_lieb.item():.5E}, loss_cut = {loss_cut.item():.5E}, Init Violations = {vio_init}, Unsafe Violations = {vio_unsafe}, Lie Violations = {vio_lie}")
     return Barrier_risk
 
-def lyapunovVerify(model_v, x_domain, iter):
-    device = config["device"]
+def lyapunovVerify(model_v, x_domain, iter, config, DOMAIN):
+    device = next(model_v.parameters()).device
     eta = config["hyperparameters"]["eta"]
     N_CE = config["hyperparameters"]["n_counter_examples"]
     flag = True
     countVio = 0
     batch_size = config["model_v"]["batch_size"] 
-    DOMAIN = config["domain"]["range"]
     epsilon = config["hyperparameters"]["epsilon_v"]
     
     # Generate x and y ranges
@@ -217,13 +211,12 @@ def lyapunovVerify(model_v, x_domain, iter):
 
     return x_domain, flag
 
-def barrierVerify(model_v, model_b, x_domain, x_unsafe, x_init, initial_set_centre):
-    device = config["device"]
+def barrierVerify(model_v, model_b, x_domain, x_unsafe, x_init, initial_set_centre, config, DOMAIN):
+    device = next(model_v.parameters()).device
     eta = config["hyperparameters"]["eta"]
     N_CE = config["hyperparameters"]["n_counter_examples"]
     batch_size = config["model_b"]["batch_size"]
     flag = True
-    
     def process_data(x_range, y_range, condition_fn, violation_message, storage_tensor):
         # Generate x and y ranges based on eta
         x = np.linspace(x_range[0], x_range[1], math.ceil((x_range[1] - x_range[0]) / eta))
@@ -279,7 +272,6 @@ def barrierVerify(model_v, model_b, x_domain, x_unsafe, x_init, initial_set_cent
     flag = flag and flag_unsafe
     
     # Processing boundary region
-    DOMAIN = config["domain"]["range"]
     x = np.linspace(DOMAIN[0][0], DOMAIN[0][1], math.ceil((DOMAIN[0][1] - DOMAIN[0][0]) / eta))
     y = np.linspace(DOMAIN[1][0], DOMAIN[1][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0]) / eta))
     X, Y = np.meshgrid(x, y)

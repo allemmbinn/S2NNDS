@@ -8,7 +8,7 @@ config_file = os.environ.get('CONFIG_FILE', 'config.json')
 with open(config_file) as file:
     config = json.load(file)
 
-device = config["device"]
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 #For defining the layers
 hidden_neurons_f = config["model_f"]["hidden_neurons"]
 hidden_layers_f = config["model_f"]["layers"]
