@@ -81,10 +81,10 @@ class LyapunovNet(nn.Module):
         Fout = self.layers_f[-1](y)
         # For the Lyapunov Function
         y = x
-        for idx, layer in enumerate(self.layers_v[:]):
+        for idx, layer in enumerate(self.layers_v[:-1]):
             z = layer(y)
             y = self.sigmoid_v(z)
-        Vout = y
+        Vout = self.layers_v[-1](y)
         return Vout, Fout
     
 # General Class of Neural Network for the Barrier Certificate
@@ -108,7 +108,8 @@ class BarrierNet(nn.Module):
     # Forward Propogation
     def forward(self, x):
         y = x
-        for idx, layer in enumerate(self.layers_b[:]):
+        for idx, layer in enumerate(self.layers_b[:-1]):
             z = layer(y)
             y = self.sigmoid_b(z)
+        self.layers_b[-1](y)
         return y

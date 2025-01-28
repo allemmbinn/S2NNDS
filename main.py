@@ -231,7 +231,7 @@ class MotionPlanner:
                 # save the weights and biases
                 z = self.vars_
                 jacobian = np.eye(self.model_v.input_size, self.model_v.input_size)
-                for idx, layer in enumerate(self.model_v.layers_v[:]):
+                for idx, layer in enumerate(self.model_v.layers_v[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
@@ -239,7 +239,12 @@ class MotionPlanner:
                     # Vdot
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
+                # For the final layer
+                last_layer = self.model_v.layers_v[-1].weight.data.cpu().numpy()
+                z = last_layer @ z
+                z += self.model_v.layers_v[-1].bias.data.cpu().numpy()
                 V_learn = z[0]
+                jacobian = last_layer @ jacobian
                 gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 V_learn_dot = (gradV @ f_learn)[0]
                 print_info('===========Verifying==========')
@@ -298,7 +303,7 @@ class MotionPlanner:
             scheduler_v.step()
             scheduler_b.step()
             if i%100 == 0:
-                self.x_domain, flag_v = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i, DOMAIN=self.limits)    
+                self.x_domain, flag_v = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i, self.config, DOMAIN=self.limits)    
                 self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center, self.config, DOMAIN=self.limits)    
                 if flag_v and flag_b:
                     print_info("Completed with Sampling Based Training. Proceeding with SMT Verification")
@@ -361,7 +366,12 @@ class MotionPlanner:
                     # Vdot
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
+                # For the final layer
+                last_layer = self.model_b.layers_b[-1].weight.data.cpu().numpy()
+                z = last_layer @ z
+                z += self.model_b.layers_b[-1].bias.data.cpu().numpy()
                 B_learn = z[0]
+                jacobian = last_layer @ jacobian
                 gradB = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 B_learn_dot = (gradB @ f_learn)[0]
                 print('===========Verifying==========')
