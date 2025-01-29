@@ -190,6 +190,7 @@ class MotionPlanner:
         self.model_v.train()
         # Starting with Sampling Based Verification
         start = timeit.default_timer()
+        # TODO : CHANGE THIS
         for i in range(max_iters):
             lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
             optimizer_v.zero_grad()
@@ -218,7 +219,8 @@ class MotionPlanner:
             scheduler_v.step()
             if i%200 == 0:
                 # Finding the values for the new model function
-                z = self.vars_
+                z = self.vars_  # Initial input
+                # Dynamics Function (Fout)
                 for idx, layer in enumerate(self.model_v.layers_f[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
@@ -228,7 +230,8 @@ class MotionPlanner:
                 z = last_layer @ z
                 z += self.model_v.layers_f[-1].bias.data.cpu().numpy()
                 f_learn = z
-                # save the weights and biases
+
+                # Lyapunov Function (Vout)
                 z = self.vars_
                 jacobian = np.eye(self.model_v.input_size, self.model_v.input_size)
                 for idx, layer in enumerate(self.model_v.layers_v[:-1]):
@@ -236,15 +239,13 @@ class MotionPlanner:
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
                     z = smt_verification.hyper_tan_dr(zhat)
-                    # Vdot
+                    # Vdot computation
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-                # For the final layer
-                last_layer = self.model_v.layers_v[-1].weight.data.cpu().numpy()
-                z = last_layer @ z
-                z += self.model_v.layers_v[-1].bias.data.cpu().numpy()
-                V_learn = z[0]
-                jacobian = last_layer @ jacobian
+                # Last layer for Lyapunov Function
+                w_last = self.model_v.layers_v[-1].weight.data.cpu().numpy()
+                b_last = self.model_v.layers_v[-1].bias.data.cpu().numpy()
+                V_learn = (w_last @ z + b_last)[0]
                 gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 V_learn_dot = (gradV @ f_learn)[0]
                 print_info('===========Verifying==========')
@@ -331,7 +332,8 @@ class MotionPlanner:
             scheduler_b.step()
             if i%200 == 0:
                 # Finding the values for the new model function
-                z = self.vars_
+                z = self.vars_  # Initial input
+                # Dynamics Function (Fout)
                 for idx, layer in enumerate(self.model_v.layers_f[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
@@ -341,24 +343,28 @@ class MotionPlanner:
                 z = last_layer @ z
                 z += self.model_v.layers_f[-1].bias.data.cpu().numpy()
                 f_learn = z
-                # save the weights and biases
+
+                # Lyapunov Function (Vout)
                 z = self.vars_
                 jacobian = np.eye(self.model_v.input_size, self.model_v.input_size)
-                for idx, layer in enumerate(self.model_v.layers_v[:]):
+                for idx, layer in enumerate(self.model_v.layers_v[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
                     z = smt_verification.hyper_tan_dr(zhat)
-                    # Vdot
+                    # Vdot computation
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-                V_learn = z[0]
+                # Last layer for Lyapunov Function
+                w_last = self.model_v.layers_v[-1].weight.data.cpu().numpy()
+                b_last = self.model_v.layers_v[-1].bias.data.cpu().numpy()
+                V_learn = (w_last @ z + b_last)[0]
                 gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 V_learn_dot = (gradV @ f_learn)[0]
                 # save the weights and biases
                 z = self.vars_
                 jacobian = np.eye(self.model_b.input_size, self.model_b.input_size)
-                for idx, layer in enumerate(self.model_b.layers_b[:]):
+                for idx, layer in enumerate(self.model_b.layers_b[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
@@ -367,11 +373,9 @@ class MotionPlanner:
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
                 # For the final layer
-                last_layer = self.model_b.layers_b[-1].weight.data.cpu().numpy()
-                z = last_layer @ z
-                z += self.model_b.layers_b[-1].bias.data.cpu().numpy()
-                B_learn = z[0]
-                jacobian = last_layer @ jacobian
+                w_last = self.model_b.layers_b[-1].weight.data.cpu().numpy()
+                b_last = self.model_b.layers_b[-1].bias.data.cpu().numpy()
+                B_learn = (w_last @ z + b_last)[0]
                 gradB = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 B_learn_dot = (gradB @ f_learn)[0]
                 print('===========Verifying==========')
