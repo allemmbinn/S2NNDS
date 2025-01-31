@@ -1,7 +1,7 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 32,
+        "hidden_neurons": 64,
         "layers" : 2,
         "epochs_warm" : 1000,
         "learning_rate" : 1e-2 
@@ -9,7 +9,7 @@
     "model_v": {
         "activation_function": "Tanh",
         "learning_rate": 1e-2,
-        "hidden_neurons": 64,
+        "hidden_neurons": 128,
         "layers" : 1,
         "max_iters" : 50000,
         "scheduler" : {
@@ -53,7 +53,7 @@
         "decay_lv" : 1.0,
         "decay_tune" : 1.5,
         "decay_l0" : 1,
-        "decay_mse" : 2,
+        "decay_mse" : 3,
         "decay_init" : 1,
         "decay_unsafe" : 1,
         "decay_cut" : 2,
