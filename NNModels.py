@@ -32,7 +32,7 @@ class DyanmicsNet(nn.Module):
         y = x
         for idx, layer in enumerate(self.layers_f[:-1]):
             y = self.sigmoid_f(layer(y))
-        Fout = self.layers_f[-1](y)
+        Fout = self.sigmoid_f(self.layers_f[-1](y))
         return Fout
     
 #Class of Neural Network for Lyapunov Function along with Dynamics Function
@@ -78,7 +78,7 @@ class LyapunovNet(nn.Module):
         for idx, layer in enumerate(self.layers_f[:-1]):
             z = layer(y)
             y = self.sigmoid_f(z)
-        Fout = self.layers_f[-1](y)
+        Fout = self.sigmoid_f(self.layers_f[-1](y))
         # For the Lyapunov Function
         y = x
         for idx, layer in enumerate(self.layers_v[:-1]):
@@ -111,5 +111,5 @@ class BarrierNet(nn.Module):
         for idx, layer in enumerate(self.layers_b[:-1]):
             z = layer(y)
             y = self.sigmoid_b(z)
-        self.layers_b[-1](y)
-        return y
+        Bout = self.layers_b[-1](y) #Are you 
+        return Bout
