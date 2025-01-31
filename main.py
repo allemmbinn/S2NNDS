@@ -76,13 +76,13 @@ class MotionPlanner:
             demos = dataset.demos
             # Divide the data into training and testing
             total_demos = len(demos)
-            train_size = int(5/7 * total_demos)
+            train_size = int(5/7 * total_demos) # 5/7 datasets are used for training
             train_indices = random.sample(range(total_demos), train_size)
             test_indices = list(set(range(total_demos)) - set(train_indices))
             self.X_train = np.concatenate([demos[i].pos for i in train_indices], axis=1).T
             self.X_test = np.concatenate([demos[i].pos for i in test_indices], axis=1).T
             self.y_train = np.concatenate([demos[i].vel for i in train_indices], axis=1).T
-            self.y_test = np.concatenate([demos[i].vel for i in test_indices], axis=1).T
+            self.y_test = np.concatenate([demos[i].vel for i in test_indices], axis=1).T #TODO: Randomize the data and shuffle into batches
         else:
             print_error("Non-LASA Dataset has been choosen")
         # Normalise the Trajectories to [-1, 1]
@@ -117,7 +117,7 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == "Circle":
                 self.x_unsafe = data.generateCircularData(self.N_unsafe, self.config["unsafe"]["radius"], self.config["unsafe"]["centre"]).to(self.device)
             else:
-                print_error("Non-Circular Unsafe Set has been choosen")
+                print_error("Non-Circular Unsafe Set has been choosen") #TODO: Add code for rectangular data
                 raise NotImplementedError
         else:
             # Get Init Data Points
@@ -137,7 +137,7 @@ class MotionPlanner:
         best_mse = np.inf   # init to infinity
         best_weights = None
         history = []
-        loss_fn = nn.MSELoss()  # mean square error
+        loss_fn = nn.MSELoss()  # mean square error #TODO: Add Lyapunov, barrier, regularization loss
         optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr = self.config["model_f"]["learning_rate"])
         for epoch in range(self.config["model_f"]["epochs_warm"]):
             self.model_f.train()
@@ -187,7 +187,8 @@ class MotionPlanner:
             start_factor = 1.0
             end_factor = 0.0001
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=start_factor, end_factor=end_factor, total_iters=max_iters)
-        self.model_v.train()
+        """self.model_v.train() #I don't think we need dropout and batch normalizing- in fact, overfitting is preferred.
+        Moreover we have already normalized the input data"""
         # Starting with Sampling Based Verification
         start = timeit.default_timer()
         # TODO : CHANGE THIS
@@ -288,14 +289,14 @@ class MotionPlanner:
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
         optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"])
         scheduler_b = torch.optim.lr_scheduler.LinearLR(optimizer_b, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
-        self.model_v.train()
-        self.model_b.train()
+        #self.model_v.train()
+        #self.model_b.train()
         # Starting with Sampling Based Verification
         start = timeit.default_timer()
         for i in range(max_iters):
             lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
             barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i, self.config)
-            total_loss = lyapunov_risk + barrier_risk
+            total_loss = lyapunov_risk + barrier_risk #I think the barrier training should not be independent of the dynamical system.
             optimizer_v.zero_grad()
             optimizer_b.zero_grad()
             total_loss.backward()
@@ -316,8 +317,8 @@ class MotionPlanner:
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
         optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"])
         scheduler_b = torch.optim.lr_scheduler.LinearLR(optimizer_b, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
-        self.model_v.train()
-        self.model_b.train()
+        #self.model_v.train()
+        #self.model_b.train()
         verified_flag = False
         for i in range(max_iters):
             lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
