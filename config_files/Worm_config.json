@@ -54,7 +54,7 @@
         "decay_lv" : 1.5,
         "decay_tune" : 2,
         "decay_l0" : 1,
-        "decay_l2" : 0.1,
+        "decay_l2" : 0.001,
         "decay_mse" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,
