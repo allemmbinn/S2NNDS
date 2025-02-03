@@ -43,7 +43,8 @@ def loss_function_v(model_v, input_domain, X_train, y_train, iter, config):
     alpha = config["hyperparameters"]["alpha"]
     epxi = (torch.norm(input_domain, p=2, dim=1)**2 * epsilon).clone().detach().to(device)
     # Regularization
-    l2_norm = sum(p.pow(2).sum() for p in model_v.parameters())
+    l2_norm = sum(param.pow(2).sum() for layer in model_v.layers_v for param in layer.parameters())
+    # l2_norm = sum(p.pow(2).sum() for p in model_v.parameters())
     # Hyperparameters
     DECAY_VPOS = config["hyperparameters"]["decay_vpos"]
     DECAY_LV = config["hyperparameters"]["decay_lv"]
