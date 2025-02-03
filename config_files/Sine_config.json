@@ -27,16 +27,16 @@
         "batch_size" : 100000
     },
     "domain": {
-        "N" : 1000
+        "N" : 10000
     },
     "init":{
         "shape" : "Circle",
-        "N" : 1000,
+        "N" : 5000,
         "radius" : 0.1
     },
     "unsafe":{
         "shape" : "Circle",
-        "N" : 1000,
+        "N" : 5000,
         "radius" : 0.1,
         "centre" : [-0.45,0.15]
     },

@@ -38,24 +38,28 @@ def loss_function_v(model_v, input_domain, X_train, y_train, iter, config):
     Circle_Tuning = Circle_Tuning.to(device)
     # MSE Loss
     F_mse = model_v(X_train)[1]
-    loss_fn = nn.MSELoss()
-    loss_MSE = loss_fn(F_mse,y_train)
     # Epixy
     epsilon = config["hyperparameters"]["epsilon_v"]
     alpha = config["hyperparameters"]["alpha"]
     epxi = (torch.norm(input_domain, p=2, dim=1)**2 * epsilon).clone().detach().to(device)
+    # Regularization
+    l2_norm = sum(p.pow(2).sum() for p in model_v.parameters())
     # Hyperparameters
     DECAY_VPOS = config["hyperparameters"]["decay_vpos"]
     DECAY_LV = config["hyperparameters"]["decay_lv"]
     DECAY_TUNE = config["hyperparameters"]["decay_tune"]
     DECAY_L0 = config["hyperparameters"]["decay_l0"]
     DECAY_MSE = config["hyperparameters"]["decay_mse"]
+    DECAY_L2 = config["hyperparameters"]["decay_l2"]
     # Loss
-    loss_zero = (X0).pow(2) 
-    loss_lie = (F.leaky_relu(L_V + epxi, alpha)).mean()
-    loss_vpos = F.leaky_relu(epxi - V_domain, alpha).mean()
-    loss_tune = ((Circle_Tuning-V_domain).pow(2)).mean()
-    Lyapunov_risk = DECAY_VPOS * loss_vpos + DECAY_LV * loss_lie  + DECAY_TUNE * loss_tune + DECAY_L0 * loss_zero + DECAY_MSE * loss_MSE
+    loss_fn = nn.MSELoss()
+    loss_MSE = DECAY_MSE * loss_fn(F_mse,y_train)
+    loss_zero = DECAY_L0 * (X0).pow(2) 
+    loss_lie  = DECAY_LV * (F.leaky_relu(L_V + epxi, alpha)).mean()
+    loss_vpos = DECAY_VPOS * F.leaky_relu(epxi - V_domain, alpha).mean()
+    loss_tune = DECAY_TUNE * ((Circle_Tuning-V_domain).pow(2)).mean()
+    loss_reg  = DECAY_L2 * l2_norm
+    Lyapunov_risk = loss_vpos + loss_lie  + loss_tune + loss_zero + loss_MSE + loss_reg
     vio_pos = np.sum(V_domain.cpu().detach().numpy() < 0)
     vio_lie = np.sum(L_V.cpu().detach().numpy() > 0)
     # Calcuation of Accuracy
@@ -77,42 +81,58 @@ def loss_function_b(model_b, model_v, input_init, input_unsafe, input_domain, X_
     input_init = input_init.float().to(device)
     B_init = model_b(input_init)
     ## LOSS
-    # MSE Loss
-    B_mse = model_b(X_train)
+    # # MSE Loss
+    # B_mse = model_b(X_train)
     # Hyperparameters
     DECAY_INIT = config["hyperparameters"]["decay_init"]
     DECAY_UNSAFE = config["hyperparameters"]["decay_unsafe"]
     DECAY_CUT = config["hyperparameters"]["decay_cut"]
     DECAY_LB = config["hyperparameters"]["decay_lb"]
-    # Loss to push to right solution
-    loss_cut = DECAY_CUT * F.relu(B_mse).mean()
-    # Total Loss
+    DECAY_L2 = config["hyperparameters"]["decay_l2"]
     epsilon = config["hyperparameters"]["epsilon_b"]
     alpha = config["hyperparameters"]["alpha"]
     epi_bound = config["hyperparameters"]["epi_bound"]
+    # Finding the Boundary Points for Lie Derivative
+    # with torch.no_grad():
+    #     B_domain = model_b(input_domain)
+    #     boundary_index = ((B_domain[:,0] >= -epi_bound) & (B_domain[:,0] <= epi_bound)).nonzero()
+    #     input_boundary = torch.index_select(input_domain, 0, boundary_index[:, 0])
+    # if len(input_boundary) > 0:
+    #     input_boundary.requires_grad = True
+    #     B_boundary = model_b(input_boundary)
+    #     F_boundary = model_v(input_boundary)[1]
+    #     gradient_boundary = torch.autograd.grad(
+    #             torch.sum(B_boundary),
+    #             input_boundary,
+    #             grad_outputs=None,
+    #             create_graph=True,
+    #             only_inputs=True,
+    #             allow_unused=True)[0]
+    #     L_B = torch.sum(gradient_boundary * F_boundary, dim=1)
+    # else:
+    #     L_B = torch.tensor([0.0])
+    # Finding the Lie Derivative for entire Domain
+    input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
+    B_domain = model_b(input_domain_clone)
+    F_domain = model_v(input_domain_clone)[1]
+    gradient_boundary = torch.autograd.grad(
+                    torch.sum(B_domain),
+                    input_domain_clone,
+                    grad_outputs=None,
+                    create_graph=True,
+                    only_inputs=True,
+                    allow_unused=True)[0]
+    L_B = torch.sum(gradient_boundary * F_domain, dim=1)
+    # Regularization
+    l2_norm = sum(p.pow(2).sum() for p in model_b.parameters())
+    # Total Loss
+    # loss_cut = DECAY_CUT * F.relu(B_mse).mean()
+    loss_cut = 0
     loss_init = DECAY_INIT * (F.leaky_relu(B_init + epsilon, alpha)).mean()
     loss_unsafe = DECAY_UNSAFE * (F.leaky_relu(- B_unsafe + epsilon, alpha)).mean()
-    #### NEED TO CHECK BOUNDARY STUFF FOR BARRIER
-    with torch.no_grad():
-        B_domain = model_b(input_domain)
-        boundary_index = ((B_domain[:,0] >= -epi_bound) & (B_domain[:,0] <= epi_bound)).nonzero()
-        input_boundary = torch.index_select(input_domain, 0, boundary_index[:, 0])
-    if len(input_boundary) > 0:
-        input_boundary.requires_grad = True
-        B_boundary = model_b(input_boundary)
-        F_boundary = model_v(input_boundary)[1]
-        gradient_boundary = torch.autograd.grad(
-                torch.sum(B_boundary),
-                input_boundary,
-                grad_outputs=None,
-                create_graph=True,
-                only_inputs=True,
-                allow_unused=True)[0]
-        L_B = torch.sum(gradient_boundary * F_boundary, dim=1)
-    else:
-        L_B = torch.tensor([0.0])
     loss_lieb = DECAY_LB * F.relu(L_B + epsilon).mean()
-    Barrier_risk = loss_init + loss_unsafe + loss_lieb + loss_cut
+    loss_reg = DECAY_L2 * l2_norm
+    Barrier_risk = loss_init + loss_unsafe + loss_lieb + loss_cut + loss_reg
     # Violations
     vio_unsafe = np.sum(B_unsafe.cpu().detach().numpy() < 0)
     vio_init = np.sum(B_init.cpu().detach().numpy() > 0)

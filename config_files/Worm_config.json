@@ -3,20 +3,22 @@
         "activation_function": "Tanh",
         "hidden_neurons": 32,
         "layers" : 2,
-        "epochs_warm" : 1000,
-        "learning_rate" : 1e-2 
+        "epochs_warm" : 500,
+        "learning_rate" : 1e-2,
+        "batch_size" : 1024 
     },
     "model_v": {
         "activation_function": "Tanh",
-        "learning_rate": 1e-3,
+        "learning_rate": 5e-3,
         "hidden_neurons": 32,
         "layers" : 1,
         "max_iters" : 20000,
         "scheduler" : {
             "start_factor" : 1.0,
-            "end_factor"   : 0.0001
+            "end_factor"   : 1e-2
         },
-        "batch_size" : 10000
+        "batch_size" : 5126,
+        "batch_size_training" : 5126
     },
     "model_b": {
         "activation_function": "Tanh",
@@ -52,6 +54,7 @@
         "decay_lv" : 1.5,
         "decay_tune" : 2,
         "decay_l0" : 1,
+        "decay_l2" : 0.1,
         "decay_mse" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,
