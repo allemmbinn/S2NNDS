@@ -1,0 +1,447 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0049[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations in Lyapunov: 142[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1500 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2500 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4000 : Total No of Violations in Lyapunov: 24[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 18[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5500 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 18[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6000 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6500 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7000 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8000 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9000 : Total No of Violations in Lyapunov: 26[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9500 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10000 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 14[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 18[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11500 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 18[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12000 : Total No of Violations in Lyapunov: 25[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13000 : Total No of Violations in Lyapunov: 27[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 16[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13500 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14000 : Total No of Violations in Lyapunov: 24[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 17[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14500 : Total No of Violations in Lyapunov: 26[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15000 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 16[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17000 : Total No of Violations in Lyapunov: 26[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17500 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19000 : Total No of Violations in Lyapunov: 27[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 6[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 20500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21000 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 21500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 22500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Initial Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23000 : Total No of Violations in Lyapunov: 26[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 23500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 24500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 6[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 25500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 26500 : Total No of Violations in Lyapunov: 21[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 6[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27000 : Total No of Violations in Lyapunov: 24[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 27500 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 28500 : Total No of Violations in Lyapunov: 24[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 6[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29000 : Total No of Violations in Lyapunov: 26[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 29500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30000 : Total No of Violations in Lyapunov: 25[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 30500 : Total No of Violations in Lyapunov: 22[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 6[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31000 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 6[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 31500 : Total No of Violations in Lyapunov: 26[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32000 : Total No of Violations in Lyapunov: 23[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 32500 : Total No of Violations in Lyapunov: 20[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 33000 : Total No of Violations in Lyapunov: 25[0m
+[33mViolation of Barrier in Unsafe Domain[0m
+[33mViolation of Barrier Derivative Condition[0m
+[33mTotal No of Violations in Barrier: 12[0m
+[34m#####################################################[0m
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/multiprocessing/queues.py", line 245, in _feed
+    send_bytes(obj)
+  File "/usr/lib/python3.8/multiprocessing/queues.py", line 245, in _feed
+    send_bytes(obj)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "main.py", line 595, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 393, in trainBarrierCertificate
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, x_domain_batch, X_train_batch, y_train_batch, epoch, self.config)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 37, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 10, in Tune
+    v += x[r][j]**2
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "main.py", line 595, in <module>
+    _ = mp.trainBarrierCertificate()
+  File "main.py", line 393, in trainBarrierCertificate
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, x_domain_batch, X_train_batch, y_train_batch, epoch, self.config)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 37, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 10, in Tune
+    v += x[r][j]**2
+KeyboardInterrupt

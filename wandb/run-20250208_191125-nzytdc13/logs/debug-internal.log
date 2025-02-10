@@ -1,0 +1,13 @@
+{"time":"2025-02-08T19:11:25.256783578+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-02-08T19:11:25.256790796+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_191125-nzytdc13/logs/debug-core.log"}
+{"time":"2025-02-08T19:11:25.261844055+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-02-08T19:11:25.265470613+05:30","level":"INFO","msg":"created new stream","id":"nzytdc13"}
+{"time":"2025-02-08T19:11:25.265483006+05:30","level":"INFO","msg":"stream: started","id":"nzytdc13"}
+{"time":"2025-02-08T19:11:25.265499163+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"nzytdc13"}}
+{"time":"2025-02-08T19:11:25.265489409+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"nzytdc13"}}
+{"time":"2025-02-08T19:11:25.265515349+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"nzytdc13"}}
+{"time":"2025-02-08T19:11:25.755989338+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-02-08T19:11:25.756415018+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-08T19:32:43.620727835+05:30","level":"INFO","msg":"stream: closing","id":"nzytdc13"}
+{"time":"2025-02-08T19:32:43.62075127+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-08T19:32:43.622134151+05:30","level":"INFO","msg":"Stopped system monitor"}

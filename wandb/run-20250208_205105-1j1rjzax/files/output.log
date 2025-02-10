@@ -1,0 +1,137 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0106[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[34mEpoch: 0, Loss: 1.8695693016052246[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations in Lyapunov: 47[0m
+[34mEpoch: 500, Loss: 0.008839157409965992[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 1000, Loss: 0.0091805849224329[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 1500, Loss: 0.007128388620913029[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 2000, Loss: 0.0067824856378138065[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 2500, Loss: 0.005447910632938147[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 3000, Loss: 0.005785596556961536[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 3500, Loss: 0.005735698621720076[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 4000, Loss: 0.007038913667201996[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 4500, Loss: 0.006838744040578604[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 5000, Loss: 0.006094166077673435[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5000 : Total No of Violations in Lyapunov: 25[0m
+[34mEpoch: 5500, Loss: 0.005559704266488552[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 6000, Loss: 0.0054756938479840755[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6000 : Total No of Violations in Lyapunov: 26[0m
+[34mEpoch: 6500, Loss: 0.0068450188264250755[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 7000, Loss: 0.007773691322654486[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7000 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 7500, Loss: 0.006505642086267471[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7500 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 8000, Loss: 0.006173240020871162[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 8500, Loss: 0.007591561414301395[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 9000, Loss: 0.005311123561114073[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9000 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 9500, Loss: 0.005879633128643036[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 10000, Loss: 0.0057287500239908695[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 10500, Loss: 0.0055379243567585945[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 11000, Loss: 0.007280357182025909[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 11500, Loss: 0.005626149941235781[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 12000, Loss: 0.00556801725178957[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12000 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 12500, Loss: 0.005395594052970409[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12500 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 13000, Loss: 0.006546101998537779[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 13500, Loss: 0.006759990472346544[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 13500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 14000, Loss: 0.007185715716332197[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 14500, Loss: 0.005784804467111826[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 14500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 15000, Loss: 0.005175354424864054[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15000 : Total No of Violations in Lyapunov: 25[0m
+[34mEpoch: 15500, Loss: 0.006391280330717564[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 15500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 16000, Loss: 0.005512312985956669[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16000 : Total No of Violations in Lyapunov: 24[0m
+[34mEpoch: 16500, Loss: 0.0053043607622385025[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 16500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 17000, Loss: 0.007976708002388477[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 17500, Loss: 0.005467378534376621[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 17500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 18000, Loss: 0.006395985372364521[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 18500, Loss: 0.005068948492407799[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 18500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 19000, Loss: 0.005876634735614061[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19000 : Total No of Violations in Lyapunov: 24[0m
+[34mEpoch: 19500, Loss: 0.0058783553540706635[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 19500 : Total No of Violations in Lyapunov: 20[0m
+[34mSampling Verification Time: 8615.869120183[0m
+[34m===========Verifying==========[0m
+Traceback (most recent call last):
+  File "main.py", line 592, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 286, in trainLyapunovFunction
+    result = smt_verification.CheckLyapunov(self.vars_, f_learn, V_learn, V_learn_dot, self.ball_lb, self.ball_ub, self.smt_config, self.beta) # SMT solver
+AttributeError: 'MotionPlanner' object has no attribute 'ball_lb'
+Traceback (most recent call last):
+  File "main.py", line 592, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 286, in trainLyapunovFunction
+    result = smt_verification.CheckLyapunov(self.vars_, f_learn, V_learn, V_learn_dot, self.ball_lb, self.ball_ub, self.smt_config, self.beta) # SMT solver
+AttributeError: 'MotionPlanner' object has no attribute 'ball_lb'

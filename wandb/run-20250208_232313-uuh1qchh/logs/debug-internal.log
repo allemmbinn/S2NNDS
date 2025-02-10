@@ -1,0 +1,19 @@
+{"time":"2025-02-08T23:23:13.255777107+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-02-08T23:23:13.255791369+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_232313-uuh1qchh/logs/debug-core.log"}
+{"time":"2025-02-08T23:23:13.293974548+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-02-08T23:23:13.307707744+05:30","level":"INFO","msg":"created new stream","id":"uuh1qchh"}
+{"time":"2025-02-08T23:23:13.30772877+05:30","level":"INFO","msg":"stream: started","id":"uuh1qchh"}
+{"time":"2025-02-08T23:23:13.307760543+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"uuh1qchh"}}
+{"time":"2025-02-08T23:23:13.307781859+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"uuh1qchh"}}
+{"time":"2025-02-08T23:23:13.307831859+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"uuh1qchh"}}
+{"time":"2025-02-08T23:23:13.829609092+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-02-08T23:23:13.829969973+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-08T23:23:14.052850135+05:30","level":"INFO","msg":"stream: closing","id":"uuh1qchh"}
+{"time":"2025-02-08T23:23:14.052886888+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-08T23:23:14.059285661+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-02-08T23:23:19.060021716+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2025-02-08T23:23:20.464453195+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-02-08T23:23:20.966476924+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"uuh1qchh"}}
+{"time":"2025-02-08T23:23:20.966548096+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"uuh1qchh"}}
+{"time":"2025-02-08T23:23:20.966541994+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"uuh1qchh"}}
+{"time":"2025-02-08T23:23:20.966673475+05:30","level":"INFO","msg":"stream: closed","id":"uuh1qchh"}

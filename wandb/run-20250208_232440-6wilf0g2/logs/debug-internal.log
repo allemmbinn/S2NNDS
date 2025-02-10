@@ -1,0 +1,19 @@
+{"time":"2025-02-08T23:24:40.250038884+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-02-08T23:24:40.25004537+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_232440-6wilf0g2/logs/debug-core.log"}
+{"time":"2025-02-08T23:24:40.273374488+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-02-08T23:24:40.278658541+05:30","level":"INFO","msg":"created new stream","id":"6wilf0g2"}
+{"time":"2025-02-08T23:24:40.27868182+05:30","level":"INFO","msg":"stream: started","id":"6wilf0g2"}
+{"time":"2025-02-08T23:24:40.27871194+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"6wilf0g2"}}
+{"time":"2025-02-08T23:24:40.278715489+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"6wilf0g2"}}
+{"time":"2025-02-08T23:24:40.278769856+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"6wilf0g2"}}
+{"time":"2025-02-08T23:24:40.928437003+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-02-08T23:24:40.928926117+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-08T23:24:41.196761933+05:30","level":"INFO","msg":"stream: closing","id":"6wilf0g2"}
+{"time":"2025-02-08T23:24:41.196830897+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-08T23:24:41.198854159+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-02-08T23:24:46.035642125+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-02-08T23:24:46.199354978+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2025-02-08T23:24:46.466730866+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"6wilf0g2"}}
+{"time":"2025-02-08T23:24:46.466812856+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"6wilf0g2"}}
+{"time":"2025-02-08T23:24:46.466828176+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"6wilf0g2"}}
+{"time":"2025-02-08T23:24:46.466900544+05:30","level":"INFO","msg":"stream: closed","id":"6wilf0g2"}

@@ -1,0 +1,26 @@
+{"time":"2025-02-08T19:32:58.876920137+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-02-08T19:32:58.876930009+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_193258-5635n3cw/logs/debug-core.log"}
+{"time":"2025-02-08T19:32:58.888426736+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-02-08T19:32:58.892633672+05:30","level":"INFO","msg":"created new stream","id":"5635n3cw"}
+{"time":"2025-02-08T19:32:58.892657545+05:30","level":"INFO","msg":"stream: started","id":"5635n3cw"}
+{"time":"2025-02-08T19:32:58.892664417+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"5635n3cw"}}
+{"time":"2025-02-08T19:32:58.892663077+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"5635n3cw"}}
+{"time":"2025-02-08T19:32:58.892668918+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"5635n3cw"}}
+{"time":"2025-02-08T19:32:59.496103528+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-02-08T19:32:59.496730729+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-08T20:27:15.512112286+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Leaf2%20LASA%20without%20Obstacles/5635n3cw/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2025-02-08T20:27:17.945569301+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Leaf2%20LASA%20without%20Obstacles/5635n3cw/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2025-02-08T20:27:24.567158559+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Leaf2%20LASA%20without%20Obstacles/5635n3cw/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2025-02-08T20:27:33.656878849+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/allemmbinn_iitkgp/Leaf2%20LASA%20without%20Obstacles/5635n3cw/file_stream\": dial tcp: lookup api.wandb.ai on 127.0.0.53:53: server misbehaving"}
+{"time":"2025-02-08T20:27:47.292297406+05:30","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/graphql\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)"}
+{"time":"2025-02-08T20:27:50.024769461+05:30","level":"INFO","msg":"stream: closing","id":"5635n3cw"}
+{"time":"2025-02-08T20:27:50.024797739+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-08T20:27:50.046254914+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-02-08T20:27:54.875789636+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-02-08T20:27:55.047379093+05:30","level":"ERROR","msg":"monitor: gpu: timeout waiting for process to exit"}
+{"time":"2025-02-08T20:27:55.280956042+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"5635n3cw"}}
+{"time":"2025-02-08T20:27:55.28107772+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"5635n3cw"}}
+{"time":"2025-02-08T20:27:55.281045686+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"5635n3cw"}}
+{"time":"2025-02-08T20:27:55.281222746+05:30","level":"INFO","msg":"stream: closed","id":"5635n3cw"}
+{"time":"2025-02-08T20:27:55.281358912+05:30","level":"ERROR","msg":"runwork: ignoring record after close","work":{"Record":{"RecordType":{"Request":{"RequestType":{"Keepalive":{}}}},"control":{"local":true,"connection_id":"127.0.0.1:43886"},"_info":{"stream_id":"5635n3cw"}}}}
+{"time":"2025-02-08T20:27:55.282624506+05:30","level":"ERROR","msg":"runwork: ignoring record after close","work":{"Record":{"RecordType":{"Request":{"RequestType":{"Keepalive":{}}}},"control":{"local":true,"connection_id":"127.0.0.1:43886"},"_info":{"stream_id":"5635n3cw"}}}}

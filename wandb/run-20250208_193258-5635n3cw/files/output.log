@@ -1,0 +1,64 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0031[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[34mEpoch: 0, Loss: 1.9188590049743652[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations in Lyapunov: 57[0m
+[34mEpoch: 500, Loss: 0.010433283634483814[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 1000, Loss: 0.01000282634049654[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 1500, Loss: 0.008288904093205929[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 2000, Loss: 0.00829842034727335[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 2500, Loss: 0.006937180180102587[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 3000, Loss: 0.007440073881298304[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 3500, Loss: 0.00755950715392828[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 4000, Loss: 0.008066421374678612[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 4500, Loss: 0.008140858262777328[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4500 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 5000, Loss: 0.007553829345852137[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5000 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 5500, Loss: 0.007507955655455589[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 6000, Loss: 0.007328405510634184[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6000 : Total No of Violations in Lyapunov: 23[0m
+[34mEpoch: 6500, Loss: 0.007934491150081158[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6500 : Total No of Violations in Lyapunov: 23[0m
+Traceback (most recent call last):
+  File "main.py", line 592, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 220, in trainLyapunovFunction
+    X_train_batch = X_train_batch.to(self.device)
+RuntimeError: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "main.py", line 592, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 220, in trainLyapunovFunction
+    X_train_batch = X_train_batch.to(self.device)
+RuntimeError: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.

@@ -1,0 +1,98 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.0044[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[34mEpoch: 0, Loss: 0.857240617275238[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations in Lyapunov: 68[0m
+[34mEpoch: 500, Loss: 0.02698119729757309[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 1000, Loss: 0.0232523325830698[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 1500, Loss: 0.02095732092857361[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 1500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 2000, Loss: 0.02019147388637066[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 2500, Loss: 0.01978231966495514[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 2500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 3000, Loss: 0.020154563710093498[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3000 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 3500, Loss: 0.01984485052525997[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 3500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 4000, Loss: 0.019765805453062057[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 4500, Loss: 0.01945474185049534[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 4500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 5000, Loss: 0.019932374358177185[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 5500, Loss: 0.020244821906089783[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 5500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 6000, Loss: 0.019783124327659607[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 6500, Loss: 0.0197821706533432[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 6500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 7000, Loss: 0.020036280155181885[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 7500, Loss: 0.019611714407801628[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 7500 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 8000, Loss: 0.020136550068855286[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 8500, Loss: 0.020118877291679382[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 8500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 9000, Loss: 0.019645538181066513[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 9500, Loss: 0.019404947757720947[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 9500 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 10000, Loss: 0.020218726247549057[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10000 : Total No of Violations in Lyapunov: 21[0m
+[34mEpoch: 10500, Loss: 0.01920252852141857[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 10500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 11000, Loss: 0.019692454487085342[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11000 : Total No of Violations in Lyapunov: 20[0m
+[34mEpoch: 11500, Loss: 0.019580766558647156[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 11500 : Total No of Violations in Lyapunov: 22[0m
+[34mEpoch: 12000, Loss: 0.019688066095113754[0m
+[33mViolation of Lyapunov in Lie Derivative[0m
+[33mEpoch 12000 : Total No of Violations in Lyapunov: 20[0m
+Traceback (most recent call last):
+  File "main.py", line 592, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 223, in trainLyapunovFunction
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, x_domain_batch, X_train_batch, y_train_batch, epoch, self.config)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 37, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 10, in Tune
+    v += x[r][j]**2
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "main.py", line 592, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 223, in trainLyapunovFunction
+    lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, x_domain_batch, X_train_batch, y_train_batch, epoch, self.config)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 37, in loss_function_v
+    Circle_Tuning = Tune(input_domain)
+  File "/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/Loss_Functions.py", line 10, in Tune
+    v += x[r][j]**2
+KeyboardInterrupt

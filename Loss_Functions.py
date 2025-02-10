@@ -68,6 +68,8 @@ def loss_function_v(model_v, input_domain, X_train, y_train, iter, config):
     acc_L = 1 - vio_lie/len(L_V)
     # print_info(f"{iter}) Lyapunov LOSS = {Lyapunov_risk.item():.5E}, MSE = {loss_MSE.item():.5E}, V_0_loss = {loss_vpos.item():.5E}, V_pos_loss = {loss_vpos.item():.5E}, Lv_loss = {loss_lie.item():.5E},\
     #     Circular Tuning Loss = {loss_tune.item():.5E}, Lie Violations = {vio_lie}, Positive Violations = {vio_pos}")
+    wandb.log({"Lyapunov Risk": Lyapunov_risk.item(), "MSE Loss": loss_MSE.item(), "V_pos accuracy: ":acc_pos, "V_lie accuracy: ":acc_L})
+
     return Lyapunov_risk
 
 # Defining the Barrier Loss Function
@@ -142,6 +144,8 @@ def loss_function_b(model_b, model_v, input_init, input_unsafe, input_domain, X_
     acc_unsafe = 1- vio_unsafe/len(B_unsafe)
     acc_init = 1-  vio_init/len(B_init)
     acc_lie = 1-vio_lie/len(L_B)
+    # Logging on Wandb
+    wandb.log({"Barrier Risk": Barrier_risk.item(), "Unsafe Set accuracy: ":acc_unsafe, "Init Set accuracy: ":acc_init, "Boundary Set accuracy: ":acc_lie})
     # print(f"{iter}) Barrier LOSS = {Barrier_risk.item():.5E}, loss_init = {loss_init.item():.5E}, loss_unsafe = {loss_unsafe.item():.5E},\
     # loss_lieb = {loss_lieb.item():.5E}, loss_cut = {loss_cut.item():.5E}, Init Violations = {vio_init}, Unsafe Violations = {vio_unsafe}, Lie Violations = {vio_lie}")
     return Barrier_risk
@@ -156,27 +160,24 @@ def lyapunovVerify(model_v, x_domain, iter, config, DOMAIN):
     epsilon = config["hyperparameters"]["epsilon_v"]
     
     # Generate x and y ranges
-    x = np.linspace(DOMAIN[0][0], DOMAIN[0][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0])/eta))
-    y = np.linspace(DOMAIN[1][0], DOMAIN[1][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0])/eta))
-    X, Y = np.meshgrid(x, y)
+    x = torch.linspace(DOMAIN[0][0], DOMAIN[0][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0])/eta))
+    y = torch.linspace(DOMAIN[1][0], DOMAIN[1][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0])/eta))
+    X, Y = torch.meshgrid(x, y, indexing='ij')
 
     # Convert X and Y to torch tensors
-    X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
-    Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+    X_tensor = X.float()
+    Y_tensor = Y.float()
 
     # Concatenate X and Y to create input data tensor
-    tot_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
+    total_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
 
     # Create a TensorDataset and DataLoader
-    dataset = TensorDataset(tot_data)
-    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
-
+    domain_dataset = TensorDataset(total_data)
+    domain_dataloader = DataLoader(domain_dataset, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
     alloted = N_CE
-
     # Iterate through the DataLoader
-    for batch in data_loader:
+    for batch in domain_dataloader:
         input_data = batch[0].to(device)  # Unpack the input data from the batch
-
         # Lyapunov Function
         torch.cuda.empty_cache()
         input_domain_clone = input_data.clone().requires_grad_().to(device)
@@ -189,11 +190,10 @@ def lyapunovVerify(model_v, x_domain, iter, config, DOMAIN):
                             only_inputs=True,
                             allow_unused=True)[0]
         L_V = torch.sum(gradient_boundary * F_domain, dim=1)
-
         # Check conditions
         Vneg = V_domain.cpu().detach().numpy() < epsilon
         Lvpos = L_V.cpu().detach().numpy() > -epsilon
-        
+        input_data = input_data.cpu()
         # Adds counterexamples for Vneg violations
         vio = np.nonzero(Vneg)
         if alloted <=0:
@@ -228,7 +228,7 @@ def lyapunovVerify(model_v, x_domain, iter, config, DOMAIN):
     if flag:
         print_success(f"Epoch {iter} : Lyapunov is certified with eta: {eta}")
     else:
-        print_warning(f"Epoch {iter} : Total No of Violations: {countVio}")
+        print_warning(f"Epoch {iter} : Total No of Violations in Lyapunov: {countVio}")
 
     return x_domain, flag
 
@@ -238,20 +238,21 @@ def barrierVerify(model_v, model_b, x_domain, x_unsafe, x_init, initial_set_cent
     N_CE = config["hyperparameters"]["n_counter_examples"]
     batch_size = config["model_b"]["batch_size"]
     flag = True
+    countVio = 0
     def process_data(x_range, y_range, condition_fn, violation_message, storage_tensor):
         # Generate x and y ranges based on eta
-        x = np.linspace(x_range[0], x_range[1], math.ceil((x_range[1] - x_range[0]) / eta))
-        y = np.linspace(y_range[0], y_range[1], math.ceil((y_range[1] - y_range[0]) / eta))
-        X, Y = np.meshgrid(x, y)
+        x = torch.linspace(x_range[0], x_range[1], math.ceil((x_range[1] - x_range[0]) / eta))
+        y = torch.linspace(y_range[0], y_range[1], math.ceil((y_range[1] - y_range[0]) / eta))
+        X, Y = torch.meshgrid(x, y, indexing='ij')
         alloted = N_CE//3
         # Convert X and Y to torch tensors
-        X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
-        Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
-        input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
-        
+        X_tensor = X.float()
+        Y_tensor = Y.float()
+        input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
+        countVio = 0
         # Create DataLoader with all data in batches of a suitable size
         dataset = TensorDataset(input_data)
-        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
 
         # Process data using DataLoader
         for batch in data_loader:
@@ -264,86 +265,113 @@ def barrierVerify(model_v, model_b, x_domain, x_unsafe, x_init, initial_set_cent
                 elif len(violation_indices[0]) > 0:
                     print_warning(violation_message)
                     allotment = min(alloted, len(violation_indices[0]))
-                    storage_tensor = storage_tensor.to(device)
+                    data_batch = data_batch.cpu()
                     for i in np.random.randint(0, len(violation_indices[0]), size=allotment):
                         storage_tensor = torch.cat((storage_tensor, data_batch[violation_indices[0][i]].unsqueeze(0)), dim=0)
                     alloted -= allotment
-                    return storage_tensor, False  
+                    countVio += allotment
+                    return storage_tensor, False, countVio 
             del data_batch
             torch.cuda.empty_cache() 
-        return storage_tensor, True
+        return storage_tensor, True, countVio 
     
     # Adding counter-examples to initial domain
     init_radius = config["init"]["radius"]
     INIT = [[c - init_radius, c + init_radius] for c in initial_set_centre]
-    x_init, flag_init = process_data(INIT[0], INIT[1], 
+    x_init, flag_init, count = process_data(INIT[0], INIT[1], 
                                      lambda B_out: np.nonzero(B_out.cpu().detach().numpy() > 0),
                                      "Violation of Barrier in Initial Domain",
                                      x_init)
     flag = flag and flag_init
+    countVio += count
     
     # Adding counter-examples to unsafe domain UNSAFE_1
     unsafe_radius = config["unsafe"]["radius"]
     unsafe_set_centre = config["unsafe"]["centre"]
     UNSAFE = [[c - unsafe_radius, c + unsafe_radius] for c in unsafe_set_centre]
-    x_unsafe, flag_unsafe = process_data(UNSAFE[0], UNSAFE[1],
+    x_unsafe, flag_unsafe, count = process_data(UNSAFE[0], UNSAFE[1],
                                           lambda B_out: np.nonzero(B_out.cpu().detach().numpy() < 0),
                                           "Violation of Barrier in Unsafe Domain",
                                           x_unsafe)
     flag = flag and flag_unsafe
+    countVio += count
     
     # Processing boundary region
-    x = np.linspace(DOMAIN[0][0], DOMAIN[0][1], math.ceil((DOMAIN[0][1] - DOMAIN[0][0]) / eta))
-    y = np.linspace(DOMAIN[1][0], DOMAIN[1][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0]) / eta))
-    X, Y = np.meshgrid(x, y)
+    x = torch.linspace(DOMAIN[0][0], DOMAIN[0][1], math.ceil((DOMAIN[0][1] - DOMAIN[0][0]) / eta))
+    y = torch.linspace(DOMAIN[1][0], DOMAIN[1][1], math.ceil((DOMAIN[1][1] - DOMAIN[1][0]) / eta))
+    X, Y = torch.meshgrid(x, y, indexing='ij')
         
     # Convert X and Y to torch tensors
-    X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
-    Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
-    input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
+    X_tensor = X.float()
+    Y_tensor = Y.float()
+    input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
         
     # Create DataLoader with all data in batches of a suitable size
     dataset = TensorDataset(input_data)
-    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
     alloted = N_CE//3
     # Process data using DataLoader
     for batch in data_loader:
-            data_batch = batch[0].to(device)
-            with torch.no_grad():
-                epi_bound = 0.05
-                B_domain = model_b(data_batch)
-                boundary_index = ((B_domain[:,0] >= -epi_bound) & (B_domain[:,0] <= epi_bound)).nonzero()
-                input_boundary = torch.index_select(data_batch, 0, boundary_index[:, 0])
-            if len(input_boundary) > 0:
-                input_boundary.requires_grad = True
-                B_boundary = model_b(input_boundary)
-                F_boundary = model_v(input_boundary)[1]
-                gradient_boundary = torch.autograd.grad(
-                        torch.sum(B_boundary),
-                        input_boundary,
+        data_batch = batch[0].to(device)
+        input_domain_clone = torch.clone(data_batch).requires_grad_().to(device)
+        B_domain = model_b(input_domain_clone)
+        F_domain = model_v(input_domain_clone)[1]
+        gradient_boundary = torch.autograd.grad(
+                        torch.sum(B_domain),
+                        input_domain_clone,
                         grad_outputs=None,
                         create_graph=True,
                         only_inputs=True,
                         allow_unused=True)[0]
-                L_B = torch.sum(gradient_boundary * F_boundary, dim=1)
-                epsilon = config["hyperparameters"]["epsilon_b"]
-                LBpos = L_B.cpu().detach().numpy() > -epsilon 
-                # Adds 10 random elements
-                vio = np.nonzero(LBpos)
-                if alloted <=0:
-                    break
-                elif len(vio[0]) > 0:
-                    print_warning("Violation of Barrier in Boundary Region")
-                    flag_boundary = False
-                    allotment = min(alloted, len(vio[0]))
-                    for i in np.random.randint(0, len(vio[0]), size=allotment):
-                        x_domain = torch.cat((x_domain, input_data[vio[0][i]].unsqueeze(0)),dim=0)     
-                    alloted -= allotment
-            del data_batch, input_boundary
-            torch.cuda.empty_cache()
+        L_B = torch.sum(gradient_boundary * F_domain, dim=1)
+        epsilon = config["hyperparameters"]["epsilon_b"]
+        LBpos = L_B.cpu().detach().numpy() > -epsilon
+        # Adds 10 random elements
+        vio = np.nonzero(LBpos)
+        if alloted <=0:
+            break
+        elif len(vio[0]) > 0:
+            print_warning("Violation of Barrier Derivative Condition")
+            flag_boundary = False
+            input_data = input_data.cpu()
+            allotment = min(alloted, len(vio[0]))
+            for i in np.random.randint(0, len(vio[0]), size=allotment):
+                x_domain = torch.cat((x_domain, input_data[vio[0][i]].unsqueeze(0)),dim=0)     
+            alloted -= allotment
+            countVio += allotment
+        # if len(input_boundary) > 0:
+        #     input_boundary.requires_grad = True
+        #     B_boundary = model_b(input_boundary)
+        #     F_boundary = model_v(input_boundary)[1]
+        #     gradient_boundary = torch.autograd.grad(
+        #             torch.sum(B_boundary),
+        #             input_boundary,
+        #             grad_outputs=None,
+        #             create_graph=True,
+        #             only_inputs=True,
+        #             allow_unused=True)[0]
+        #     L_B = torch.sum(gradient_boundary * F_boundary, dim=1)
+        #     epsilon = config["hyperparameters"]["epsilon_b"]
+        #     LBpos = L_B.cpu().detach().numpy() > -epsilon 
+        #     # Adds 10 random elements
+        #     vio = np.nonzero(LBpos)
+        #     if alloted <=0:
+        #         break
+        #     elif len(vio[0]) > 0:
+        #         print_warning("Violation of Barrier in Boundary Region")
+        #         flag_boundary = False
+        #         allotment = min(alloted, len(vio[0]))
+        #         for i in np.random.randint(0, len(vio[0]), size=allotment):
+        #             x_domain = torch.cat((x_domain, input_data[vio[0][i]].unsqueeze(0)),dim=0)     
+        #         alloted -= allotment
+        # del data_batch, input_boundary
+        torch.cuda.empty_cache()
     flag = flag and flag_boundary
     # If no violations are found
     if flag:
-        print_success("Barrier is certified")
+        print_success(f"Barrier is certified with eta: {eta}")
+    else:
+        print_warning(f"Total No of Violations in Barrier: {countVio}")
+    print_info("#####################################################")
     return x_init, x_unsafe, x_domain, flag
 

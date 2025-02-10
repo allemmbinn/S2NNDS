@@ -1,0 +1,26 @@
+2025-02-08 23:25:09,886 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Current SDK version is 0.18.2
+2025-02-08 23:25:09,886 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Configure stats pid to 748600
+2025-02-08 23:25:09,886 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Loading settings from /home/allemmbinn/.config/wandb/settings
+2025-02-08 23:25:09,886 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Loading settings from /home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/settings
+2025-02-08 23:25:09,886 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Loading settings from environment variables: {}
+2025-02-08 23:25:09,886 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Applying setup settings: {'mode': None, '_disable_service': None}
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Inferring run settings from compute environment: {'program_relpath': 'main.py', 'program_abspath': '/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/main.py', 'program': 'main.py'}
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_setup.py:_flush():79] Applying login settings: {}
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_init.py:_log_setup():532] Logging user logs to /home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_232509-o291ghfi/logs/debug.log
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_init.py:_log_setup():533] Logging internal logs to /home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_232509-o291ghfi/logs/debug-internal.log
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_init.py:init():616] calling init triggers
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_init.py:init():623] wandb.init called with sweep_config: {}
+config: {'model_f': {'activation_function': 'ReLU', 'hidden_neurons': 32, 'layers': 2, 'epochs_warm': 1000, 'learning_rate': 0.01, 'batch_size': 1024}, 'model_v': {'activation_function': 'ReLU', 'learning_rate': 0.001, 'hidden_neurons': 64, 'layers': 1, 'max_iters': 30000, 'scheduler': {'start_factor': 1.0, 'end_factor': 0.01}, 'batch_size': 5126, 'batch_size_training': 5126}, 'model_b': {'activation_function': 'ReLU', 'learning_rate': 0.001, 'hidden_neurons': 64, 'layers': 2, 'max_iters': 50000, 'batch_size': 10000}, 'domain': {'N': 3000}, 'init': {'shape': 'Circle', 'N': 3000, 'radius': 0.1}, 'unsafe': {'shape': 'Circle', 'N': 3000, 'radius': 0.1, 'centre': [-0.25, -0.1]}, 'Barrier': True, 'plots': True, 'plotting': {'range': [[-1.2, 0.25], [-1.0, 0.25]], 'contour': False, 'legend': False, 'name': 'Wshape LASA without Obstacles'}, 'hyperparameters': {'decay_vpos': 0.5, 'decay_lv': 1.5, 'decay_tune': 2, 'decay_l0': 1, 'decay_l2': 0.001, 'decay_mse': 1, 'decay_init': 1, 'decay_unsafe': 1, 'decay_cut': 2, 'decay_lb': 3, 'epsilon_v': 0.001, 'epsilon_b': 0.001, 'alpha': 0.0001, 'epi_bound': 0.05, 'eta': 0.01, 'n_counter_examples': 20}}
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_init.py:init():666] starting backend
+2025-02-08 23:25:09,887 INFO    MainThread:748600 [wandb_init.py:init():670] sending inform_init request
+2025-02-08 23:25:09,888 INFO    MainThread:748600 [backend.py:_multiprocessing_setup():104] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-02-08 23:25:09,889 INFO    MainThread:748600 [wandb_init.py:init():683] backend started and connected
+2025-02-08 23:25:09,890 INFO    MainThread:748600 [wandb_init.py:init():778] updated telemetry
+2025-02-08 23:25:09,900 INFO    MainThread:748600 [wandb_init.py:init():811] communicating run to backend with 90.0 second timeout
+2025-02-08 23:25:10,404 INFO    MainThread:748600 [wandb_init.py:init():862] starting run threads in backend
+2025-02-08 23:25:10,540 INFO    MainThread:748600 [wandb_run.py:_console_start():2464] atexit reg
+2025-02-08 23:25:10,540 INFO    MainThread:748600 [wandb_run.py:_redirect():2312] redirect: wrap_raw
+2025-02-08 23:25:10,540 INFO    MainThread:748600 [wandb_run.py:_redirect():2377] Wrapping output streams.
+2025-02-08 23:25:10,540 INFO    MainThread:748600 [wandb_run.py:_redirect():2402] Redirects installed.
+2025-02-08 23:25:10,584 INFO    MainThread:748600 [wandb_init.py:init():906] run started, returning control to user process
+2025-02-08 23:26:36,500 WARNING MsgRouterThr:748600 [router.py:message_loop():77] message_loop has been closed

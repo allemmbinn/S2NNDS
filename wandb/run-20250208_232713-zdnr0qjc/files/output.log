@@ -1,0 +1,86 @@
+[34mDYNAMICAL SYSTEM TRAINING[0m
+[34mMSE of Initial Estimate of Dynamical System: 0.1001[0m
+[34mLYAPUNOV FUNCTION TRAINING[0m
+[34mEpoch: 0, Loss: 6.773447513580322[0m
+[33mViolation of Lyapunov in Positive Definiteness[0m
+[33mEpoch 0 : Total No of Violations in Lyapunov: 482[0m
+Exception ignored in: <function _releaseLock at 0x7f2f0ea5b820>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/logging/__init__.py", line 227, in _releaseLock
+    def _releaseLock():
+KeyboardInterrupt:
+Exception in thread Thread-8:
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.8/threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/_utils/pin_memory.py", line 53, in _pin_memory_loop
+    do_one_step()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/_utils/pin_memory.py", line 30, in do_one_step
+    r = in_queue.get(timeout=MP_STATUS_CHECK_INTERVAL)
+  File "/usr/lib/python3.8/multiprocessing/queues.py", line 116, in get
+    return _ForkingPickler.loads(res)
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/multiprocessing/reductions.py", line 495, in rebuild_storage_fd
+    fd = df.detach()
+  File "/usr/lib/python3.8/multiprocessing/resource_sharer.py", line 57, in detach
+    with _resource_sharer.get_connection(self._id) as conn:
+  File "/usr/lib/python3.8/multiprocessing/resource_sharer.py", line 87, in get_connection
+    c = Client(address, authkey=process.current_process().authkey)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 509, in Client
+    deliver_challenge(c, authkey)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 740, in deliver_challenge
+    response = connection.recv_bytes(256)        # reject large message
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 216, in recv_bytes
+    buf = self._recv_bytes(maxlength)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 414, in _recv_bytes
+    buf = self._recv(4)
+  File "/usr/lib/python3.8/multiprocessing/connection.py", line 379, in _recv
+    chunk = read(handle, remaining)
+ConnectionResetError: [Errno 104] Connection reset by peer
+Traceback (most recent call last):
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1133, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/usr/lib/python3.8/queue.py", line 178, in get
+    raise Empty
+_queue.Empty
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "main.py", line 594, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 221, in trainLyapunovFunction
+    for (x_domain_batch,), (X_train_batch, y_train_batch) in zip(domain_loader, train_loader):
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1329, in _next_data
+    idx, data = self._get_data()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1285, in _get_data
+    success, data = self._try_get_data()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1146, in _try_get_data
+    raise RuntimeError(f'DataLoader worker (pid(s) {pids_str}) exited unexpectedly') from e
+RuntimeError: DataLoader worker (pid(s) 917023, 917024) exited unexpectedly
+Traceback (most recent call last):
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1133, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/usr/lib/python3.8/queue.py", line 178, in get
+    raise Empty
+_queue.Empty
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "main.py", line 594, in <module>
+    lyapunov_verified = mp.trainLyapunovFunction()
+  File "main.py", line 221, in trainLyapunovFunction
+    for (x_domain_batch,), (X_train_batch, y_train_batch) in zip(domain_loader, train_loader):
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1329, in _next_data
+    idx, data = self._get_data()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1285, in _get_data
+    success, data = self._try_get_data()
+  File "/home/allemmbinn/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1146, in _try_get_data
+    raise RuntimeError(f'DataLoader worker (pid(s) {pids_str}) exited unexpectedly') from e
+RuntimeError: DataLoader worker (pid(s) 917023, 917024) exited unexpectedly

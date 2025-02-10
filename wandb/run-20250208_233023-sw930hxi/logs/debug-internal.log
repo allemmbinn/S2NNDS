@@ -1,0 +1,18 @@
+{"time":"2025-02-08T23:30:23.852868964+05:30","level":"INFO","msg":"using version","core version":"0.18.2"}
+{"time":"2025-02-08T23:30:23.852883312+05:30","level":"INFO","msg":"created symlink","path":"/home/allemmbinn/Documents/NN_DS/Neural-Network-Dynamical-System/wandb/run-20250208_233023-sw930hxi/logs/debug-core.log"}
+{"time":"2025-02-08T23:30:24.257508613+05:30","level":"ERROR","msg":"dialing: google: could not find default credentials. See https://cloud.google.com/docs/authentication/external/set-up-adc for more information"}
+{"time":"2025-02-08T23:30:24.261096421+05:30","level":"INFO","msg":"created new stream","id":"sw930hxi"}
+{"time":"2025-02-08T23:30:24.261117861+05:30","level":"INFO","msg":"stream: started","id":"sw930hxi"}
+{"time":"2025-02-08T23:30:24.261141294+05:30","level":"INFO","msg":"handler: started","stream_id":{"value":"sw930hxi"}}
+{"time":"2025-02-08T23:30:24.261187793+05:30","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"sw930hxi"}}
+{"time":"2025-02-08T23:30:24.261205299+05:30","level":"INFO","msg":"sender: started","stream_id":{"value":"sw930hxi"}}
+{"time":"2025-02-08T23:30:24.739591636+05:30","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2025-02-08T23:30:24.740136276+05:30","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-02-09T02:00:45.672216947+05:30","level":"INFO","msg":"stream: closing","id":"sw930hxi"}
+{"time":"2025-02-09T02:00:45.672238829+05:30","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-02-09T02:00:45.673251466+05:30","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-02-09T02:00:47.086178816+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-02-09T02:00:47.57579658+05:30","level":"INFO","msg":"handler: closed","stream_id":{"value":"sw930hxi"}}
+{"time":"2025-02-09T02:00:47.575889136+05:30","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"sw930hxi"}}
+{"time":"2025-02-09T02:00:47.575927337+05:30","level":"INFO","msg":"sender: closed","stream_id":{"value":"sw930hxi"}}
+{"time":"2025-02-09T02:00:47.576083025+05:30","level":"INFO","msg":"stream: closed","id":"sw930hxi"}

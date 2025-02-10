@@ -26,6 +26,7 @@ from dataclasses import dataclass
 import pyrallis
 import pyLasaDataset as lasa
 import random
+import wandb
 # Verifier Requirements
 from dreal import *
 
