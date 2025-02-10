@@ -32,12 +32,12 @@
         "N" : 3000
     },
     "init":{
-        "shape" : "Circle",
+        "shape" : "Rectangle",
         "N" : 3000,
         "radius" : 0.1
     },
     "unsafe":{
-        "shape" : "Circle",
+        "shape" : "Rectangle",
         "N" : 3000,
         "radius" : 0.1,
         "centre" : [-0.25,-0.1]
