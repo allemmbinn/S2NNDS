@@ -1,2 +1,6 @@
 wandb/run-20250208_205105-1j1rjzax/run-1j1rjzax.wandb
 wandb/run-20250208_151721-6evkcvue/run-6evkcvue.wandb
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+

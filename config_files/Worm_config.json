@@ -3,11 +3,7 @@
         "activation_function": "Tanh",
         "hidden_neurons": 32,
         "layers" : 2,
-<<<<<<< HEAD
         "epochs_warm" : 500,
-=======
-        "epochs_warm" : 200,
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
         "learning_rate" : 1e-2,
         "batch_size" : 1024 
     },
@@ -21,13 +17,8 @@
             "start_factor" : 1.0,
             "end_factor"   : 1e-2
         },
-<<<<<<< HEAD
-        "batch_size" : 5126,
-        "batch_size_training" : 5126
-=======
         "batch_size" : 1024,
-        "batch_size_training" : 1024
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
+00        "batch_size_training" : 1024
     },
     "model_b": {
         "activation_function": "Tanh",
@@ -58,7 +49,6 @@
     "unsafe":{
         "shape" : "Rectangle",
         "N" : 2500,
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
         "radius" : 0.1,
         "centre" : [-0.5,-0.1]
     },
@@ -75,11 +65,7 @@
         "decay_lv" : 1.5,
         "decay_tune" : 2,
         "decay_l0" : 1,
-<<<<<<< HEAD
-        "decay_l2" : 0.001,
-=======
         "decay_l2" : 1e-5,
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
         "decay_mse" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,
