@@ -1,7 +1,7 @@
 from common_header import *
 from cmcrameri import cm
 
-def initialDSPlot(model_f, X_train, initial_set_center):
+def initialDSPlot(model_f, X_train, initial_set_center, dt):
     device = next(model_f.parameters()).device
     # Plotting the Training Data after Warm-starting
     fig, ax = plt.subplots()
@@ -15,7 +15,6 @@ def initialDSPlot(model_f, X_train, initial_set_center):
     x = torch.zeros((n, 2))
     x[0] = torch.tensor(initial_set_center, dtype=torch.float32)
     x = x.to(device)
-    dt = 0.02
     for j in range(1, n):
         Fout = model_f(x[j-1])
         x[j] = x[j-1] + Fout * dt
