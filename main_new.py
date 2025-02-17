@@ -1,10 +1,11 @@
 from common_header import *
-import NNModels_new as NNModels
+import NNModels
 import data_new as data
-import Loss_Functions
+import Loss_Functions_new as Loss_Functions
 import Plotter
 import smt_verification
 from dreal import *
+import verification
 
 
 @dataclass
@@ -24,6 +25,65 @@ class MotionPlanner:
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        #Initialize state dictionaries
+        self.model_v_state_dict = None
+        self.model_b_state_dict = None
+        self.model_f_state_dict = None
+        self.optimizer_v_state_dict = None
+        self.optimizer_b_state_dict = None
+        self.optimizer_f_state_dict = None
+        self.scheduler_v_state_dict = None
+        self.scheduler_b_state_dict = None
+        self.scheduler_f_state_dict = None
+        #initialize the learning rate
+        self.lr_f = self.config["model_f"]["learning_rate"]
+        self.lr_v = self.config["model_v"]["learning_rate"]
+        self.lr_b = self.config["model_b"]["learning_rate"]
+        self.counterexamples_added = True #Setting the counterexamples flag to true
+        self.g = torch.Generator()
+        self.g.manual_seed(0)    
+
+
+    def seed_worker(self,worker_id):
+        np.random.seed(0)
+        random.seed(0)
+
+
+    def load_model_states(self):
+        if self.model_v_state_dict is not None:
+            self.model_v.load_state_dict(self.model_v_state_dict)
+        if self.model_b_state_dict is not None:
+            self.model_b.load_state_dict(self.model_b_state_dict)
+        if self.model_f_state_dict is not None:
+            self.model_f.load_state_dict(self.model_f_state_dict)
+        if self.optimizer_v_state_dict is not None:
+            self.optimizer_v.load_state_dict(self.optimizer_v_state_dict)
+        if self.optimizer_b_state_dict is not None:
+            self.optimizer_b.load_state_dict(self.optimizer_b_state_dict)
+        if self.optimizer_f_state_dict is not None:
+            self.optimizer_f.load_state_dict(self.optimizer_f_state_dict)
+        if self.scheduler_v_state_dict is not None:
+            self.scheduler_v.load_state_dict(self.scheduler_v_state_dict)
+        if self.scheduler_b_state_dict is not None:
+            self.scheduler_b.load_state_dict(self.scheduler_b_state_dict)
+        if self.scheduler_f_state_dict is not None:
+            self.scheduler_f.load_state_dict(self.scheduler_f_state_dict)
+
+    def save_model(self, model, optimizer, scheduler, model_path):
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+        torch.save({
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'scheduler_state_dict': scheduler.state_dict()
+        }, model_path)
+
+    def save_all_models(self):
+        base_path = os.path.join('models', self.args.lasa_name)
+        os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+        self.save_model(self.model_f, self.optimizer_f, self.scheduler_f, os.path.join(base_path, 'model_f.pth'))
+        self.save_model(self.model_v, self.optimizer_v, self.scheduler_v, os.path.join(base_path, 'model_v.pth'))
+        self.save_model(self.model_b, self.optimizer_b, self.scheduler_b, os.path.join(base_path, 'model_b.pth'))
+
     
     def calculate_limits(self, data, x_limit_fact=1.0, y_limit_fact=1.0):
         x_min = min(data[0, :])
@@ -70,7 +130,7 @@ class MotionPlanner:
             # Divide the data into training and testing
             self.total_demos = len(self.demos)
             self.dim_in = self.demos[0].pos.shape[0]
-            train_size = int(6/7 * self.total_demos) # 5/7 datasets are used for training
+            train_size = int(5/7 * self.total_demos) # 5/7 datasets are used for training
             train_indices = random.sample(range(self.total_demos), train_size)
             test_indices = list(set(range(self.total_demos)) - set(train_indices))
             self.X_train = np.concatenate([self.demos[i].pos for i in train_indices], axis=1).T
@@ -88,8 +148,8 @@ class MotionPlanner:
             train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
             test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
             batch_size = self.config["model_f"]["batch_size"]
-            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
-            self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2)
+            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+            self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
         else:
             print_error("Non-LASA Dataset has been choosen")
         # Normalise the Trajectories to [-1, 1] #Use the maximum value to normalize and scale the data.
@@ -124,31 +184,127 @@ class MotionPlanner:
             self.unsafe = self.config["unsafe"]["range"]
             self.unsafe_domain = data.generateGridData(self.N_unsafe, self.unsafe)
 
-            #TODO:Shuffle the data
+            #Dataset Generation and Shuffling
+            batch_number = self.config["model_b"]["batch_number"]
+            domain_dataset = torch.utils.data.TensorDataset(self.domain)
+            init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
+            unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
+            train_dataset  = torch.utils.data.TensorDataset(self.X_train, self.y_train)
+            self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=int(self.domain.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=int(self.X_train.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+            self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=int(self.init_domain.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+            self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=int(self.unsafe_domain.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+
+    def generate_counterexample_data(self):
+        self.load_model_states()        
+        input_domain = torch.cat([batch[0] for batch in self.domain_loader], dim=0)
+        init_domain = torch.cat([batch[0] for batch in self.init_loader], dim=0)
+        unsafe_domain = torch.cat([batch[0] for batch in self.unsafe_loader], dim=0)
+        counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, 
+                                                      input_domain, self.config)
+        counterexamples_init = verification.verify_init(self.model_b, init_domain)
+        counterexamples_unsafe = verification.verify_unsafe(self.model_b, unsafe_domain)
+
+        if counterexamples_domain.dim() == 1:
+             counterexamples_domain = counterexamples_domain.unsqueeze(0)
+
+        if counterexamples_init.dim() == 1:
+                counterexamples_init = counterexamples_init.unsqueeze(0)     
+
+        if counterexamples_unsafe.dim() == 1:
+             counterexamples_unsafe = counterexamples_unsafe.unsqueeze(0)
+
+        add_data_domain = []
+        add_data_init = []
+        add_data_unsafe = []
+
+        for counterexample in counterexamples_domain:
+            for _ in range(self.config["counterex"]["N"]):
+                random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
+                add_data_domain.append(random_point)
+        
+        if len(add_data_domain) > 0:
+            add_data_domain = torch.stack(add_data_domain)
+        else:
+            add_data_domain = None
+ 
+
+        for counterexample in counterexamples_init:
+            for _ in range(self.config["counterex"]["N"]):
+                random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
+                add_data_init.append(random_point)
+        
+        if len(add_data_init) > 0:
+            add_data_init = torch.stack(add_data_init)
+        else:
+            add_data_init = None
+
+        for counterexample in counterexamples_unsafe:
+            for _ in range(self.config["counterex"]["N"]):
+                random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
+                add_data_unsafe.append(random_point)
+        
+        if len(add_data_unsafe) > 0:
+             add_data_unsafe = torch.stack(add_data_unsafe)
+        else:
+            add_data_unsafe = None
+
+
+        # Add the counterexamples to the domain data
+        if add_data_domain is not None:
+             print_info("DOMAIN COUNTEREXAMPLES ADDED")
+             self.domain = torch.cat([self.domain, add_data_domain], dim=0)
+        if add_data_init is not None:
+            print_info("INIT COUNTEREXAMPLES ADDED")
+            self.init_domain = torch.cat([self.init_domain, add_data_init], dim=0)
+        if add_data_unsafe is not None:
+            print_info("UNSAFE COUNTEREXAMPLES ADDED")
+            self.unsafe_domain = torch.cat([self.unsafe_domain, add_data_unsafe], dim=0)
+        elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
+            print_info("NO COUNTEREXAMPLES ADDED")
+            self.counterexamples_added = False
+
+        #Dataset Generation and Shuffling
+        batch_number = self.config["model_b"]["batch_number"]
+        domain_dataset = torch.utils.data.TensorDataset(self.domain)
+        init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
+        unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=int(self.domain.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=int(self.init_domain.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=int(self.unsafe_domain.shape[0]/batch_number), shuffle=True, num_workers=2, pin_memory=True)
 
     def trainInitialDynamics(self):
         self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
         self.hidden_layers_f = self.config["model_f"]["layers"]
-        sigmoid_f = NNModels.DynamicsNet.actFun(self.config['model_f']['activation_function'])
+        sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
         self.model_f = NNModels.DyanmicsNet(self.dim_in, self.hidden_f, sigmoid_f).to(self.device)
         best_mse = np.inf   # init to infinity
         best_weights = None
         history = []
         loss_fn = nn.MSELoss()  # mean square error #TODO: Add Lyapunov, barrier, regularization loss
-        optimizer_f = optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+        self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
+                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
         for epoch in range(self.config["model_f"]["epochs_warm"]):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
                 # Calculate the loss
-                y_pred = self.model_f(X_batch.float().to(self.device))
-                loss = loss_fn(y_pred, y_batch.float().to(self.device))
-                total_loss += loss.item()
+                x_val = X_batch.float().to(self.device)
+                y_pred = self.model_f(x_val)
+                #hyperparameter for l2 regularization
+                DECAY_L2 = self.config["hyperparameters"]["decay_l2_f"]
+                loss_mse = loss_fn(y_pred, y_batch.float().to(self.device)) #+ DECAY_L2*sum(param.pow(2).sum() for param in self.model_f.parameters())
+                #alpha = self.config["hyperparameters"]["alpha"]
+                #dec = self.config["model_f"]["init_decay"]
+                #loss_lyap = dec*torch.sum(F.leaky_relu(2*x_val*y_pred,alpha))
+                loss = loss_mse #+ loss_lyap
                 # backward pass
-                optimizer_f.zero_grad()
+                self.optimizer_f.zero_grad()
                 loss.backward()
-                optimizer_f.step()
+                self.optimizer_f.step()
+                total_loss += loss.item()
             # Log the Training Loss
             # wandb.log({"DS_training_loss": total_loss})
             #evaluate accuracy at end of each epoch           
@@ -165,16 +321,128 @@ class MotionPlanner:
                     torch.cuda.empty_cache()
         # restore model and return best accuracy
         self.model_f.load_state_dict(best_weights)
+        # Store the model state dictionary
+        self.model_f_state_dict = best_weights
+        self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
 
 
 
+    def trainCertificate(self):
+            if self.config["Barrier"]: # Then train Lyapunov and Barrier Function together
+                # self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
+                # self.hidden_layers_f = self.config["model_f"]["layers"]
+                # sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
+                # self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
+                # self.model_f = NNModels.DyanmicsNet(self.dim_in, self.hidden_f, sigmoid_f).to(self.device)
+                # self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+                # self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
+                #                                                     patience=self.config["model_f"]["lr_patience"], verbose=True)
 
+                #Building the Lyapunov Model
+                hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
+                hidden_layers_v = self.config["model_v"]["layers"]
+                hidden_v = [hidden_neurons_v] * hidden_layers_v            
+                self.model_v = NNModels.LyapunovNet(
+                n_input=self.dim_in,
+                hidden_v=hidden_v,
+                sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
+                #Optimizer and Scheduler for Lyapunov Function
+                self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"])
+                self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
+                                                                        patience = self.config["model_v"]["lr_patience"], verbose = True)
+                
+                #Building the Barrier Model
+                hidden_neurons_b = self.config["model_b"]["hidden_neurons"]
+                hidden_layers_b = self.config["model_b"]["layers"]
+                hidden_b = [hidden_neurons_b] * hidden_layers_b
+                self.model_b = NNModels.BarrierNet(
+                n_input=self.dim_in,
+                hidden_b=hidden_b,
+                sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
+                #Optimizer and Scheduler for Barrier Function
+                self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"])
+                self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
+                                                                        patience = self.config["model_b"]["lr_patience"], verbose = True)
 
+                # Load the stored model state dictionary if available
+                self.load_model_states()        
+                # Start Training
+                start = timeit.default_timer()
+                max_iter = self.config["hyperparameters"]["max_iters"]
+                for epoch in range(max_iter):
+                    cert_loss = 0
+                    dyn_loss = 0
+                    for batches in itertools.zip_longest(self.domain_loader, self.train_loader, self.init_loader, self.unsafe_loader, fillvalue=None):
+                        self.optimizer_f.zero_grad()
+                        self.optimizer_v.zero_grad()
+                        self.optimizer_b.zero_grad()
+                        if batches[0] is not None:
+                            input_domain = batches[0][0].to(self.device)
+                            loss_domain = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                            loss_domain.backward(retain_graph=True)
+                        else:
+                            loss_domain = torch.tensor(0.0, requires_grad = True)
+                        if batches[1] is not None:
+                            input_train = batches[1][0].to(self.device)
+                            output_train = batches[1][1].to(self.device)
+                            loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
+                            loss_train.backward(retain_graph=True)
+                        else:
+                            loss_train = torch.tensor(0.0, requires_grad = True)
 
-        
-    
+                        if batches[2] is not None:
+                            input_init = batches[2][0].to(self.device)
+                            loss_init = Loss_Functions.loss_function_init( self.model_b, input_init, self.config)
+                            loss_init.backward(retain_graph=True)
+                        else:
+                            loss_init = torch.tensor(0.0, requires_grad = True)
+
+                        if batches[3] is not None:
+                            input_unsafe = batches[3][0].to(self.device)
+                            loss_unsafe = Loss_Functions.loss_function_unsafe(self.model_b, input_unsafe, self.config)
+                            loss_unsafe.backward(retain_graph=True)
+                        else:
+                            loss_unsafe = torch.tensor(0.0, requires_grad = True)
+
+                        #total_loss =   loss_domain + loss_train + loss_unsafe + loss_init 
+                        #total_loss.backward()
+
+                        # Gradient clipping
+                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        #torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        #torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+
+                        self.optimizer_f.step()
+                        self.optimizer_v.step() 
+                        self.optimizer_b.step()
+                        # Calculate average training loss for the epoch
+                        cert_loss += loss_domain + loss_init + loss_unsafe
+                        dyn_loss += loss_train
+
+                        avg_loss_f = dyn_loss / len(self.train_loader)
+                        # Step the scheduler with training loss
+                        self.scheduler_f.step(avg_loss_f)
+
+                        avg_loss_cert = cert_loss/len(self.domain_loader)
+                        # Step the scheduler with training loss
+                        self.scheduler_v.step(avg_loss_cert)
+                        self.scheduler_b.step(avg_loss_cert)
+                    
+
+                    # Log the training loss
+                    decay=self.config["hyperparameters"]["decay_mse"]
+                    print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
+                    print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss.item()}")
+
+                # Save the recent versions of model_v and model_b in memory
+                self.model_v_state_dict = self.model_v.state_dict()
+                self.model_b_state_dict = self.model_b.state_dict()
+                self.model_f_state_dict = self.model_f.state_dict()
+                self.final_mse_loss = dyn_loss.item()
+                self.final_cert_loss = cert_loss.item()
 
 if __name__ == "__main__":
 # Settings Seeds for Reproducibility
@@ -184,15 +452,37 @@ if __name__ == "__main__":
     args = pyrallis.parse(ConfigFile, args=filtered_args)
     #args = pyrallis.parse(ConfigFile)
     mp = MotionPlanner(args)
-    mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center)
+    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     print_info("CERTIFICATE TRAINING")
+    mp.trainCertificate()
+    trial = 1
+    lr_inc = mp.config["counterex"]["lr_increment_factor"]
+    while trial < 50:
+        print_info("ADDING COUNTEREXAMPLES")
+        mp.generate_counterexample_data()
+        if mp.counterexamples_added:
+            mp.trainCertificate()
+            trial += 1      
+
+            for param_group in mp.optimizer_f.param_groups:
+                param_group['lr'] *= lr_inc
+            for param_group in mp.optimizer_v.param_groups:
+                param_group['lr'] *= lr_inc
+            for param_group in mp.optimizer_b.param_groups:
+                param_group['lr'] *= lr_inc
+        else:
+            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            break
+    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+    mp.save_all_models()
+
+
 
 
 
