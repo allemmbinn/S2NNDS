@@ -30,6 +30,7 @@ import wandb
 import sys
 # Verifier Requirements
 from dreal import *
+import itertools
 
 def print_error(message):
     print(colored(message, 'red'))

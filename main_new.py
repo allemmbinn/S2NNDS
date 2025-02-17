@@ -10,12 +10,32 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Worm"
+    lasa_name : str = "Leaf_2"
     dataset_type : str = "LASA"
 
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
+
+def save_seed(seed, seed_filepath):
+    os.makedirs(os.path.dirname(seed_filepath), exist_ok=True)
+    with open(seed_filepath, 'w') as file:
+        json.dump({'seed': seed}, file)
+
+def load_seed(seed_filepath):
+    with open(seed_filepath, 'r') as file:
+        seed_data = json.load(file)
+    return seed_data['seed']    
+
+def set_seed(seed):
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
         
 class MotionPlanner:
     def __init__(self, args):
@@ -446,10 +466,16 @@ class MotionPlanner:
 
 if __name__ == "__main__":
 # Settings Seeds for Reproducibility
-    np.random.seed(0)
-    torch.manual_seed(0)
     filtered_args = filter_args(sys.argv[1:])
     args = pyrallis.parse(ConfigFile, args=filtered_args)
+    seed_filepath = f'seeds/{args.lasa_name}_seed.json'
+    # Check if the seed file exists
+    try:
+        seed = load_seed(seed_filepath)
+    except FileNotFoundError:
+        seed = 0  # seed value
+
+    set_seed(seed)
     #args = pyrallis.parse(ConfigFile)
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
@@ -478,9 +504,10 @@ if __name__ == "__main__":
                 param_group['lr'] *= lr_inc
         else:
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            mp.save_all_models()
+            save_seed(seed, seed_filepath)
             break
     Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
-    mp.save_all_models()
 
 
 

@@ -12,8 +12,8 @@
     },
     "model_v": {
         "activation_function": "ReLU",
-        "learning_rate": 1e-2,
-        "hidden_neurons": 64,
+        "learning_rate": 5e-2,
+        "hidden_neurons": 32,
         "layers" : 2,
         "max_iters" : 20000,
         "lr_factor" : 0.2,
@@ -23,8 +23,8 @@
     },
     "model_b": {
         "activation_function": "ReLU",
-        "learning_rate": 1e-2,
-        "hidden_neurons": 64,
+        "learning_rate": 5e-2,
+        "hidden_neurons": 32,
         "layers" : 2,
         "lr_factor" : 0.2,
         "lr_patience" : 10,
@@ -47,7 +47,7 @@
     "counterex":{
         "N" : 1,
         "radius" : 0.01,
-        "lr_increment_factor" : 1.5
+        "lr_increment_factor" : 2
     },
     "Barrier" : true,
     "plots" : true,
@@ -55,10 +55,10 @@
         "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
+        "name" : "Leaf_2 LASA with Obstacles"
     },
     "hyperparameters" : {
-        "max_iters" : 70,
+        "max_iters" : 50,
         "decay_mse" : 1,
         "decay_l2_f" : 0.0,
         "decay_lf" : 0.0,
@@ -71,10 +71,10 @@
         "decay_cut" : 1,
         "decay_lb" : 1,
         "decay_l2_B" : 0.01,
-        "alpha" : 1e-2,
+        "alpha" : 1e-4,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
         "tol" : 0.0,
-        "lie_tol": 0.005
+        "lie_tol": 0.01
     }
 }
