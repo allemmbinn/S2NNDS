@@ -76,6 +76,6 @@
         "epi_bound" : 0.05,
         "eta" : 1e-4,
         "tol" : 0.001,
-        "lie_tol": 0.005
+        "lie_tol": 0.01
     }
 }
