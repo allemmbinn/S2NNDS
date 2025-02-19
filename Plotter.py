@@ -13,7 +13,8 @@ def initialDSPlot(model_f, X_train, initial_set_center, dt):
     # Plotting the final trajectory
     n = 3000
     x = torch.zeros((n, 2))
-    x[0] = torch.tensor(initial_set_center, dtype=torch.float32)
+    # x[0] = torch.tensor(initial_set_center, dtype=torch.float32)
+    x[0] = initial_set_center.float()
     x = x.to(device)
     for j in range(1, n):
         Fout = model_f(x[j-1])

@@ -3,7 +3,7 @@
         "activation_function": "Tanh",
         "hidden_neurons": 32,
         "layers" : 2,
-        "epochs_warm" : 500,
+        "epochs_warm" : 200,
         "learning_rate" : 1e-2,
         "batch_size" : 1024 
     },
@@ -29,15 +29,17 @@
         "batch_size" : 10000
     },
     "domain":{
-        "N" : 1000
+        "N" : 2500
     },
     "init":{
-        "N" : 1000,
+        "N" : 2500,
         "radius" : 0.1
     },
     "unsafe":{
-        "shape" : "Circle",
-        "N" : 1000
+        "shape" : "Rectangle",
+        "N" : 2500,
+        "radius" : 0.1,
+        "centre" : [-0.5,-0.1]
     },
     "Barrier" : true,
     "plots" : true,
@@ -45,14 +47,14 @@
         "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
+        "name" : "Angle LASA with Obstacles"
     },
     "hyperparameters" : {
         "decay_vpos" : 0.5,
         "decay_lv" : 1.5,
         "decay_tune" : 2,
         "decay_l0" : 1,
-        "decay_l2" : 1e-5,
+        "decay_l2" : 1e-6,
         "decay_mse" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,

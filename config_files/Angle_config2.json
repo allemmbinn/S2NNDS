@@ -1,6 +1,6 @@
 {
     "model_f": {
-        "activation_function": "Tanh",
+        "activation_function": "ReLU",
         "hidden_neurons": 16,
         "layers" : 2,
         "epochs_warm" : 100,
@@ -32,18 +32,18 @@
         },
 
     "domain":{
-        "N" : 20,
+        "N" : 50,
         "range" : [[-1,1],[-1,1]]
     },
     "init":{
-        "N" : 20,
+        "N" : 50,
         "radius" : 0.1
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "N" : 20,
+        "N" : 50,
        "prev_range" : [[-0.6, -0.4], [-0.2,-0.01]],
-        "range" : [[-0.6, -0.4], [-0.2,-0.1]]
+        "range" : [[0.10, 0.35], [-0.6,-0.4]]
     },
     "counterex":{
         "N" : 1,
@@ -56,11 +56,11 @@
         "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
+        "name" : "Angle LASA with Obstacles"
     },
     "hyperparameters" : {
         "max_iters" : 50,
-        "decay_mse" : 2,
+        "decay_mse" : 1,
         "decay_l2_f" : 0.0,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,

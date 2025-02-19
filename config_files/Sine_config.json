@@ -1,17 +1,6 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-<<<<<<< HEAD
-        "hidden_neurons": 32,
-        "layers" : 2,
-        "epochs_warm" : 1000,
-        "learning_rate" : 1e-2 
-    },
-    "model_v": {
-        "activation_function": "Tanh",
-        "learning_rate": 1e-2,
-        "hidden_neurons": 32,
-=======
         "hidden_neurons": 64,
         "layers" : 2,
         "epochs_warm" : 200,
@@ -22,21 +11,14 @@
         "activation_function": "Tanh",
         "learning_rate": 5e-3,
         "hidden_neurons": 64,
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
         "layers" : 1,
         "max_iters" : 20000,
         "scheduler" : {
             "start_factor" : 1.0,
-<<<<<<< HEAD
-            "end_factor"   : 0.0001
-        },
-        "batch_size" : 100000
-=======
             "end_factor"   : 1e-2
         },
         "batch_size" : 1024,
         "batch_size_training" : 1024
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
     },
     "model_b": {
         "activation_function": "Tanh",
@@ -47,18 +29,6 @@
         "batch_size" : 100000
     },
     "domain": {
-<<<<<<< HEAD
-        "N" : 10000
-    },
-    "init":{
-        "shape" : "Circle",
-        "N" : 5000,
-        "radius" : 0.1
-    },
-    "unsafe":{
-        "shape" : "Circle",
-        "N" : 5000,
-=======
         "N" : 2500
     },
     "init":{
@@ -68,7 +38,6 @@
     "unsafe":{
         "shape" : "Rectangle",
         "N" : 2500,
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
         "radius" : 0.1,
         "centre" : [-0.45,0.15]
     },
@@ -85,10 +54,7 @@
         "decay_lv" : 1.5,
         "decay_tune" : 2,
         "decay_l0" : 1,
-<<<<<<< HEAD
-=======
         "decay_l2" : 1e-6,
->>>>>>> ca84be88f5aaf173c4a67d1a03dea81f3b79b482
         "decay_mse" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,

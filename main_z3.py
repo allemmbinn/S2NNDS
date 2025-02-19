@@ -4,7 +4,7 @@ import data_new as data
 import Loss_Functions_new as Loss_Functions
 import Plotter
 import smt_verification
-from dreal import *
+import z3
 import verification
 
 
@@ -43,19 +43,6 @@ class MotionPlanner:
         self.counterexamples_added = True #Setting the counterexamples flag to true
         self.g = torch.Generator()
         self.g.manual_seed(0)    
-        # Defining the SMT Configuration
-        if args.dataset_type == "LASA":
-            # For Verification
-            x1 = Variable("x1")
-            x2 = Variable("x2")
-            self.vars_ = [x1,x2]
-            self.smt_config = Config()
-            self.smt_config.use_polytope_in_forall = True
-            self.smt_config.use_local_optimization = True
-            self.smt_config.precision = 1e-5
-            self.beta = 1e-3
-            self.ball_lb = 1e-2
-            self.ball_ub = 1.50
 
     def seed_worker(self,worker_id):
         np.random.seed(0)
@@ -226,16 +213,16 @@ class MotionPlanner:
         add_data_init = []
         add_data_unsafe = []
         
-        # Maximum Changes observed in the counterexamples
-        max_ce = 50
+        # Generating Counterexamples
+        max_ces = 50
         flag = 0
 
         for counterexample in counterexamples_domain:
-            flag += 1
+            flag +=1
             for _ in range(self.config["counterex"]["N"]):
                 random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
                 add_data_domain.append(random_point)
-            if flag >= max_ce:
+            if flag >= max_ces:
                 break
             
         if len(add_data_domain) > 0:
@@ -249,26 +236,29 @@ class MotionPlanner:
             for _ in range(self.config["counterex"]["N"]):
                 random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
                 add_data_init.append(random_point)
-            if flag >= max_ce:
-                break
+            if flag >= max_ces:
+                break    
+            
+        
         if len(add_data_init) > 0:
             add_data_init = torch.stack(add_data_init)
         else:
             add_data_init = None
 
-        flag = 0
+        flag = 0 
         for counterexample in counterexamples_unsafe:
             flag += 1
             for _ in range(self.config["counterex"]["N"]):
                 random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
                 add_data_unsafe.append(random_point)
-            if flag >= max_ce:
+            if flag >= max_ces:
                 break
             
         if len(add_data_unsafe) > 0:
              add_data_unsafe = torch.stack(add_data_unsafe)
         else:
             add_data_unsafe = None
+
 
         # Add the counterexamples to the domain data
         if add_data_domain is not None:
@@ -450,8 +440,8 @@ class MotionPlanner:
                 
                 # Log the training loss
                 decay=self.config["hyperparameters"]["decay_mse"]
-                print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
-                print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss.item()}")
+                # print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
+                # print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss.item()}")
 
             # Save the recent versions of model_v and model_b in memory
             self.model_v_state_dict = self.model_v.state_dict()
@@ -461,33 +451,26 @@ class MotionPlanner:
             self.final_cert_loss = cert_loss.item()
 
     def verifyCertificate(self):
-        flag_verified = False
+        vars_ = [z3.Real("x" + str(i)) for i in range(2)]
+        solver = z3.Solver()
         # Finding the values for the new model function
-        z = self.vars_
+        z = vars_
         for idx, layer in enumerate(self.model_f.layers_f[:-1]):
             w = layer.weight.data.cpu().numpy()
             zhat = w @ z
-            if self.config['model_f']['activation_function'] == 'Tanh':
-                z = smt_verification.hyper_tan_dr(zhat)
-            elif self.config['model_f']['activation_function'] == 'ReLU':
-                z = smt_verification.hyper_relu_dr(zhat)
+            z = smt_verification.hyper_relu_dr_z3(zhat)
         last_layer = self.model_f.layers_f[-1].weight.data.cpu().numpy()
         z = last_layer @ z
-        z = smt_verification.hyper_tan_dr(z)
         f_learn = z
-        # save the weights and biases
-        z = self.vars_
+        # Now Verification of Lyapunov
+        z = vars_
         jacobian = np.eye(self.model_v.input_size, self.model_v.input_size)
         for idx, layer in enumerate(self.model_v.layers_v[:-1]):
             w = layer.weight.data.cpu().numpy()
             zhat = w @ z
             jacobian = w @ jacobian
-            if self.config['model_v']['activation_function'] == 'Tanh':
-                z = smt_verification.hyper_tan_dr(zhat)
-                jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-            elif self.config['model_v']['activation_function'] == 'ReLU':
-                z = smt_verification.hyper_relu_dr(zhat)
-                jacobian = np.diagflat(smt_verification.hyper_relu_der_dr(zhat)) @ jacobian   
+            z = smt_verification.hyper_relu_dr_z3(zhat)
+            jacobian = np.diagflat(smt_verification.hyper_relu_der_dr_z3(zhat)) @ jacobian   
         last_layer = self.model_v.layers_v[-1].weight.data.cpu().numpy()
         z = last_layer @ z 
         jacobian = last_layer @ jacobian       
@@ -495,83 +478,65 @@ class MotionPlanner:
         gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
         V_learn_dot = (gradV @ f_learn)[0]
         print_info('===========Verifying==========')
-        start_ = timeit.default_timer()
-        result = smt_verification.CheckLyapunov(self.vars_, f_learn, V_learn, V_learn_dot, self.ball_lb, self.ball_ub, self.smt_config, self.beta) # SMT solver
-        if result:
-            x_domain = self.x_domain.to('cpu')
-            x_domain = smt_verification.AddCounterexamples(x_domain, result, 10)
-            self.x_domain = x_domain.float().to(self.device)
-            print_success("Lyapunov is SMT Verified")
-            return True
-        else:
-            print_error("Not SMT Verified")
-            return False
-        
-        # Verification for the Barrier Certificate
-        z = self.vars_
+        ball = sum(x*x for x in vars_)
+        self.ball_lb = 0.01
+        self.ball_ub = 1.50
+        ball_constraint = z3.And(self.ball_lb**2 <= ball, ball <= self.ball_ub**2)
+        solver.add(z3.Not(z3.Implies(ball_constraint, V_learn > 0)))
+        if solver.check() == z3.sat:
+            model = solver.model()
+            counterexample = [model[var].as_fraction() for var in vars_]
+            print_warning("Not Satisfied for Positive Definiteness. Counterexample:")
+            print_warning(counterexample)
+            return counterexample
+        solver.reset()
+        solver.add(z3.Not(z3.Implies(ball_constraint, V_learn_dot <= 0)))
+        if solver.check() == z3.sat:
+            model = solver.model()
+            counterexample = [model[var].as_fraction() for var in vars_]
+            print_warning("Not Satisfied for Derivative of Lyapunov Function. Counterexample:")
+            print_warning(counterexample)
+            return counterexample
+        print_success("Lyapunov Verified")
+        # Now Verification of Barrier
+        z = vars_
         jacobian = np.eye(self.model_b.input_size, self.model_b.input_size)
-        for idx, layer in enumerate(self.model_b.layers_b[:-1]):
+        for idx, layer in enumerate(self.model_v.layers_v[:-1]):
             w = layer.weight.data.cpu().numpy()
             zhat = w @ z
             jacobian = w @ jacobian
-            if self.config['model_b']['activation_function'] == 'Tanh':
-                z = smt_verification.hyper_tan_dr(zhat)
-                jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-            elif self.config['model_b']['activation_function'] == 'ReLU':
-                z = smt_verification.hyper_relu_dr(zhat)
-                jacobian = np.diagflat(smt_verification.hyper_relu_der_dr(zhat)) @ jacobian   
-        last_layer = self.model_b.layers_b[-1].weight.data.cpu().numpy()
+            z = smt_verification.hyper_relu_dr_z3(zhat)
+            jacobian = np.diagflat(smt_verification.hyper_relu_der_dr_z3(zhat)) @ jacobian   
+        last_layer = self.model_v.layers_v[-1].weight.data.cpu().numpy()
         z = last_layer @ z 
         jacobian = last_layer @ jacobian       
-        B_learn = z[0]
-        gradB = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
-        B_learn_dot = (gradB @ f_learn)[0]
-        # Verification of the Barrier Function
-        init_ball = Expression(0)
-        unsafe_ball = Expression(0)
-        #init_ball = logical_and(self.vars_[0] >= INIT[0][0], self.vars_[0] <= INIT[0][1], self.vars_[1] >= INIT[1][0], self.vars_[1] <= INIT[1][1])
-        initial_set_radius = self.config["init"]["radius"]
-        init_ball = logical_and((self.vars_[0] - self.initial_set_center[0]) <= initial_set_radius, (self.vars_[1] - self.initial_set_center[1]) <= initial_set_radius)
-        #unsafe_ball = logical_and(self.vars_[0] >= UNSAFE[0][0], self.vars_[0] <= UNSAFE[0][1], self.vars_[1] >= UNSAFE[1][0], self.vars_[1] <= UNSAFE[1][1])
-        unsafe_set_range = self.config["unsafe"]["range"]
-        unsafe_ball = logical_and(self.vars_[0] >= unsafe_set_range[0][0], self.vars_[0] <= unsafe_set_range[0][1], self.vars_[1] >= unsafe_set_range[1][0], self.vars_[1] <= unsafe_set_range[1][1])
-        # Constraint: x ∈ Ball → (B(c, xin) < 0 ∧ B(c, xun) >= 0)
-        condition = logical_imply(init_ball, B_learn < 0)
-        result = CheckSatisfiability(logical_not(condition),self.smt_config)
-        if(result):
-            print_warning("Not a Barrier Function. Found counterexamples in Initial Domain: ")
-            print_warning(result)
-            x_init = self.x_init.to('cpu')
-            x_init = smt_verification.AddCounterexamples(x_init, result, 50)
-            self.x_init = x_init.float().to(self.device)
-        else:
-            condition = logical_imply(unsafe_ball, B_learn >= 0)
-            result = CheckSatisfiability(logical_not(condition),self.smt_config)
-            if(result):
-                print_warning("Not a Barrier Function. Found counterexamples in Unsafe Domain: ")
-                print_warning(result)
-                x_unsafe = self.x_unsafe.to('cpu')
-                x_unsafe = smt_verification.AddCounterexamples(x_unsafe, result, 50)
-                self.x_unsafe = x_unsafe.to(self.device)
-            else:
-                epsi = 1e-3
-                DOMAIN = self.config["domain"]["range"]
-                domain_ball = logical_and(self.vars_[0] >= DOMAIN[0][0], self.vars_[0] <= DOMAIN[0][1], self.vars_[1] >= DOMAIN[1][0], self.vars_[1] <= DOMAIN[1][1])
-                condition = logical_imply(logical_and(B_learn <= epsi, B_learn >= -epsi, domain_ball), B_learn_dot <= 0)
-                result = CheckSatisfiability(logical_not(condition),self.smt_config)
-                if(result):
-                    print_warning("Not a Barrier Function. Found counterexamples in Boundary Domain: ")
-                    print_warning(result)
-                    x_domain = self.x_domain.to('cpu')
-                    x_domain = smt_verification.AddCounterexamples(x_domain, result, 50)
-                    self.x_domain = x_domain.to(self.device)
-                    return False
-                else:
-                    verified_flag = True
-                    print_success("Satisfy conditions")
-                    print_success(f"{B_learn} is a Barrier function with Epsilon: {self.beta}")
-                    return verified_flag
-                                        
+        V_learn = z[0]
+        gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
+        V_learn_dot = (gradV @ f_learn)[0]
+        print_info('===========Verifying==========')
+        ball = sum(x*x for x in vars_)
+        self.ball_lb = 0.01
+        self.ball_ub = 1.50
+        ball_constraint = z3.And(self.ball_lb**2 <= ball, ball <= self.ball_ub**2)
+        solver.add(z3.Not(z3.Implies(ball_constraint, V_learn > 0)))
+        if solver.check() == z3.sat:
+            model = solver.model()
+            counterexample = [model[var].as_fraction() for var in vars_]
+            print_warning("Not Satisfied for Positive Definiteness. Counterexample:")
+            print_warning(counterexample)
+            return counterexample
+        solver.reset()
+        solver.add(z3.Not(z3.Implies(ball_constraint, V_learn_dot <= 0)))
+        if solver.check() == z3.sat:
+            model = solver.model()
+            counterexample = [model[var].as_fraction() for var in vars_]
+            print_warning("Not Satisfied for Derivative of Lyapunov Function. Counterexample:")
+            print_warning(counterexample)
+            return counterexample
+        print_success("Z3 Verified")
+        return None
+
+            
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     np.random.seed(0)
@@ -589,28 +554,24 @@ if __name__ == "__main__":
     mp.generate_domain_data()
     print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
-    # For SMT VERIFICATION
-    flag_verified = False
-    while flag_verified == False:
-        trial = 1
-        lr_inc = mp.config["counterex"]["lr_increment_factor"]
-        while trial < 50:
-            print_info("ADDING COUNTEREXAMPLES")
-            mp.generate_counterexample_data()
-            if mp.counterexamples_added:
-                mp.trainCertificate()
-                trial += 1      
+    trial = 1
+    lr_inc = mp.config["counterex"]["lr_increment_factor"]
+    while trial < 50:
+        print_info("ADDING COUNTEREXAMPLES")
+        mp.generate_counterexample_data()
+        if mp.counterexamples_added:
+            mp.trainCertificate()
+            trial += 1      
 
-                for param_group in mp.optimizer_f.param_groups:
-                    param_group['lr'] *= lr_inc
-                for param_group in mp.optimizer_v.param_groups:
-                    param_group['lr'] *= lr_inc
-                for param_group in mp.optimizer_b.param_groups:
-                    param_group['lr'] *= lr_inc
-            else:
-                print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-                flag_verified = mp.verifyCertificate()
-                break
+            for param_group in mp.optimizer_f.param_groups:
+                param_group['lr'] *= lr_inc
+            for param_group in mp.optimizer_v.param_groups:
+                param_group['lr'] *= lr_inc
+            for param_group in mp.optimizer_b.param_groups:
+                param_group['lr'] *= lr_inc
+        else:
+            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            break
     Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
     mp.verifyCertificate()
     mp.save_all_models()

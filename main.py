@@ -19,8 +19,9 @@ class MotionPlanner:
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        # wandb_name = self.config["plotting"]["name"]
-        # wandb.init(project=wandb_name, config=self.config)
+        wandb_name = self.config["plotting"]["name"]
+        wandb.init(project=wandb_name, config=self.config)
+
         
     def calculate_limits(self, data, x_limit_fact=1.0, y_limit_fact=1.0):
         x_min = min(data[0, :])
@@ -109,6 +110,7 @@ class MotionPlanner:
         # self.y_test = (self.y_test - mean_vel) / std_dev_vel
         # Check Limits
         self.limits = self.calculate_limits(self.X_train.numpy().T)
+        self.ball_ub = max([x_range[1] for x_range in self.limits])
         # Finding the mean_point
         mean_point = np.mean([demos[i].pos[:,0] for i in range(total_demos)], axis=0)/pos_scaling
         # Get initial set center
@@ -170,7 +172,7 @@ class MotionPlanner:
                 loss.backward()
                 optimizer_f.step()
             # Log the Training Loss
-            # wandb.log({"DS_training_loss": total_loss})
+            wandb.log({"DS_training_loss": total_loss})
             #evaluate accuracy at end of each epoch           
             self.model_f.eval()
             for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
@@ -602,6 +604,6 @@ if __name__ == "__main__":
         _ = mp.trainBarrierCertificate()
         Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.config, mp.model_b)
     Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.config)
-    # wandb.finish()
+    wandb.finish()
 
     

@@ -31,61 +31,61 @@ def loss_function_dyn(model_f, X_train, y_train, config):
     return loss_mse #, loss_reg
 
 def loss_function_domain(model_v, model_b, model_f, input_domain, config):
-        device = next(model_v.parameters()).device
-        model_b = model_b.to(device)
-        model_f = model_f.to(device)
-        # For the domain
-        input_domain = input_domain.float().to(device)
-        #Lyapunov Losses
-        # Zero set
-        x_0 = torch.zeros([1, 2]).to(device)
-        V_0 = model_v(x_0)
-        # Compute lie derivative of V : L_V = ∑∂V/∂xᵢ*fᵢ
-        input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
-        V_value = model_v(input_domain_clone)
-        f_value = model_f(input_domain_clone)
-        grad_lyap = torch.autograd.grad(
-                        torch.sum(V_value),
-                        input_domain_clone,
-                        grad_outputs=None,
-                        create_graph=True,
-                        only_inputs=True,
-                        allow_unused=True)[0]
-        lie_lyap = torch.sum(grad_lyap * f_value, dim=1)
-        #Lie derivative of barrier 
-        B_value = model_b(input_domain_clone)
-        abs_B = torch.abs(B_value)
-        lie_tol = config["hyperparameters"]["lie_tol"]
-        mask = abs_B <= lie_tol
-        B_value = B_value[mask] 
-        grad_bar = torch.autograd.grad(
-                        torch.sum(B_value),
-                        input_domain_clone,
-                        grad_outputs=None,
-                        create_graph=True,
-                        only_inputs=True,
-                        allow_unused=True)[0]
-        lie_barr = torch.sum(grad_bar * f_value, dim=1)
-        #SKIP circular tuning for now, add it if needed
-        # Add Regularization for barrier and Lyapunov
-        l2_norm_lyap = sum(param.pow(2).sum() for layer in model_v.layers_v for param in layer.parameters()) 
-        l2_norm_barr = sum(param.pow(2).sum() for layer in model_b.layers_b for param in layer.parameters())
-        #Getting the hyperparameters
-        tol = config["hyperparameters"]["tol"]
-        DECAY_V0 = config["hyperparameters"]["decay_v0"]
-        DECAY_VPOS = config["hyperparameters"]["decay_vpos"]
-        DECAY_LV = config["hyperparameters"]["decay_lv"]
-        DECAY_L2_V = config["hyperparameters"]["decay_l2_V"]
-        DECAY_LB = config["hyperparameters"]["decay_lb"]
-        DECAY_L2_B = config["hyperparameters"]["decay_l2_B"]
-        alpha = config["hyperparameters"]["alpha"] #Parameter for leaky relu
-        #Invidual weighted losses
-        loss_zero = DECAY_V0 * (V_0).pow(2)
-        loss_lie  = DECAY_LV * (F.leaky_relu(lie_lyap + tol, alpha)).mean() + DECAY_LB * (F.leaky_relu(lie_barr + tol, alpha)).mean() 
-        loss_vpos = DECAY_VPOS * (F.leaky_relu(tol + 0.001 - V_value, alpha)).mean()
-        loss_reg = DECAY_L2_V * l2_norm_lyap + DECAY_L2_B * l2_norm_barr
-        #total loss
-        return loss_lie + loss_vpos + loss_zero #+ loss_vpos #+ loss_reg
+    device = next(model_v.parameters()).device
+    model_b = model_b.to(device)
+    model_f = model_f.to(device)
+    # For the domain
+    input_domain = input_domain.float().to(device)
+    #Lyapunov Losses
+    # Zero set
+    x_0 = torch.zeros([1, 2]).to(device)
+    V_0 = model_v(x_0)
+    # Compute lie derivative of V : L_V = ∑∂V/∂xᵢ*fᵢ
+    input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
+    V_value = model_v(input_domain_clone)
+    f_value = model_f(input_domain_clone)
+    grad_lyap = torch.autograd.grad(
+                    torch.sum(V_value),
+                    input_domain_clone,
+                    grad_outputs=None,
+                    create_graph=True,
+                    only_inputs=True,
+                    allow_unused=True)[0]
+    lie_lyap = torch.sum(grad_lyap * f_value, dim=1)
+    #Lie derivative of barrier 
+    B_value = model_b(input_domain_clone)
+    abs_B = torch.abs(B_value)
+    lie_tol = config["hyperparameters"]["lie_tol"]
+    mask = abs_B <= lie_tol
+    B_value = B_value[mask] 
+    grad_bar = torch.autograd.grad(
+                    torch.sum(B_value),
+                    input_domain_clone,
+                    grad_outputs=None,
+                    create_graph=True,
+                    only_inputs=True,
+                    allow_unused=True)[0]
+    lie_barr = torch.sum(grad_bar * f_value, dim=1)
+    #SKIP circular tuning for now, add it if needed
+    # Add Regularization for barrier and Lyapunov
+    l2_norm_lyap = sum(param.pow(2).sum() for layer in model_v.layers_v for param in layer.parameters()) 
+    l2_norm_barr = sum(param.pow(2).sum() for layer in model_b.layers_b for param in layer.parameters())
+    #Getting the hyperparameters
+    tol = config["hyperparameters"]["tol"]
+    DECAY_V0 = config["hyperparameters"]["decay_v0"]
+    DECAY_VPOS = config["hyperparameters"]["decay_vpos"]
+    DECAY_LV = config["hyperparameters"]["decay_lv"]
+    DECAY_L2_V = config["hyperparameters"]["decay_l2_V"]
+    DECAY_LB = config["hyperparameters"]["decay_lb"]
+    DECAY_L2_B = config["hyperparameters"]["decay_l2_B"]
+    alpha = config["hyperparameters"]["alpha"] #Parameter for leaky relu
+    #Invidual weighted losses
+    loss_zero = DECAY_V0 * (V_0).pow(2)
+    loss_lie  = DECAY_LV * (F.leaky_relu(lie_lyap + tol, alpha)).mean() + DECAY_LB * (F.leaky_relu(lie_barr + tol, alpha)).mean() 
+    loss_vpos = DECAY_VPOS * (F.leaky_relu(tol + 0.001 - V_value, alpha)).mean()
+    loss_reg = DECAY_L2_V * l2_norm_lyap + DECAY_L2_B * l2_norm_barr
+    #total loss
+    return loss_lie + loss_vpos + loss_zero #+ loss_vpos #+ loss_reg
 
 def loss_function_init(model_b, input_init, config):
     device = next(model_b.parameters()).device
@@ -102,17 +102,17 @@ def loss_function_init(model_b, input_init, config):
     return  loss_init
 
 def loss_function_unsafe(model_b, input_unsafe, config):
-        device = next(model_b.parameters()).device
-        input_unsafe = input_unsafe.float().to(device)
-        # For the unsafe set
-        B_unsafe = model_b(input_unsafe)
-        #hyperparameters
-        tol = config["hyperparameters"]["tol"] 
-        DECAY_UNSAFE = config["hyperparameters"]["decay_unsafe"]
-        alpha = config["hyperparameters"]["alpha"]
-        #losses
-        loss_unsafe =  DECAY_UNSAFE * (F.leaky_relu(- B_unsafe + 0.001 + tol, alpha)).mean()
-        return loss_unsafe
+    device = next(model_b.parameters()).device
+    input_unsafe = input_unsafe.float().to(device)
+    # For the unsafe set
+    B_unsafe = model_b(input_unsafe)
+    #hyperparameters
+    tol = config["hyperparameters"]["tol"] 
+    DECAY_UNSAFE = config["hyperparameters"]["decay_unsafe"]
+    alpha = config["hyperparameters"]["alpha"]
+    #losses
+    loss_unsafe =  DECAY_UNSAFE * (F.leaky_relu(- B_unsafe + 0.001 + tol, alpha)).mean()
+    return loss_unsafe
         
 def lyapunovVerify(model_v, x_domain, iter, config, DOMAIN):
     device = next(model_v.parameters()).device

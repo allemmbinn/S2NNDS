@@ -28,9 +28,10 @@ import pyLasaDataset as lasa
 import random
 import wandb
 import sys
+import itertools
+
 # Verifier Requirements
 from dreal import *
-import itertools
 
 def print_error(message):
     print(colored(message, 'red'))

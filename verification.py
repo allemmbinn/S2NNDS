@@ -40,7 +40,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     lie_bar = torch.sum(grad_bar * f_value, dim=1)
     mask = (torch.abs(B_value[:,0]) <= lie_tol) & (lie_bar > 0)
     true_indices_lie_bar = torch.nonzero(mask, as_tuple=False).squeeze()
- # Filter out empty tensors and ensure they have at least one dimension
+    # Filter out empty tensors and ensure they have at least one dimension
     indices_list = [true_indices_lie_lyap, true_indices_pos, true_indices_lie_bar]
     indices_list = [indices.unsqueeze(0) if indices.dim() == 0 else indices for indices in indices_list if indices.numel() > 0]
     # Get the union of all the indices
@@ -50,8 +50,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         counterexamples = input_domain[true_indices_union]
     else:
         counterexamples = torch.empty((0, input_domain.shape[1]), device=device)
-
-    return counterexamples
+    return counterexamples.cpu()
 
 def verify_init(model_b,init_domain):
     device = next(model_b.parameters()).device
@@ -61,7 +60,7 @@ def verify_init(model_b,init_domain):
     mask = B_value[:,0] > 0
     true_indices_init = torch.nonzero(mask, as_tuple=False).squeeze()
     counterexamples = init_domain[true_indices_init]
-    return counterexamples
+    return counterexamples.cpu()
 
 def verify_unsafe(model_b, unsafe_domain):
     device = next(model_b.parameters()).device
@@ -71,7 +70,7 @@ def verify_unsafe(model_b, unsafe_domain):
     mask = B_value[:,0] <= 0
     true_indices_unsafe = torch.nonzero(mask, as_tuple=False).squeeze()
     counterexamples = unsafe_domain[true_indices_unsafe]
-    return counterexamples
+    return counterexamples.cpu()
 
 
         

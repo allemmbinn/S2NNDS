@@ -34,6 +34,7 @@ class DyanmicsNet(nn.Module):
         for idx, layer in enumerate(self.layers_f[:-1]):
             y = self.sigmoid_f(layer(y))
         Fout = self.output_act_f(self.layers_f[-1](y))
+        # Fout = self.layers_f[-1](y)
 
         # # Ensure f(0) = 0
         # zero_input = torch.zeros_like(x)
