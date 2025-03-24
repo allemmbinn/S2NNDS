@@ -59,7 +59,7 @@ class DyanmicsNet(nn.Module):
 
 #Neural Network for Lyapunov Function
 class LyapunovNet(nn.Module): 
-    def __init__(self, n_input, hidden_v, thresholds, sigmoid_v, bound):
+    def __init__(self, n_input, hidden_v, thresholds, sigmoid_v):
         super(LyapunovNet, self).__init__()
         self.input_size = n_input
         self.layers_v = nn.ModuleList()
@@ -99,7 +99,7 @@ class LyapunovNet(nn.Module):
     
 #Neural Network for Barrier Function
 class BarrierNet(nn.Module): 
-    def __init__(self, n_input, hidden_b, thresholds, sigmoid_b, bound):
+    def __init__(self, n_input, hidden_b, thresholds, sigmoid_b):
         super(BarrierNet, self).__init__()
         self.input_size = n_input
         self.layers_b = nn.ModuleList()

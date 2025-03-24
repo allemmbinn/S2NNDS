@@ -387,8 +387,7 @@ class MotionPlanner:
             n_input=self.dim_in,
             hidden_v=hidden_v,
             thresholds=self.config["model_v"]["clip"],
-            sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function']),
-                        bound = self.config["model_v"]["bound"]).to(self.device)
+            sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Lyapunov Function
             if self.flag_finetune == False:
                 self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
@@ -408,8 +407,7 @@ class MotionPlanner:
             n_input=self.dim_in,
             hidden_b=hidden_b,
             thresholds = self.config["model_b"]["clip"],
-            sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function']),
-            bound = self.config["model_b"]["bound"]).to(self.device)
+            sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Barrier Function
             if self.flag_finetune == False:
                 self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
@@ -448,7 +446,7 @@ class MotionPlanner:
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         self.optimizer_f.step()
-                        #self.model_v.clip_weights()
+                        self.model_v.clip_weights()
                     else:
                         loss_domain_v = torch.tensor(0.0, requires_grad = True)
 
@@ -473,7 +471,7 @@ class MotionPlanner:
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         self.optimizer_f.step()    
-                        #self.model_b.clip_weights()
+                        self.model_b.clip_weights()
 
                     if batches[1] is not None:
                          input_train = batches[1][0].to(self.device)
@@ -483,7 +481,7 @@ class MotionPlanner:
                          loss_train.backward()
                          torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                          self.optimizer_f.step()
-                         #self.model_f.clip_weights()
+                         self.model_f.clip_weights()
  
                     else:
                         loss_train = torch.tensor(0.0, requires_grad=True)

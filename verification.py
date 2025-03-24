@@ -114,7 +114,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     #barrier lie derivative counterexamples
     bar_tol =  config["hyperparameters"]["bar_tol"]
     lie_tol = config["hyperparameters"]["lie_tol"]
-    input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
+    #input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
     B_value = model_b(input_domain_clone)
     f_value = model_f(input_domain_clone)
     grad_bar = torch.autograd.grad(
@@ -125,8 +125,8 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
                     only_inputs=True,
                     allow_unused=True)[0]
     lie_bar = torch.sum(grad_bar * f_value, dim=1)
-    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol) & (lie_bar > -bar_tol)
-    #bar_mask = (lie_bar > -bar_tol)
+    #bar_mask = (torch.abs(B_value[:,0]) <= lie_tol) & (lie_bar > -bar_tol)
+    bar_mask = (lie_bar > -bar_tol)
     filtered_lie_bar = lie_bar[bar_mask]
     filtered_input_domain = input_domain_clone[bar_mask]
 

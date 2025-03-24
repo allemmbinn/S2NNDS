@@ -9,14 +9,14 @@
         "lr_factor" : 0.1,
         "lr_patience" :5,
         "init_decay" : 0.1,
-        "clip" : [[-0.95,0.95],[-0.95,0.95],[-0.95,0.95]]
+        "clip" : [[-0.95,0.95],[-1,1],[-1,1]]
         },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 5e-2,
+        "learning_rate": 1e-2,
         "learning_rate_ft": 7e-3,
-        "hidden_neurons": 64,
-        "layers" : 1,
+        "hidden_neurons": 32,
+        "layers" : 2,
         "lr_factor" : 0.2,
         "lr_patience" :10,
         "clip" : [[-0.5,0.5],[-0.5,0.5],[-0.5,0.5]],
@@ -25,14 +25,14 @@
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 5e-2,
+        "learning_rate": 1e-2,
         "learning_rate_ft": 7e-3,
         "hidden_neurons": 64,
-        "layers" : 1,
+        "layers" : 2,
         "lr_factor" : 0.2,
         "lr_patience" : 10,
         "batch_size" : 256,
-        "clip" : [[-0.1,0.1],[-0.1,0.1],[-0.1,0.1]],
+        "clip" : [[-1,1],[-1,1], [-1,1]],
         "warmup" : 10,
         "bound" : 5
         },
@@ -47,14 +47,14 @@
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "range" : [[-0.6, -0.4], [-0.2,-0.1]]
+        "range" : [[-0.6, -0.4], [-0.1,-0.0]]
     },
     "counterex":{
         "N_cex_domain" : 95,
         "N" : 1,
         "no_min" : 5,
         "radius" : 0.001,
-        "lr_increment_factor" : 1.5,
+        "lr_increment_factor" : 1.0,
         "lyap_tol" : 0.01,
         "pos_tol" : 0.01,
         "bar_tol" : 0.01,
@@ -71,7 +71,7 @@
     "hyperparameters" : {
         "max_iters" : 30,
         "max_iters_ft" : 30,
-        "decay_mse" : 1,
+        "decay_mse" : 5,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
         "decay_lv" : 1,
@@ -80,15 +80,15 @@
         "decay_unsafe" : 1,
         "decay_cut" : 1,
         "decay_lb" : 1,
-        "alpha" : 1.5,
+        "alpha" : 1,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
         "lyap_tol" : 0.01,
         "pos_tol" : 0.01,
         "bar_tol" : 0.01,
         "inun_tol" : 0.01, 
-        "lie_tol": 0.1,
-        "reg_bar" : 0.01,
-        "reg_v" : 0.01   
+        "lie_tol": 0.01,
+        "reg_bar" : 0.001,
+        "reg_v" : 0.001   
     }
 }
