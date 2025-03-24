@@ -8,27 +8,35 @@
         "batch_size" : 64,
         "lr_factor" : 0.1,
         "lr_patience" :5,
-        "init_decay" : 0.01
+        "init_decay" : 0.01,
+        "clip" : [[-2,2],[-2,2], [-2, 2]]
+
     },
     "model_v": {
-        "activation_function": "ReLU",
+        "activation_function": "eLU",
         "learning_rate": 1e-2,
+        "learning_rate_ft": 1e-2,
         "hidden_neurons": 64,
         "layers" : 1,
         "max_iters" : 20000,
         "lr_factor" : 0.2,
         "lr_patience" :10,
         "batch_size" : 5126,
-        "batch_size_training" : 5126
+        "batch_size_training" : 5126,
+        "clip" : [[-0.5,0.5],[-0.5,0.5],[-0.5,0.5]],
+        "warmup" : 10
     },
     "model_b": {
-        "activation_function": "ReLU",
+        "activation_function": "eLU",
         "learning_rate": 1e-2,
+        "learning_rate_ft": 1e-2,
         "hidden_neurons": 64,
         "layers" : 2,
         "lr_factor" : 0.2,
         "lr_patience" : 10,
-        "batch_number" : 5
+        "batch_size" : 256,
+        "clip" : [[-0.1,0.1],[-0.1,0.1],[-0.1,0.1]],
+        "warmup" : 10
         },
 
     "domain":{
@@ -46,8 +54,13 @@
     },
     "counterex":{
         "N" : 1,
+        "no_min" : 5,
         "radius" : 0.01,
-        "lr_increment_factor" : 1.5
+        "lr_increment_factor" : 1.0,
+        "lyap_tol" : 0.01,
+        "pos_tol" : 0.01,
+        "bar_tol" : 0.01,
+        "inun_tol" : 0.01
     },
     "Barrier" : true,
     "plots" : true,
@@ -58,8 +71,9 @@
         "name" : "Worm LASA with Obstacles"
     },
     "hyperparameters" : {
-        "max_iters" : 70,
-        "decay_mse" : 3,
+        "max_iters" : 30,
+        "max_iters_ft" : 30,
+        "decay_mse" : 1,
         "decay_l2_f" : 0.0,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
@@ -71,10 +85,15 @@
         "decay_cut" : 1,
         "decay_lb" : 1,
         "decay_l2_B" : 0.01,
-        "alpha" : 1e-2,
+        "alpha" : 1,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
-        "tol" : 0.0,
-        "lie_tol": 0.005
+        "lyap_tol" : 0.01,
+        "pos_tol" : 0.01,
+        "bar_tol" : 0.01,
+        "inun_tol" : 0.01, 
+        "lie_tol": 0.01,
+        "reg_bar" : 0.01,
+        "reg_v" : 0.01
     }
 }

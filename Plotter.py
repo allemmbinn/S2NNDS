@@ -128,3 +128,35 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
                         mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(0, 1))
     plt.show()
+
+def plotLyapunov(model_v):
+    x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
+    x2 = torch.linspace(-1, 1, 50)
+    X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
+    # Flatten to pass into the model
+    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    V_value = model_v(inputs).detach().numpy()
+    V_value = V_value.reshape(50,50)
+    plt.figure(figsize=(8, 6))
+    plt.contourf(X1, X2, V_value, levels=50, cmap="inferno")
+    plt.colorbar(label="Lyapunov ")
+    plt.xlabel("x1")
+    plt.ylabel("x2")
+    plt.title("Lyapunov Heatmap")
+    plt.show()
+
+def plotBarrier(model_b):
+    x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
+    x2 = torch.linspace(-1, 1, 50)
+    X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
+    # Flatten to pass into the model
+    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    B_value = model_b(inputs).detach().numpy()
+    B_value = B_value.reshape(50,50)
+    plt.figure(figsize=(8, 6))
+    plt.contourf(X1, X2, B_value, levels=50, cmap="inferno")
+    plt.colorbar(label="Barrier")
+    plt.xlabel("x1")
+    plt.ylabel("x2")
+    plt.title("Barrier Heatmap")
+    plt.show()

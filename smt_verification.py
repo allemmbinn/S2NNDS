@@ -1,11 +1,11 @@
 from common_header import *
 from dreal import *
-import z3
+from z3 import *
    
 def hyper_tan_dr(x):
     y = x.copy()
     for idx in range(len(y)):
-        y[idx] = 1 / pow(cosh(y[idx]), 2)
+        y[idx] = tanh(y[idx])
     return y
 
 def hyper_tan_der_dr(x):
@@ -37,7 +37,16 @@ def hyper_relu_dr_z3(x):
         y[idx] = simplify(RELU(y[idx]))
     return y
 
-def hyper_relu_der_dr_z3(x):
+def piecewise_tanh_z3(x):
+    y=x.copy()
+    for idx in range(len(y)):
+        y[idx] = simplify(If(y[idx] < -1, -1,
+                 If(y[idx] < 0, y[idx],
+                    If(y[idx] < 1, y[idx],
+                       1))))
+    return y
+
+def hyper_relu_der_z3(x):
     y = x.copy()
     simplify = z3.simplify
     for idx in range(len(y)):
@@ -60,24 +69,20 @@ def AddCounterexamples(x,CE,N):
         x = torch.cat((x, torch.tensor([n_pt])), 0)
     return x
 
-def CheckLyapunov(x, f, V, V_dot, ball_lb, ball_ub, config, epsilon):
+def CheckLyapunov(x, V, V_dot, ball_lb, ball_ub, config):
     ball= Expression(0)
-    lie_derivative_of_V = Expression(0)
     for i in range(len(x)):
         ball += x[i]*x[i]
     ball_in_bound = logical_and(ball_lb*ball_lb <= ball, ball <= ball_ub*ball_ub)
     # Constraint: x ∈ Ball → (V(c, x) > 0 ∧ Lie derivative of V <= 0)
-    condition = logical_imply(ball_in_bound, V >= 0)
-    import pdb; pdb.set_trace()
+    condition_pos = logical_imply(ball_in_bound, V >= 0)
+    condition_der = logical_imply(ball_in_bound, V_dot <= 0)
+    condition = logical_and(condition_pos, condition_der)
     result = CheckSatisfiability(logical_not(condition),config)
     if(result):
-        print_warning("Not Satisfied for Positive Definteness. Counterexamples: ")
+        print_warning("SMT Verification for Lyapunov failed... Generating Counterexamples:" )
         print_warning(result)
         return result
     else:
-        condition = logical_imply(ball_in_bound, V_dot <= 0)
-        result = CheckSatisfiability(logical_not(condition),config)
-        if result:
-            print_warning("Not Satisfied for Derivative of Lyapunov Function. Counterexamples:")
-            print_warning(result)
+        print_info("SMT Verification for Lyapunov successful")
         return result

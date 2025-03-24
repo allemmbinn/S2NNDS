@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torch.nn.utils.prune as prune
+import torch.nn.utils as utils
 
 # Plotting Requirements
 import matplotlib.pyplot as plt
@@ -29,6 +31,7 @@ import random
 import wandb
 import sys
 import itertools
+import sympy as sp
 
 # Verifier Requirements
 from dreal import *
