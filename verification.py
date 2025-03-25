@@ -63,16 +63,16 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
     #remove points close to equilibrium
     # Define the bounds
-    lower_bound = -0.01
-    upper_bound = 0.01
+    #lower_bound = -0.01
+    #upper_bound = 0.01
 
     # Create a boolean mask for points within the bounds
-    mask_x = (input_domain_clone[:, 0] < lower_bound) | (input_domain_clone[:, 0] > upper_bound)
-    mask_y = (input_domain_clone[:, 1] < lower_bound) | (input_domain_clone[:, 1] > upper_bound)
-    mask = mask_x & mask_y
+    #mask_x = (input_domain_clone[:, 0] < lower_bound) | (input_domain_clone[:, 0] > upper_bound)
+    #mask_y = (input_domain_clone[:, 1] < lower_bound) | (input_domain_clone[:, 1] > upper_bound)
+    #mask = mask_x & mask_y
 
     # Apply the mask to filter out the points
-    input_domain_clone = input_domain_clone[mask]    
+    #input_domain_clone = input_domain_clone[mask]    
     V_value = model_v(input_domain_clone)
 
     f_value = model_f(input_domain_clone)
@@ -114,7 +114,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     #barrier lie derivative counterexamples
     bar_tol =  config["hyperparameters"]["bar_tol"]
     lie_tol = config["hyperparameters"]["lie_tol"]
-    #input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
+    input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
     B_value = model_b(input_domain_clone)
     f_value = model_f(input_domain_clone)
     grad_bar = torch.autograd.grad(
@@ -125,12 +125,12 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
                     only_inputs=True,
                     allow_unused=True)[0]
     lie_bar = torch.sum(grad_bar * f_value, dim=1)
-    #bar_mask = (torch.abs(B_value[:,0]) <= lie_tol) & (lie_bar > -bar_tol)
-    bar_mask = (lie_bar > -bar_tol)
+    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol) & (lie_bar > -bar_tol)
+    #bar_mask = (lie_bar > -bar_tol)
     filtered_lie_bar = lie_bar[bar_mask]
     filtered_input_domain = input_domain_clone[bar_mask]
 
-    #get the last minimum values of lie_bar
+    #get the maximum values of lie_bar
     if filtered_lie_bar.numel() > 0:  # Ensure there are valid values
         _, min_indices = torch.topk(filtered_lie_bar, k=min(N, filtered_lie_bar.numel()), largest=True)
         lie_bar_cex = filtered_input_domain[min_indices]
@@ -172,7 +172,7 @@ def verify_unsafe(model_b, unsafe_domain, config):
     unsafe_domain_clone = unsafe_domain.float().to(device)
     B_value = model_b(unsafe_domain_clone)
     inun_tol = config["counterex"]["inun_tol"]
-    mask = B_value[:,0] < inun_tol
+    mask = B_value[:,0] <= inun_tol
     filtered_B_value = B_value[mask].view(-1)
     filtered_uns_domain = unsafe_domain_clone[mask]
     if filtered_B_value.numel() > 0:  # Ensure there are valid values

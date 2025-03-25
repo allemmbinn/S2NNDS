@@ -4,7 +4,6 @@ import data_new as data
 import Loss_Functions_new as Loss_Functions
 import opt 
 import Plotter
-import smt_verification
 from dreal import *
 import verification
 
@@ -211,6 +210,8 @@ class MotionPlanner:
         self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
         self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"]["batch_size"], shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
+        self.N_cex_domain = self.config["counterex"]["N_cex_domain"] #The number of counterexample samples we want in the domain region
+
         #Erasing these tensors to reset counterexample generation
         #To be run before the generation of counterexamples for a new set of data!
         if hasattr(self, 'domain_cex'):
@@ -223,9 +224,7 @@ class MotionPlanner:
 
     def generate_counterexample_data(self):
         self.load_model_states()     
-        N_cex_domain = self.config["counterex"]["N_cex_domain"] #The number of samples we want in the domain region
-
-        input_domain, self.eps = data.generateGridData(N_cex_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
+        input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
         unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
         counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, 
@@ -618,7 +617,7 @@ if __name__ == "__main__":
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    #while not mp.flag_verified and iters <= 20: 
+   # while not mp.flag_verified and iters <= 20: 
     print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
     trial = 1
@@ -650,21 +649,21 @@ if __name__ == "__main__":
             break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
-        
-    mp.verifyCertificate()
-        # if not mp.flag_verified:
-        #     print_info("RETRAINING... ADDING NEW DATA")
-        #     mp.generate_domain_data()    
-        #     print_info(f"N_domain value: {mp.N_domain}")
-        #     # print_info("PRUNE THE MODELS FOR FINE-TUNING")
-        #     # mp.prune_models(0.2)
-        #     mp.counterexamples_added = True
-        #     mp.flag_finetune = True
-        #     iters +=1
-        # else:
-        #     print_info("VERIFICATION SUCCESSFUL")
-        #     break    
-    save_seed(seed,seed_filepath) 
-    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
     mp.save_all_models()
+    
+    #     mp.verifyCertificate()
+    #     if not mp.flag_verified:
+    #         print_info("RETRAINING... ADDING NEW DATA")
+    #         mp.generate_domain_data()    
+    #         print_info(f"N_domain value: {mp.N_domain}")
+    #         # print_info("PRUNE THE MODELS FOR FINE-TUNING")
+    #         # mp.prune_models(0.2)
+    #         mp.counterexamples_added = True
+    #         mp.flag_finetune = True
+    #         iters +=1
+    #     else:
+    #         print_info("VERIFICATION SUCCESSFUL")
+    #         break    
+    # save_seed(seed,seed_filepath) 
+    # Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
  
