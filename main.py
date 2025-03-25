@@ -10,10 +10,13 @@ from dreal import *
 config_file = os.environ.get('CONFIG_FILE', 'config.json')
 with open(config_file) as file:
     config = json.load(file)
-if config["wandb"] == "None":
+try:
+    if config["wandb"] == "None":
+        wandb_name = "LASA"
+    else:
+        wandb_name = config["wandb"]["name"]
+except:
     wandb_name = "LASA"
-else:
-    wandb_name = config["wandb"]["name"]
 wandb.init(project=wandb_name, config=config)
 class MotionPlanner:
     def __init__(self):
@@ -112,14 +115,18 @@ class MotionPlanner:
         max_iters = config["model_v"]["max_iters"]
         optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = config["model_v"]["learning_rate"])
         # Provide the start factor and end factor
-        if config["model_v"]["scheduler"]["start_factor"] == "None":
+        try:
+            if config["model_v"]["scheduler"]["start_factor"] == "None":
+                start_factor = 1.0
+            else:
+                start_factor = config["model_v"]["scheduler"]["start_factor"]
+            if config["model_v"]["scheduler"]["end_factor"] == "None":
+                end_factor = 0.0001
+            else:
+                end_factor = config["model_v"]["scheduler"]["end_factor"]
+        except:
             start_factor = 1.0
-        else:
-            start_factor = config["model_v"]["scheduler"]["start_factor"]
-        if config["model_v"]["scheduler"]["end_factor"] == "None":
             end_factor = 0.0001
-        else:
-            end_factor = config["model_v"]["scheduler"]["end_factor"]
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=start_factor, end_factor=end_factor, total_iters=max_iters)
         self.model_v.train()
         # Starting with Sampling Based Verification
