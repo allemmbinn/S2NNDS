@@ -63,16 +63,16 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
     #remove points close to equilibrium
     # Define the bounds
-    #lower_bound = -0.01
-    #upper_bound = 0.01
+    lower_bound = config["counterex"]["lb"]
+    upper_bound = config["counterex"]["ub"]
 
     # Create a boolean mask for points within the bounds
-    #mask_x = (input_domain_clone[:, 0] < lower_bound) | (input_domain_clone[:, 0] > upper_bound)
-    #mask_y = (input_domain_clone[:, 1] < lower_bound) | (input_domain_clone[:, 1] > upper_bound)
-    #mask = mask_x & mask_y
+    mask_x = (input_domain_clone[:, 0] < lower_bound) | (input_domain_clone[:, 0] > upper_bound)
+    mask_y = (input_domain_clone[:, 1] < lower_bound) | (input_domain_clone[:, 1] > upper_bound)
+    mask = mask_x & mask_y
 
     # Apply the mask to filter out the points
-    #input_domain_clone = input_domain_clone[mask]    
+    input_domain_clone = input_domain_clone[mask]    
     V_value = model_v(input_domain_clone)
 
     f_value = model_f(input_domain_clone)

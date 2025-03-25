@@ -22,11 +22,10 @@ def assignActivationFunction(activation_function):
 
 #Class of Neural Network for Dynamics Function
 class DyanmicsNet(nn.Module):
-    def __init__(self,n_input, hidden_f, thresholds, sigmoid_f):
+    def __init__(self,n_input, hidden_f, sigmoid_f):
         super(DyanmicsNet, self).__init__()
         self.input_size = n_input
         self.layers_f = nn.ModuleList()
-        self.thresholds = thresholds
         n_prev = self.input_size
         ## For the Dynamics Function
         for n_hid in hidden_f:
@@ -50,20 +49,13 @@ class DyanmicsNet(nn.Module):
         Fout = self.output_act_f(self.layers_f[-1](y))
         return Fout
     
-    def clip_weights(self):
-        for layer, threshold in zip(self.layers_f, self.thresholds) :
-            if isinstance(layer,nn.Linear):
-                layer.weight.data.clamp_(threshold[0], threshold[1])
-
-
 
 #Neural Network for Lyapunov Function
 class LyapunovNet(nn.Module): 
-    def __init__(self, n_input, hidden_v, thresholds, sigmoid_v):
+    def __init__(self, n_input, hidden_v, sigmoid_v):
         super(LyapunovNet, self).__init__()
         self.input_size = n_input
         self.layers_v = nn.ModuleList()
-        self.thresholds = thresholds
         self.output_act_v= nn.Tanh()
 
         ## For the Lyapunov Function
@@ -90,20 +82,12 @@ class LyapunovNet(nn.Module):
         Vout = self.layers_v[-1](y)
         return Vout
     
-    def clip_weights(self):
-        for layer, threshold in zip(self.layers_v, self.thresholds) :
-            if isinstance(layer,nn.Linear):
-                layer.weight.data.clamp_(threshold[0], threshold[1])
-
-
-    
 #Neural Network for Barrier Function
 class BarrierNet(nn.Module): 
-    def __init__(self, n_input, hidden_b, thresholds, sigmoid_b):
+    def __init__(self, n_input, hidden_b, sigmoid_b):
         super(BarrierNet, self).__init__()
         self.input_size = n_input
         self.layers_b = nn.ModuleList()
-        self.thresholds = thresholds
         self.output_act_b= nn.Tanh()
         n_prev = self.input_size
         self.sigmoid_b = sigmoid_b
@@ -132,11 +116,5 @@ class BarrierNet(nn.Module):
         Bout = self.layers_b[-1](y)
         return Bout
     
-    def clip_weights(self):
-        for layer, threshold in zip(self.layers_b, self.thresholds) :
-            if isinstance(layer,nn.Linear):
-                layer.weight.data.clamp_(threshold[0], threshold[1])
-
-
 
 

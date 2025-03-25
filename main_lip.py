@@ -63,8 +63,6 @@ class MotionPlanner:
         self.g = torch.Generator()
         self.g.manual_seed(0)    
         #verification flag
-        self.flag_finetune = False
-        self.flag_verified = False
 
     def seed_worker(self,worker_id):
         np.random.seed(0)
@@ -163,10 +161,7 @@ class MotionPlanner:
         self.initial_set_center = np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling
 
     def generate_domain_data(self):
-        if self.flag_finetune == False:
-            self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
-        else:
-            self.N_domain = self.N_domain + self.config["domain"]["additional_N_domain"] 
+        self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
         self.RANGE = self.config["domain"]["range"] #The number of samples we want in the domain region
         self.domain, _ = data.generateGridData(self.N_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
 
@@ -196,10 +191,7 @@ class MotionPlanner:
 
         total_size = len(self.domain) + len(self.init_domain) + len(self.unsafe_domain)
 
-        if self.flag_finetune == False:
-           self.batch_size = self.config["model_b"]["batch_size"]
-        else:
-           self.batch_size *= 1
+        self.batch_size = self.config["model_b"]["batch_size"]
 
         domain_batch_size = int(len(self.domain) / total_size * self.batch_size)	
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
@@ -326,7 +318,6 @@ class MotionPlanner:
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
         self.model_f = NNModels.DyanmicsNet(self.dim_in, 
                                             self.hidden_f, 
-                                            self.config["model_f"]["clip"], 
                                             sigmoid_f).to(self.device)
         best_mse = np.inf   # init to infinity
         best_weights = None
@@ -352,7 +343,7 @@ class MotionPlanner:
                 self.optimizer_f.zero_grad()
                 loss.backward()
                 self.optimizer_f.step()
-                self.model_f.clip_weights()
+                #self.model_f.clip_weights()
                 total_loss += loss.item()
             # Log the Training Loss
             # wandb.log({"DS_training_loss": total_loss})
@@ -385,15 +376,11 @@ class MotionPlanner:
             self.model_v = NNModels.LyapunovNet(
             n_input=self.dim_in,
             hidden_v=hidden_v,
-            thresholds=self.config["model_v"]["clip"],
+            #thresholds=self.config["model_v"]["clip"],
             sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Lyapunov Function
-            if self.flag_finetune == False:
-                self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
-                warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
-            else:
-                self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate_ft"], weight_decay = self.config["hyperparameters"]["reg_v"])
-                warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate_ft"])
+            self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
+            warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
                 
             self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
                                                                     patience = self.config["model_v"]["lr_patience"], verbose = True)
@@ -405,16 +392,11 @@ class MotionPlanner:
             self.model_b = NNModels.BarrierNet(
             n_input=self.dim_in,
             hidden_b=hidden_b,
-            thresholds = self.config["model_b"]["clip"],
+            #thresholds = self.config["model_b"]["clip"],
             sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Barrier Function
-            if self.flag_finetune == False:
-                self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
-                warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
-            else:
-                self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate_ft"], weight_decay = self.config["hyperparameters"]["reg_bar"])
-                warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate_ft"])
-
+            self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
+            warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
             
             self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                     patience = self.config["model_b"]["lr_patience"], verbose = True)
@@ -425,10 +407,7 @@ class MotionPlanner:
 
             # Start Training
             start = timeit.default_timer() 
-            if self.flag_finetune == False:
-                 max_iter = self.config["hyperparameters"]["max_iters"]
-            else:
-                max_iter = self.config["hyperparameters"]["max_iters_ft"]
+            max_iter = self.config["hyperparameters"]["max_iters"]
 
             for epoch in range(max_iter):
                 cert_loss_b = 0
@@ -445,7 +424,7 @@ class MotionPlanner:
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         self.optimizer_f.step()
-                        self.model_v.clip_weights()
+                        #self.model_v.clip_weights()
                     else:
                         loss_domain_v = torch.tensor(0.0, requires_grad = True)
 
@@ -470,7 +449,7 @@ class MotionPlanner:
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         self.optimizer_f.step()    
-                        self.model_b.clip_weights()
+                        #self.model_b.clip_weights()
 
                     if batches[1] is not None:
                          input_train = batches[1][0].to(self.device)
@@ -480,7 +459,7 @@ class MotionPlanner:
                          loss_train.backward()
                          torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                          self.optimizer_f.step()
-                         self.model_f.clip_weights()
+                         #self.model_f.clip_weights()
  
                     else:
                         loss_train = torch.tensor(0.0, requires_grad=True)
@@ -578,23 +557,20 @@ class MotionPlanner:
 
         if self.lyap_verify and self.bar_verify:
             print_success("Formal Verification Successful!")
-            self.flag_verified = True
-        else:
-            self.flag_finetune = True
             
-    def prune_models(self, prune_amount):
-        for name, module in self.model_v.named_modules():
-            if isinstance(module, nn.Linear):
-                prune.l1_unstructured(module, name='weight', amount=prune_amount)
-                prune.remove(module, 'weight')  # Remove the pruning reparameterization
-        for name, module in self.model_b.named_modules():
-            if isinstance(module, nn.Linear):
-                prune.l1_unstructured(module, name='weight', amount=prune_amount)
-                prune.remove(module, 'weight')
-        for name, module in self.model_f.named_modules():           
-            if isinstance(module, nn.Linear):
-                prune.l1_unstructured(module, name='weight', amount=prune_amount)
-                prune.remove(module, 'weight')
+    # def prune_models(self, prune_amount):
+    #     for name, module in self.model_v.named_modules():
+    #         if isinstance(module, nn.Linear):
+    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
+    #             prune.remove(module, 'weight')  # Remove the pruning reparameterization
+    #     for name, module in self.model_b.named_modules():
+    #         if isinstance(module, nn.Linear):
+    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
+    #             prune.remove(module, 'weight')
+    #     for name, module in self.model_f.named_modules():           
+    #         if isinstance(module, nn.Linear):
+    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
+    #             prune.remove(module, 'weight')
 
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
@@ -650,6 +626,7 @@ if __name__ == "__main__":
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
     mp.save_all_models()
+    save_seed(seed,seed_filepath)
     
     #     mp.verifyCertificate()
     #     if not mp.flag_verified:
