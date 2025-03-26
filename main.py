@@ -203,8 +203,8 @@ class MotionPlanner:
                 if flag:
                     print_info("Completed with Sampling Based Training. Proceeding with SMT Verification")
                     break
-            if i%5000 == 0:
-                Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, self.config)
+            # if i%5000 == 0:
+            #     Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, self.config)
         stop_ = timeit.default_timer()
         print_info(f"Sampling Verification Time: {stop_ - start}")
         # SMT Verification
@@ -392,11 +392,11 @@ class MotionPlanner:
                 init_ball = Expression(0)
                 unsafe_ball = Expression(0)
                 #init_ball = logical_and(self.vars_[0] >= INIT[0][0], self.vars_[0] <= INIT[0][1], self.vars_[1] >= INIT[1][0], self.vars_[1] <= INIT[1][1])
-                initial_set_radius = config["init"]["radius"]
+                initial_set_radius = self.config["init"]["radius"]
                 init_ball = logical_and((self.vars_[0] - self.initial_set_center[0])**2 + (self.vars_[1] - self.initial_set_center[1])**2 <= initial_set_radius**2)
                 #unsafe_ball = logical_and(self.vars_[0] >= UNSAFE[0][0], self.vars_[0] <= UNSAFE[0][1], self.vars_[1] >= UNSAFE[1][0], self.vars_[1] <= UNSAFE[1][1])
-                unsafe_set_center = config["unsafe"]["centre"]
-                unsafe_set_radius = config["unsafe"]["radius"]
+                unsafe_set_center = self.config["unsafe"]["centre"]
+                unsafe_set_radius = self.config["unsafe"]["radius"]
                 unsafe_ball = logical_and((self.vars_[0] - unsafe_set_center[0])**2 + (self.vars_[1] - unsafe_set_center[1])**2 <= unsafe_set_radius**2)
                 # Constraint: x ∈ Ball → (B(c, xin) < 0 ∧ B(c, xun) >= 0)
                 condition = logical_imply(init_ball, B_learn < 0)
@@ -418,7 +418,7 @@ class MotionPlanner:
                         self.x_unsafe = x_unsafe.to(self.device)
                     else:
                         epsi = 1e-3
-                        DOMAIN = config["domain"]["range"]
+                        DOMAIN = self.config["domain"]["range"]
                         domain_ball = logical_and(self.vars_[0] >= DOMAIN[0][0], self.vars_[0] <= DOMAIN[0][1], self.vars_[1] >= DOMAIN[1][0], self.vars_[1] <= DOMAIN[1][1])
                         condition = logical_imply(logical_and(B_learn <= epsi, B_learn >= -epsi, domain_ball), B_learn_dot <= 0)
                         result = CheckSatisfiability(logical_not(condition),self.smt_config)
