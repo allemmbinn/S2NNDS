@@ -10,7 +10,7 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Worm"
+    lasa_name : str = "Angle"
     dataset_type : str = "LASA"
 
 def filter_args(args):
@@ -158,7 +158,7 @@ class MotionPlanner:
         self.X_test /= self.pos_scaling
         self.y_train /= self.vel_scaling
         self.y_test /= self.vel_scaling
-        self.initial_set_center = np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling
+        self.initial_set_center = (np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling).reshape(1,2)
 
     def generate_domain_data(self):
         self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
@@ -171,7 +171,14 @@ class MotionPlanner:
         self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
         self.init_max = np.where(self.init_max > 1, 1, self.init_max)
 
+
         self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
+        
+        num_rows = self.init_domain.size(0)
+        random_index = torch.randint(0, num_rows, (1,)).item()
+        self.initial_set_random = self.init_domain[random_index].reshape(1,2)
+        self.initial_set_center = torch.cat([self.initial_set_center, self.initial_set_random])
+        
         #self.N_init = self.config["init"]["N"]
         #self.init_range = ((np.concatenate((init_min, init_max), axis = 0)).transpose()).tolist()
         #self.init_domain, _ = data.generateGridData(self.N_init, self.init_range)
