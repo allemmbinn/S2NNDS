@@ -38,7 +38,7 @@
         "additional_N_domain" : 10
     },
     "init":{
-        "radius" : 0.1
+        "radius" : 0.05
     },
     "unsafe":{
         "shape" : "Rectangle",

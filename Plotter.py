@@ -12,15 +12,17 @@ def initialDSPlot(model_f, X_train, initial_set_center, dt):
         ax.plot(X[(i-1)*N+1:i*N,0], X[(i-1)*N+1:i*N,1],"b")
     # Plotting the final trajectory
     n = 3000
-    x = torch.zeros((n, 2))
-    # x[0] = torch.tensor(initial_set_center, dtype=torch.float32)
-    x[0] = initial_set_center.float()
-    x = x.to(device)
-    for j in range(1, n):
-        Fout = model_f(x[j-1])
-        x[j] = x[j-1] + Fout * dt
-    x = x.cpu().detach().numpy()
-    ax.plot(x[:, 0], x[:, 1],'r')
+    color = ['r','g']
+    for i in range(initial_set_center.shape[0]):
+        x = torch.zeros((n, 2))
+        #x[0] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        x[0] = initial_set_center[i].float()
+        x = x.to(device)
+        for j in range(1, n):
+            Fout = model_f(x[j-1])
+            x[j] = x[j-1] + Fout * dt
+        x = x.cpu().detach().numpy()
+        ax.plot(x[:, 0], x[:, 1],color[i])
 
     plt.xlabel('x')
     plt.ylabel('y')

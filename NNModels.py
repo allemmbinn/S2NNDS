@@ -116,5 +116,3 @@ class BarrierNet(nn.Module):
         Bout = self.layers_b[-1](y)
         return Bout
     
-
-

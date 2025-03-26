@@ -1,54 +1,60 @@
 {
     "model_f": {
-        "activation_function": "ReLU",
+        "activation_function": "Tanh",
         "hidden_neurons": 16,
         "layers" : 2,
-        "epochs_warm" : 100,
-        "learning_rate" : 1e-3,
+        "epochs_warm" : 200,
+        "learning_rate" : 5e-5,
         "batch_size" : 64,
         "lr_factor" : 0.1,
         "lr_patience" :5,
-        "init_decay" : 0.01
+        "init_decay" : 0.1        
     },
     "model_v": {
-        "activation_function": "ReLU",
-        "learning_rate": 7e-3,
+        "activation_function": "eLU",
+        "learning_rate": 5e-2,
+        "learning_rate_ft": 7e-3,
         "hidden_neurons": 64,
         "layers" : 2,
-        "max_iters" : 20000,
         "lr_factor" : 0.2,
         "lr_patience" :10,
-        "batch_size" : 5126,
-        "batch_size_training" : 5126
+        "warmup" : 10    
     },
     "model_b": {
-        "activation_function": "ReLU",
-        "learning_rate": 7e-3,
+        "activation_function": "eLU",
+        "learning_rate": 5e-2,
+        "learning_rate_ft": 7e-3,
         "hidden_neurons": 64,
         "layers" : 2,
         "lr_factor" : 0.2,
         "lr_patience" : 10,
-        "batch_number" : 5
+        "batch_size" : 256,
+        "warmup" : 10
         },
 
     "domain":{
         "N" : 50,
         "range" : [[-1,1],[-1,1]]
-    },
+        },
     "init":{
-        "N" : 50,
-        "radius" : 0.1
+        "radius" : 0.05
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "N" : 50,
-       "prev_range" : [[-0.6, -0.4], [-0.2,-0.01]],
-        "range" : [[0.10, 0.35], [-0.6,-0.4]]
+        "range" : [[-0.6, -0.4], [0.8,1.0]]
     },
     "counterex":{
+        "N_cex_domain" : 800,
         "N" : 1,
-        "radius" : 0.01,
-        "lr_increment_factor" : 1.5
+        "no_min" : 10,
+        "radius" : 0.001,
+        "lr_increment_factor" : 1.0,
+        "lyap_tol" : 0.0,
+        "pos_tol" : 0.0,
+        "bar_tol" : 0.0,
+        "inun_tol" : 0.0,
+        "lb" : 0,
+        "ub" : 0
     },
     "Barrier" : true,
     "plots" : true,
@@ -56,26 +62,29 @@
         "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Angle LASA with Obstacles"
+        "name" : "Worm LASA with Obstacles"
     },
     "hyperparameters" : {
-        "max_iters" : 50,
-        "decay_mse" : 1,
-        "decay_l2_f" : 0.0,
+        "max_iters" : 30,
+        "max_iters_ft" : 30,
+        "decay_mse" : 5,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
         "decay_lv" : 1,
         "decay_v0" : 1,
-        "decay_l2_V" : 0.01,
         "decay_init" : 1,
         "decay_unsafe" : 1,
         "decay_cut" : 1,
         "decay_lb" : 1,
-        "decay_l2_B" : 0.01,
-        "alpha" : 1e-4,
+        "alpha" : 1,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
-        "tol" : 0.001,
-        "lie_tol": 0.01
+        "lyap_tol" : 0.01,
+        "pos_tol" : 0.01,
+        "bar_tol" : 0.01,
+        "inun_tol" : 0.01, 
+        "lie_tol": 0.01,
+        "reg_bar" : 0.0,
+        "reg_v" : 0.0  
     }
 }
