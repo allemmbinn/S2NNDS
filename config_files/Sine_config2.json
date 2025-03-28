@@ -1,10 +1,10 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 16,
-        "layers" : 2,
-        "epochs_warm" : 150,
-        "learning_rate" : 1e-4,
+        "hidden_neurons": 64,
+        "layers" : 4,
+        "epochs_warm" : 100,
+        "learning_rate" : 1e-3,
         "batch_size" : 64,
         "lr_factor" : 0.1,
         "lr_patience" :5,
@@ -14,8 +14,8 @@
         "activation_function": "eLU",
         "learning_rate": 1e-2,
         "learning_rate_ft": 7e-3,
-        "hidden_neurons": 64,
-        "layers" : 2,
+        "hidden_neurons": 128,
+        "layers" : 3,
         "lr_factor" : 0.2,
         "lr_patience" :10,
         "warmup" : 10    
@@ -24,8 +24,8 @@
         "activation_function": "eLU",
         "learning_rate": 1e-2,
         "learning_rate_ft": 7e-3,
-        "hidden_neurons": 64,
-        "layers" : 2,
+        "hidden_neurons": 128,
+        "layers" : 3,
         "lr_factor" : 0.2,
         "lr_patience" : 10,
         "batch_size" : 256,
@@ -40,11 +40,12 @@
         "radius" : 0.05
     },
     "unsafe":{
-        "shape" : "Rectangle",
-        "range" : [[-0.6, -0.4], [0.7,1.0]]
+        "shape" : "Circle",
+        "center" : [-0.4,0.35],
+        "radius" : 0.1
     },
     "counterex":{
-        "N_cex_domain" : 800,
+        "N_cex_domain" : 500,
         "N" : 1,
         "no_min" : 10,
         "radius" : 0.001,
@@ -67,7 +68,7 @@
     "hyperparameters" : {
         "max_iters" : 30,
         "max_iters_ft" : 30,
-        "decay_mse" : 5,
+        "decay_mse" : 1,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
         "decay_lv" : 1,
@@ -82,9 +83,9 @@
         "lyap_tol" : 0.01,
         "pos_tol" : 0.01,
         "bar_tol" : 0.01,
-        "inun_tol" : 0.001, 
-        "lie_tol": 0.01,
+        "inun_tol" : 0.0001, 
+        "lie_tol": 0.005,
         "reg_bar" : 0.001,
-        "reg_v" : 0.001  
+        "reg_v" : 0.001 
     }
 }

@@ -10,7 +10,7 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Angle"
+    lasa_name : str = "Worm"
     dataset_type : str = "LASA"
 
 def filter_args(args):
@@ -185,11 +185,16 @@ class MotionPlanner:
 
         #Generate data for unsafe set
         #self.N_unsafe = self.config["unsafe"]["N"]
-        self.unsafe = self.config["unsafe"]["range"]
-        self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-        self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
-        self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
-
+        if self.config["unsafe"]["shape"] == 'Rectangle':
+            self.unsafe = self.config["unsafe"]["range"]
+            self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+            self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+            self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+        elif self.config["unsafe"]["shape"] == 'Circle':
+            self.uns_center = torch.tensor(self.config["unsafe"]["center"])
+            self.uns_rad = self.config["unsafe"]["radius"]
+            mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
+            self.unsafe_domain = self.domain[mask]
         #Dataset Generation and Shuffling
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
         init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
@@ -225,7 +230,13 @@ class MotionPlanner:
         self.load_model_states()     
         input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
-        unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
+        
+        if self.config["unsafe"]["shape"] == 'Rectangle':
+            unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
+        elif self.config["unsafe"]["shape"] == 'Circle':
+            mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
+            unsafe_domain = input_domain[mask]
+
         counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, 
                                                       input_domain, self.config)
         counterexamples_init = verification.verify_init(self.model_b, init_domain, self.config)
@@ -286,8 +297,10 @@ class MotionPlanner:
              print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
              self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_domain], dim=0), dim = 0)
              self.init_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.init_min)) & (self.domain_cex <= torch.tensor(self.init_max))).all(dim=1)]
-             self.unsafe_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.unsafe_min)) & (self.domain_cex <= torch.tensor(self.unsafe_max))).all(dim=1)]
-       
+             if self.config["unsafe"]["shape"] == 'Rectangle':
+                self.unsafe_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.unsafe_min)) & (self.domain_cex <= torch.tensor(self.unsafe_max))).all(dim=1)]
+             elif self.config["unsafe"]["shape"] == 'Circle':
+                self.unsafe_domain_cex = self.domain_cex[(torch.linalg.norm(self.domain_cex - self.uns_center, dim =1) <= self.uns_rad )]
         if add_data_init is not None:
             print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain_cex = torch.unique(torch.cat([self.init_domain_cex, add_data_init], dim=0), dim = 0)
@@ -297,7 +310,7 @@ class MotionPlanner:
             print_info(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain_cex = torch.unique(torch.cat([self.unsafe_domain_cex, add_data_unsafe], dim=0), dim =0)
             self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_unsafe], dim=0), dim = 0)
-
+                
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
             print_info("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
@@ -564,7 +577,20 @@ class MotionPlanner:
 
         if self.lyap_verify and self.bar_verify:
             print_success("Formal Verification Successful!")
-            
+
+    def final_model_eval(self):
+        self.model_f.eval()
+        self.mse = 0
+        total_samples = 0
+
+        for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
+            y_pred = self.model_f(X_batch.float().to(self.device))
+            loss_fn = nn.MSELoss(reduction = 'mean')
+            batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
+            self.mse += batch_mse.item()
+            total_samples += X_batch.size(0)  
+        self.mse = self.mse / total_samples
+
     # def prune_models(self, prune_amount):
     #     for name, module in self.model_v.named_modules():
     #         if isinstance(module, nn.Linear):
@@ -633,6 +659,8 @@ if __name__ == "__main__":
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
     mp.save_all_models()
+    mp.final_model_eval()
+    print_info(f"MSE for test data after certificate training: {mp.mse}")
     save_seed(seed,seed_filepath)
     
     #     mp.verifyCertificate()
