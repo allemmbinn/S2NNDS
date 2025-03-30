@@ -1,23 +1,32 @@
 from common_header import *
-from torch.utils.data import Dataset
 
-def generateGridData(N, RANGE):
+def generateGridData(N, RANGE, dim_in=2):
     y = torch.linspace(RANGE[1][0], RANGE[1][1], steps=N+1)
     epsilon_y = (RANGE[1][1]-RANGE[1][0])/N #Discretization parameter
     y = y[:-1] + epsilon_y/2
-    #y +=  (RANGE[1][1]-RANGE[1][0])/N
-    #y = torch.cat((torch.tensor([RANGE[1][0]]),y))
     x = torch.linspace(RANGE[0][0], RANGE[0][1], steps=N+1)
     epsilon_x = (RANGE[0][1]-RANGE[0][0])/N #Discretization parameter
     x = x[:-1] + epsilon_x/2
-    #x +=  (RANGE[0][1]-RANGE[0][0])/N
-    #x = torch.cat((torch.tensor([RANGE[0][0]]),x))
-    X, Y = torch.meshgrid(x, y, indexing='ij')
-    # Convert X and Y to torch tensors
-    # X_tensor = torch.tensor(X, dtype=torch.float32)
-    # Y_tensor = torch.tensor(Y, dtype=torch.float32)
-    X_tensor = X.float()
-    Y_tensor = Y.float()
-    input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
-    eps = np.sqrt(epsilon_x**2 + epsilon_y**2) / 2
+    if dim_in == 2:
+        # Create 2D meshgrid
+        X, Y = torch.meshgrid(x, y, indexing='ij')
+        # Convert to float tensors
+        X_tensor = X.float()
+        Y_tensor = Y.float()
+        # Stack into input data points
+        input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
+        eps = np.sqrt(epsilon_x**2 + epsilon_y**2) / 2
+    elif dim_in == 3:
+        # Create 3D meshgrid
+        z = torch.linspace(RANGE[2][0], RANGE[2][1], steps=N+1)
+        epsilon_z = (RANGE[2][1]-RANGE[2][0])/N
+        z = z[:-1] + epsilon_z/2
+        X, Y, Z = torch.meshgrid(x, y, z, indexing='ij')
+        # Convert to float tensors
+        X_tensor = X.float()
+        Y_tensor = Y.float()
+        Z_tensor = Z.float()
+        # Stack into input data points
+        input_data = torch.stack((X_tensor, Y_tensor, Z_tensor), dim=-1).reshape(-1, 3)
+        eps = np.sqrt(epsilon_x**2 + epsilon_y**2 + epsilon_z**2) / 2
     return input_data, eps

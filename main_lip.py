@@ -11,10 +11,11 @@ import verification
 @dataclass
 class ConfigFile:
     lasa_name : str = "Worm"
-    dataset_type : str = "LASA"
+    dataset_type : str = "LASA" # This can also be 3D_DSOPT
+    dsopt_name: str = "Cshape_bottom"
 
 def filter_args(args):
-    known_args = ['--lasa_name', '--dataset_type']
+    known_args = ['--lasa_name', '--dataset_type', '--dsopt_name']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
 
 def save_seed(seed, seed_filepath):
@@ -40,7 +41,10 @@ class MotionPlanner:
     def __init__(self, args):
         self.args = args
         # Load the configuration file
-        file_path = "./config_files/" + self.args.lasa_name + "_config2.json"
+        if self.args.dataset_type == 'LASA':
+            file_path = "./config_files/" + self.args.lasa_name + "_config2.json"
+        elif self.args.dataset_type == '3D_DSOPT':
+            file_path = "./config_files/" + self.args.dsopt_name + "_config2.json"
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -117,6 +121,8 @@ class MotionPlanner:
                 dataset = lasa.DataSet.GShape
             elif self.args.lasa_name == "SShape":
                 dataset = lasa.DataSet.SShape
+            elif self.args.lasa_name == "WShape":
+                dataset = lasa.DataSet.WShape
             elif self.args.lasa_name == "Leaf_2":
                 dataset = lasa.DataSet.Leaf_2
             elif self.args.lasa_name == "Sine":
@@ -149,6 +155,40 @@ class MotionPlanner:
             batch_size = self.config["model_f"]["batch_size"]
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
             self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+            self.initial_set_center = np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)
+        elif self.args.dataset_type == '3D_DSOPT':
+            folder_path = os.path.join(os.getcwd(),"datasets")
+            if not os.path.isdir(folder_path):
+                print_error("Run dsopt_dataset.sh to get the dataset")
+            path_name = os.path.join(folder_path, "3D_" + self.args.dsopt_name + ".mat")
+            if os.path.exists(path_name):
+                mat = scipy.io.loadmat(path_name)
+            else:
+                print("Dataset not found!")
+            self.demos = np.squeeze(mat["data"])
+            # Divide the data into training and testing
+            self.total_demos = len(self.demos)
+            self.dim_in = 3
+            train_size = int(0.75 * self.total_demos) 
+            train_indices = random.sample(range(self.total_demos), train_size)
+            test_indices = list(set(range(self.total_demos)) - set(train_indices))
+            self.X_train = np.concatenate([self.demos[i][:3] for i in train_indices], axis=1).T
+            self.X_test = np.concatenate([self.demos[i][:3] for i in test_indices], axis=1).T
+            self.y_train = np.concatenate([self.demos[i][3:] for i in train_indices], axis=1).T
+            self.y_test = np.concatenate([self.demos[i][3:] for i in test_indices], axis=1).T 
+            # Convert to Pytorch Tensors
+            self.X_train = torch.tensor(self.X_train, dtype=torch.float32)
+            self.X_test = torch.tensor(self.X_test, dtype=torch.float32)
+            self.y_train = torch.tensor(self.y_train, dtype=torch.float32)
+            self.y_test = torch.tensor(self.y_test, dtype=torch.float32)  
+            assert self.X_train.shape[0] == self.y_train.shape[0], "Mismatch in number of samples between X_train and y_train"
+            assert self.X_test.shape[0] == self.y_test.shape[0], "Mismatch in number of samples between X_test and y_test" 
+            train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
+            test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
+            batch_size = self.config["model_f"]["batch_size"]
+            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+            self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+            self.initial_set_center = np.mean([self.demos[i][:3, 0] for i in range(15)], axis=0)
         else:
             print_error("Non-LASA Dataset has been choosen")
         # Normalise the Trajectories to [-1, 1] #Use the maximum value to normalize and scale the data.
@@ -158,37 +198,48 @@ class MotionPlanner:
         self.X_test /= self.pos_scaling
         self.y_train /= self.vel_scaling
         self.y_test /= self.vel_scaling
-        self.initial_set_center = (np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling).reshape(1,2)
+        self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
     def generate_domain_data(self):
         self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
         self.RANGE = self.config["domain"]["range"] #The number of samples we want in the domain region
-        self.domain, _ = data.generateGridData(self.N_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
+        self.domain, _ = data.generateGridData(self.N_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
 
         #Generate data for initial set
-        self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,2)
-        self.init_min = np.where(self.init_min < -1, -1, self.init_min)
-        self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
-        self.init_max = np.where(self.init_max > 1, 1, self.init_max)
+        if self.args.dataset_type == 'LASA':
+            self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,2)
+            self.init_min = np.where(self.init_min < -1, -1, self.init_min)
+            self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
+            self.init_max = np.where(self.init_max > 1, 1, self.init_max)
+        elif self.args.dataset_type == '3D_DSOPT':
+                
+            self.init_min = (np.min([self.demos[i][:3,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,3)
+            self.init_min = np.where(self.init_min < -1, -1, self.init_min)
+            self.init_max = (np.max([self.demos[i][:3,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,3)
+            self.init_max = np.where(self.init_max > 1, 1, self.init_max)
 
 
         self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
         
         num_rows = self.init_domain.size(0)
         random_index = torch.randint(0, num_rows, (1,)).item()
-        self.initial_set_random = self.init_domain[random_index].reshape(1,2)
+        self.initial_set_random = self.init_domain[random_index].reshape(1,self.dim_in)
         self.initial_set_center = torch.cat([self.initial_set_center, self.initial_set_random])
         
         #self.N_init = self.config["init"]["N"]
         #self.init_range = ((np.concatenate((init_min, init_max), axis = 0)).transpose()).tolist()
-        #self.init_domain, _ = data.generateGridData(self.N_init, self.init_range)
+        #self.init_domain, _ = data.generateGridData(self.N_init, self.init_range, self.dim_in)
 
         #Generate data for unsafe set
         #self.N_unsafe = self.config["unsafe"]["N"]
         if self.config["unsafe"]["shape"] == 'Rectangle':
             self.unsafe = self.config["unsafe"]["range"]
-            self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-            self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+            if self.dim_in == 2:
+                self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+                self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+            elif self.dim_in == 3:
+                self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0], self.unsafe[2][0]])        
+                self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1], self.unsafe[2][1]])
             self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
         elif self.config["unsafe"]["shape"] == 'Circle':
             self.uns_center = torch.tensor(self.config["unsafe"]["center"])
@@ -225,10 +276,9 @@ class MotionPlanner:
         if hasattr(self, 'unsafe_cex'):
             del self.unsafe_domain_cex 
 
-
     def generate_counterexample_data(self):
         self.load_model_states()     
-        input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
+        input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
         
         if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -237,8 +287,7 @@ class MotionPlanner:
             mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
             unsafe_domain = input_domain[mask]
 
-        counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, 
-                                                      input_domain, self.config)
+        counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
         counterexamples_init = verification.verify_init(self.model_b, init_domain, self.config)
         counterexamples_unsafe = verification.verify_unsafe(self.model_b, unsafe_domain, self.config)
         # if counterexamples_domain.dim() == 1:
@@ -369,16 +418,17 @@ class MotionPlanner:
             # wandb.log({"DS_training_loss": total_loss})
             #evaluate accuracy at end of each epoch           
             self.model_f.eval()
+            total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
                 mse = loss_fn(y_pred, y_batch.float().to(self.device))
-                mse = float(mse)
-                history.append(mse)
-                if loss < best_mse:
-                    best_mse = mse
-                    best_weights = copy.deepcopy(self.model_f.state_dict())
-                with torch.no_grad():
-                    torch.cuda.empty_cache()
+                total_loss += mse.item()
+            history.append(total_loss)
+            if total_loss < best_mse:
+                best_mse = total_loss
+                best_weights = copy.deepcopy(self.model_f.state_dict())
+            with torch.no_grad():
+                torch.cuda.empty_cache()
         # restore model and return best accuracy
         self.model_f.load_state_dict(best_weights)
         # Store the model state dictionary
@@ -614,15 +664,18 @@ if __name__ == "__main__":
     try:
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
-       seed = 0  # seed value
-    #seed = random.randint(0, 100)
+        seed = 0  # seed value
+        seed = random.randint(0, 100)
     set_seed(seed)
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+    if args.dataset_type == '3D_DSOPT':
+        Plotter.initial3DDSPlot(mp.model_f, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
+    elif args.dataset_type == 'LASA':
+        Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
@@ -652,7 +705,10 @@ if __name__ == "__main__":
                 param_group['lr'] = mp.lr_v
             for param_group in mp.optimizer_b.param_groups:
                 param_group['lr'] = mp.lr_b
-            Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+            if filtered_args['dataset_type'] == '3D_DSOPT':
+                Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
+            elif filtered_args['dataset_type'] == 'LASA':
+                Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
             break

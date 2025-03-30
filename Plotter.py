@@ -1,6 +1,7 @@
 from common_header import *
 from cmcrameri import cm
 
+
 def initialDSPlot(model_f, X_train, initial_set_center, dt):
     device = next(model_f.parameters()).device
     # Plotting the Training Data after Warm-starting
@@ -29,6 +30,32 @@ def initialDSPlot(model_f, X_train, initial_set_center, dt):
     plt.title('Trajectories of the Dynamical System')
     plt.grid(True)
     plt.axis('equal')
+    plt.show()
+
+def initial3DDSPlot(model_f, demos, initial_set_center):
+    device = next(model_f.parameters()).device
+    # Create a figure and 3D axes
+    fig = plt.figure(figsize=(10, 8))
+    ax = plt.axes(projection='3d')
+    for i in range(demos.shape[0]):
+        ax.plot3D(demos[i][0,:], demos[i][1,:], demos[i][2,:], 'blue')
+    # Plotting the final trajectory
+    n = 3000
+    dt = 0.01
+    x = torch.zeros((n, 3))
+    x[0, :] = initial_set_center
+    x = x.to(device)
+    for j in range(1, n):
+        Fout = model_f(x[j-1])
+        x[j] = x[j-1] + Fout * dt
+    x = x.cpu().detach().numpy()
+    ax.plot(x[:, 0], x[:, 1], x[:, 2],'red')
+
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+    plt.title('Trajectories of the Dynamical System')
+    plt.grid(True)
     plt.show()
 
 def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
@@ -131,12 +158,21 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
                         bbox_to_anchor=(0, 1))
     plt.show()
 
-def plotLyapunov(model_v):
+def plotLyapunov(model_v, dim_in=2):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
     x2 = torch.linspace(-1, 1, 50)
-    X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
-    # Flatten to pass into the model
-    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    if dim_in == 3:
+        x3 = torch.linspace(-1, 1, 50)
+        # Create a 3D meshgrid
+        X1, X2, X3 = torch.meshgrid(x1, x2, x3)
+        # Flatten to pass into the model
+        inputs = torch.stack([X1.flatten(), X2.flatten(), X3.flatten()], dim=1)
+    elif dim_in == 2:
+        # Create a 2D meshgrid
+        X1, X2 = torch.meshgrid(x1, x2)        
+        # Flatten to pass into the model
+        inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    model_v = model_v.to(inputs.device)
     V_value = model_v(inputs).detach().numpy()
     V_value = V_value.reshape(50,50)
     plt.figure(figsize=(8, 6))
@@ -147,12 +183,21 @@ def plotLyapunov(model_v):
     plt.title("Lyapunov Heatmap")
     plt.show()
 
-def plotBarrier(model_b):
+def plotBarrier(model_b, dim_in=2):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
     x2 = torch.linspace(-1, 1, 50)
-    X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
-    # Flatten to pass into the model
-    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    if dim_in == 3:
+        x3 = torch.linspace(-1, 1, 50)
+        # Create a 3D meshgrid
+        X1, X2, X3 = torch.meshgrid(x1, x2, x3)
+        # Flatten to pass into the model
+        inputs = torch.stack([X1.flatten(), X2.flatten(), X3.flatten()], dim=1)
+    elif dim_in == 2:
+        # Create a 2D meshgrid
+        X1, X2 = torch.meshgrid(x1, x2)        
+        # Flatten to pass into the model
+        inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    model_b = model_b.to(inputs.device)
     B_value = model_b(inputs).detach().numpy()
     B_value = B_value.reshape(50,50)
     plt.figure(figsize=(8, 6))

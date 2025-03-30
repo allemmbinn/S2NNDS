@@ -38,7 +38,8 @@ def loss_function_domain(model_v, model_b, model_f, input_domain, config):
     input_domain = input_domain.float().to(device)
     #Lyapunov Losses
     # Zero set
-    x_0 = torch.zeros([1, 2]).to(device)
+    dim_in = input_domain.shape[1]
+    x_0 = torch.zeros([1, dim_in]).to(device)
     V_0 = model_v(x_0) 
     # Compute lie derivative of V : L_V = ∑∂V/∂xᵢ*fᵢ
     input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)

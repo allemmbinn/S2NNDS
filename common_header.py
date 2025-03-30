@@ -9,7 +9,7 @@ import torch.nn.utils as utils
 # Plotting Requirements
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits import mplot3d
 
 # Other Requirements
 import os

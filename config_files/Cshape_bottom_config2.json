@@ -1,14 +1,14 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 64,
+        "hidden_neurons": 16,
         "layers" : 2,
-        "epochs_warm" : 800,
-        "learning_rate" : 7e-3,
-        "batch_size" : 128,
+        "epochs_warm" : 100,
+        "learning_rate" : 1e-3,
+        "batch_size" : 64,
         "lr_factor" : 0.1,
         "lr_patience" :5,
-        "init_decay" : 0.01
+        "init_decay" : 0.1        
     },
     "model_v": {
         "activation_function": "eLU",
@@ -31,18 +31,18 @@
         "batch_size" : 256,
         "warmup" : 10
         },
+
     "domain":{
         "N" : 50,
-        "range" : [[-1,1],[-1,1]],
+        "range" : [[-1,1],[-1,1],[-1,1]],
         "additional_N_domain" : 10
     },
     "init":{
-        "N" : 20,
-        "radius" : 0.1
+        "radius" : 0.05
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "range" : [[-0.6, -0.4], [-0.2,-0.1]]
+        "range" : [[-0.6, -0.4], [-0.2,-0.1], [-0.5, 0.5]]
     },
     "counterex":{
         "N_cex_domain" : 800,
@@ -63,10 +63,10 @@
         "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "GShape LASA with Obstacles"
+        "name" : "Worm LASA with Obstacles"
     },
     "hyperparameters" : {
-        "max_iters" : 50,
+        "max_iters" : 30,
         "max_iters_ft" : 30,
         "decay_mse" : 5,
         "decay_lf" : 0.0,

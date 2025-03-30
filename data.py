@@ -12,13 +12,14 @@ def generateCircularData(N, r, centre):
     x_coord = radius * np.cos(angle)
     y_coord = radius * np.sin(angle)
     offset = torch.cat([x_coord, y_coord], dim=1)
-
     angle = (2 * np.pi) * torch.rand(border_batch, 1)
     x_coord = r * np.cos(angle)
     y_coord = r * np.sin(angle)
     offset_border = torch.cat([x_coord, y_coord], dim=1)
     offset = torch.cat([offset, offset_border])
     return torch.tensor(centre) + offset
+
+
 
 def generateGridData(N, RANGE):
     y = torch.linspace(RANGE[1][0], RANGE[1][1], steps=N)
