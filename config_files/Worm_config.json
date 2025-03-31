@@ -1,6 +1,4 @@
 {
-    "device" : "cpu",
-    "dim_in" : 2,
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 32,
@@ -15,7 +13,8 @@
         "layers" : 1,
         "max_iters" : 20000,
         "scheduler" : {
-            "gamma" : 0.9998
+            "start_factor" : 1.0,
+            "end_factor"   : 0.0001
         },
         "batch_size" : 10000
     },
@@ -27,20 +26,10 @@
         "max_iters" : 50000,
         "batch_size" : 10000
     },
-    "dataset": {
-        "type" : "LASA",
-        "name" : "Worm",
-        "datashape" : 1000,
-        "path" : "/home/allemmbinn/Documents/NN_DS/LASA_Datasets/"
-    },
-    "domain": {
-        "shape" : "Rectangle",
-        "range" : [[-1.5, 1.5], [-1.5, 1.5]],
-        "N" : 1000,
-        "radius" : 0.1
+    "domain":{
+        "N" : 1000
     },
     "init":{
-        "shape" : "Circle",
         "N" : 1000,
         "radius" : 0.1
     },
@@ -74,8 +63,5 @@
         "epi_bound" : 0.05,
         "eta" : 1e-2,
         "n_counter_examples" : 20
-    },
-    "wandb" : {
-        "name" : "Worm with Obstacles"
     }
 }

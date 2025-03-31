@@ -1,6 +1,4 @@
 {
-    "device" : "cuda",
-    "dim_in" : 2,
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 32,
@@ -10,10 +8,10 @@
     },
     "model_v": {
         "activation_function": "Tanh",
-        "learning_rate": 1e-3,
-        "hidden_neurons": 64,
+        "learning_rate": 1e-2,
+        "hidden_neurons": 32,
         "layers" : 1,
-        "max_iters" : 30000,
+        "max_iters" : 20000,
         "scheduler" : {
             "start_factor" : 1.0,
             "end_factor"   : 0.0001
@@ -23,22 +21,13 @@
     "model_b": {
         "activation_function": "Tanh",
         "learning_rate": 1e-3,
-        "hidden_neurons": 64,
+        "hidden_neurons": 32,
         "layers" : 2,
         "max_iters" : 50000,
         "batch_size" : 10000
     },
-    "dataset": {
-        "type" : "LASA",
-        "name" : "Wshape",
-        "datashape" : 1000,
-        "path" : "/home/allemmbinn/Documents/NN_DS/LASA_Datasets/"
-    },
     "domain": {
-        "shape" : "Rectangle",
-        "range" : [[-1.5, 1.5], [-1.5, 1.5]],
-        "N" : 1000,
-        "radius" : 0.1
+        "N" : 1000
     },
     "init":{
         "shape" : "Circle",
@@ -48,35 +37,32 @@
     "unsafe":{
         "shape" : "Circle",
         "N" : 1000,
-        "radius" : 0.1,
-        "centre" : [-0.25,-0.1]
+        "radius" : 0.15,
+        "centre" : [-0.5,0.25]
     },
-    "Barrier" : true,
+    "Barrier" : false,
     "plots" : true,
     "plotting" : {
-        "range" : [[-1.2,0.25],[-1.0, 0.25]],
+        "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Wshape LASA without Obstacles"
+        "name" : "Leaf2 LASA without Obstacles"
     },
     "hyperparameters" : {
-        "decay_vpos" : 0.5,
-        "decay_lv" : 1.5,
-        "decay_tune" : 2,
+        "decay_vpos" : 1,
+        "decay_lv" : 1,
+        "decay_tune" : 1,
         "decay_l0" : 1,
         "decay_mse" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,
-        "decay_cut" : 2,
-        "decay_lb" : 3,
+        "decay_cut" : 1,
+        "decay_lb" : 1,
         "epsilon_v" : 1e-3,
         "epsilon_b" : 1e-3,
         "alpha" : 1e-4,
         "epi_bound" : 0.05,
-        "eta" : 1e-2,
+        "eta" : 1e-3,
         "n_counter_examples" : 20
-    },
-    "wandb" : {
-        "name" : "Wshape with Obstacles"
     }
 }

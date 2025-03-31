@@ -1,14 +1,8 @@
 from common_header import *
 from cmcrameri import cm
 
-# Load the configuration file
-config_file = os.environ.get('CONFIG_FILE', 'config.json')
-with open(config_file) as file:
-    config = json.load(file) 
-
-device = config["device"]
-
 def initialDSPlot(model_f, X_train, initial_set_center):
+    device = next(model_f.parameters()).device
     # Plotting the Training Data after Warm-starting
     fig, ax = plt.subplots()
     X = X_train
@@ -35,7 +29,8 @@ def initialDSPlot(model_f, X_train, initial_set_center):
     plt.axis('equal')
     plt.show()
 
-def lyapunovBarrierPlot(model_v, X_train, mean_point, model_b = None):
+def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
+    device = next(model_v.parameters()).device
     N = 1000
     fig, ax = plt.subplots()
     # Define grid for plotting

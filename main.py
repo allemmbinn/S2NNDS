@@ -10,74 +10,140 @@ from dreal import *
 config_file = os.environ.get('CONFIG_FILE', 'config.json')
 with open(config_file) as file:
     config = json.load(file)
-try:
-    if config["wandb"] == "None":
-        wandb_name = "LASA"
-    else:
-        wandb_name = config["wandb"]["name"]
-except:
+if config["wandb"] == "None":
     wandb_name = "LASA"
+else:
+    wandb_name = config["wandb"]["name"]
 wandb.init(project=wandb_name, config=config)
 class MotionPlanner:
-    def __init__(self):
-        self.N_domain = config["domain"]["N"]
-        self.hidden_neurons_f = config["model_f"]["hidden_neurons"]
-        self.hidden_layers_f = config["model_f"]["layers"]
-        self.device = config["device"]
-        self.dim_in = config["dim_in"]
+    def __init__(self, args):
+        self.args = args
+        # Load the configuration file
+        file_path = "./config_files/" + self.args.lasa_name + "_config.json"
+        with open(file_path) as file:
+            self.config = json.load(file)
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.dim_in = config["dim_in"]
         # For Verification
-        x1 = Variable("x1")
-        x2 = Variable("x2")
-        self.vars_ = [x1,x2]
+        # x1 = Variable("x1")
+        # x2 = Variable("x2")
+        # self.vars_ = [x1,x2]
         self.smt_config = Config()
         self.smt_config.use_polytope_in_forall = True
         self.smt_config.use_local_optimization = True
         self.smt_config.precision = 1e-5
         self.beta = 1e-3
         self.ball_lb = 1e-2
-        self.ball_ub = 1.01
+        self.ball_ub = 1.5
     
+    def calculate_limits(self, data, x_limit_fact=1.0, y_limit_fact=1.0):
+        x_min = np.min(data[0, :])
+        x_max = np.max(data[0, :])
+        x_range = x_max - x_min
+        
+        y_min = np.min(data[1, :])
+        y_max = np.max(data[1, :])
+        y_range = y_max - y_min
+        
+        xy_range = max(x_range, y_range)
+        
+        x_lowerlim = x_min - xy_range * x_limit_fact
+        x_upperlim = x_max + xy_range * x_limit_fact
+        y_lowerlim = y_min - xy_range * y_limit_fact
+        y_upperlim = y_max + xy_range * y_limit_fact
+        
+        limits = [[x_lowerlim, x_upperlim], [y_lowerlim, y_upperlim]]
+        return limits
+
     def generateData(self):
-        self.X_train, self.y_train, self.X_test, self.y_test = data.generateReferenceData()
+        if self.args.dataset_type == 'LASA':
+            if self.args.lasa_name == "Angle":
+                dataset = lasa.DataSet.Angle
+            elif self.args.lasa_name == "Worm":
+                dataset = lasa.DataSet.Worm
+            elif self.args.lasa_name == "CShape":
+                dataset = lasa.DataSet.CShape
+            elif self.args.lasa_name == "DoubleBendedLine":
+                dataset = lasa.DataSet.DoubleBendedLine
+            elif self.args.lasa_name == "GShape":
+                dataset = lasa.DataSet.GShape
+            elif self.args.lasa_name == "SShape":
+                dataset = lasa.DataSet.SShape
+            elif self.args.lasa_name == "Leaf_2":
+                dataset = lasa.DataSet.Leaf_2
+            elif self.args.lasa_name == "Sine":
+                dataset = lasa.DataSet.Sine
+            else:
+                print_error("Invalid LASA Dataset has been choosen")
+                raise NotImplementedError
+            self.dt = dataset.dt
+            demos = dataset.demos
+            # Divide the data into training and testing
+            total_demos = len(demos)
+            train_size = int(5/7 * total_demos) # 5/7 datasets are used for training
+            train_indices = random.sample(range(total_demos), train_size)
+            test_indices = list(set(range(total_demos)) - set(train_indices))
+            self.X_train = np.concatenate([demos[i].pos for i in train_indices], axis=1).T
+            self.X_test = np.concatenate([demos[i].pos for i in test_indices], axis=1).T
+            self.y_train = np.concatenate([demos[i].vel for i in train_indices], axis=1).T
+            self.y_test = np.concatenate([demos[i].vel for i in test_indices], axis=1).T #TODO: Randomize the data and shuffle into batches
+        else:
+            print_error("Non-LASA Dataset has been choosen")
+        # Normalise the Trajectories to [-1, 1]
+        pos_scaling = max(np.max(np.linalg.norm(self.X_train, axis=1)), np.max(np.linalg.norm(self.X_test, axis=1)))
+        vel_scaling = max(np.max(np.linalg.norm(self.y_train, axis=1)), np.max(np.linalg.norm(self.y_test, axis=1)))
+        self.X_train /= pos_scaling
+        self.X_test /= pos_scaling
+        self.y_train /= vel_scaling
+        self.y_test /= vel_scaling     
+        # mean_pos = np.mean(total_data, axis=0)
+        # std_dev_pos = np.std(total_data, axis=0)
+        # mean_vel = np.mean(self.y_train, axis=0)
+        # std_dev_vel = np.std(self.y_train, axis=0)
+        # self.X_train = (self.X_train - mean_pos) / std_dev_pos
+        # self.X_test = (self.X_test - mean_pos) / std_dev_pos
+        # self.y_train = (self.y_train - mean_vel) / std_dev_vel
+        # self.y_test = (self.y_test - mean_vel) / std_dev_vel
+        # Check Limits
+        self.limits = self.calculate_limits(self.X_train.T)
+        # Finding the mean_point
+        mean_point = np.mean([demos[i].pos[:,0] for i in range(total_demos)], axis=0)/pos_scaling
         # Get initial set center
-        self.x_domain = data.generateData(self.N_domain, "domain").to(self.device)
-        if config["Barrier"]:
+        self.N_domain = self.config["domain"]["N"]
+        self.x_domain = data.generateRectangularData(self.N_domain, self.limits).to(self.device)
+        if self.config["Barrier"]:
             # Get Init Data Points
-            # Get initial set center
-            N = config["dataset"]["datashape"]
-            n = int(self.X_train.shape[0]/N)
-            mean_point = [0,0]
-            for i in range(n):
-                mean_point += self.X_train[(i-1)*N]
-            mean_point /= n
             self.initial_set_center = mean_point
-            self.N_init = config["init"]["N"]
-            self.x_init = data.generateData(self.N_init, "init", self.initial_set_center) 
+            self.N_init = self.config["init"]["N"]
+            self.x_init = data.generateCircularData(self.N_init, self.config["init"]["radius"], self.initial_set_center).to(self.device)            
             # Get Unsafe Data Points
-            self.N_unsafe = config["unsafe"]["N"]
-            self.x_unsafe = data.generateData(self.N_unsafe, "unsafe").to(self.device)
+            self.N_unsafe = self.config["unsafe"]["N"]
+            if self.config["unsafe"]["shape"] == "Circle":
+                self.x_unsafe = data.generateCircularData(self.N_unsafe, self.config["unsafe"]["radius"], self.config["unsafe"]["centre"]).to(self.device)
+            else:
+                print_error("Non-Circular Unsafe Set has been choosen") #TODO: Add code for rectangular data
+                raise NotImplementedError
         else:
             # Get Init Data Points
-            # Get initial set center
-            N = config["dataset"]["datashape"]
-            n = int(self.X_train.shape[0]/N)
-            mean_point = [0,0]
-            for i in range(n):
-                mean_point += self.X_train[(i-1)*N]
-            mean_point /= n
             self.initial_set_center = mean_point
-            self.N_init = config["init"]["N"]
-            self.x_init = data.generateData(self.N_init, "init", self.initial_set_center).to(self.device) 
+            self.N_init = self.config["init"]["N"]
+            self.x_init = data.generateCircularData(self.N_init, self.config["init"]["radius"], self.initial_set_center).to(self.device) 
+        # DIMENSION
+        self.dim_in = self.X_train.shape[1]
+        self.vars_ = [Variable(f"x{i}") for i in range(self.dim_in)]           
 
     def trainInitialDynamics(self):
+        self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
+        self.hidden_layers_f = self.config["model_f"]["layers"]
+        sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
-        self.model_f = NNModels.DyanmicsNet(self.dim_in, self.hidden_f).to(self.device)
+        self.model_f = NNModels.DyanmicsNet(self.dim_in, self.hidden_f, sigmoid_f).to(self.device)
         best_mse = np.inf   # init to infinity
         best_weights = None
         history = []
-        loss_fn = nn.MSELoss()  # mean square error
-        optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr = config["model_f"]["learning_rate"])
-        for epoch in range(config["model_f"]["epochs_warm"]):
+        loss_fn = nn.MSELoss()  # mean square error #TODO: Add Lyapunov, barrier, regularization loss
+        optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr = self.config["model_f"]["learning_rate"])
+        for epoch in range(self.config["model_f"]["epochs_warm"]):
             self.model_f.train()
             # Calculate the loss
             y_pred = self.model_f(torch.tensor(self.X_train, dtype=torch.float32).to(self.device))
@@ -92,7 +158,6 @@ class MotionPlanner:
             mse = loss_fn(y_pred, torch.tensor(self.y_test).to(self.device))
             mse = float(mse)
             history.append(mse)
-            wandb.log({"DS_training_loss": loss.item()})
             if loss < best_mse:
                 best_mse = mse
                 best_weights = copy.deepcopy(self.model_f.state_dict())
@@ -103,63 +168,66 @@ class MotionPlanner:
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
     
     def trainLyapunovFunction(self):
-        hidden_neurons_v = config["model_v"]["hidden_neurons"]
-        hidden_layers_v = config["model_v"]["layers"]
+        hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
+        hidden_layers_v = self.config["model_v"]["layers"]
         hidden_v = [hidden_neurons_v] * hidden_layers_v
         self.model_v = NNModels.LyapunovNet(
             n_input=self.dim_in,
             hidden_v=hidden_v,
             hidden_f=self.hidden_f,
-            model_f=self.model_f
+            model_f=self.model_f,
+            sigmoid_f=NNModels.assignActivationFunction(self.config['model_f']['activation_function']),
+            sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])
         ).to(self.device)      
-        max_iters = config["model_v"]["max_iters"]
-        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = config["model_v"]["learning_rate"])
+        max_iters = self.config["model_v"]["max_iters"]
+        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"])
+        # SMT Verification
+        self.ball_ub = max([x_range[1] for x_range in self.limits])
         # Provide the start factor and end factor
-        try:
-            if config["model_v"]["scheduler"]["start_factor"] == "None":
-                start_factor = 1.0
-            else:
-                start_factor = config["model_v"]["scheduler"]["start_factor"]
-            if config["model_v"]["scheduler"]["end_factor"] == "None":
-                end_factor = 0.0001
-            else:
-                end_factor = config["model_v"]["scheduler"]["end_factor"]
-        except:
+        if config["model_v"]["scheduler"]["start_factor"] == "None":
             start_factor = 1.0
+        else:
+            start_factor = config["model_v"]["scheduler"]["start_factor"]
+        if config["model_v"]["scheduler"]["end_factor"] == "None":
             end_factor = 0.0001
+        else:
+            end_factor = config["model_v"]["scheduler"]["end_factor"]
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=start_factor, end_factor=end_factor, total_iters=max_iters)
-        self.model_v.train()
+        """self.model_v.train() #I don't think we need dropout and batch normalizing- in fact, overfitting is preferred.
+        Moreover we have already normalized the input data"""
         # Starting with Sampling Based Verification
         start = timeit.default_timer()
+        # TODO : CHANGE THIS
         for i in range(max_iters):
-            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
             optimizer_v.zero_grad()
             lyapunov_risk.backward()
             optimizer_v.step()
             scheduler_v.step()
             if i%200 == 0:
-                self.x_domain, flag = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i)    
+                self.x_domain, flag = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i, self.config, DOMAIN=self.limits)    
                 if flag:
                     print_info("Completed with Sampling Based Training. Proceeding with SMT Verification")
                     break
-            if i%5000 == 0:
-                Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center)
+            # if i%5000 == 0:
+            #     Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, self.config)
         stop_ = timeit.default_timer()
         print_info(f"Sampling Verification Time: {stop_ - start}")
         # SMT Verification
-        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = config["model_v"]["learning_rate"])
+        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"])
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=1.0, end_factor=0.01, total_iters=max_iters)
         self.model_v.train()
         verified_flag = False
         for i in range(max_iters):
-            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
+            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
             optimizer_v.zero_grad()
             lyapunov_risk.backward()
             optimizer_v.step()
             scheduler_v.step()
             if i%200 == 0:
                 # Finding the values for the new model function
-                z = self.vars_
+                z = self.vars_  # Initial input
+                # Dynamics Function (Fout)
                 for idx, layer in enumerate(self.model_v.layers_f[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
@@ -169,18 +237,22 @@ class MotionPlanner:
                 z = last_layer @ z
                 z += self.model_v.layers_f[-1].bias.data.cpu().numpy()
                 f_learn = z
-                # save the weights and biases
+
+                # Lyapunov Function (Vout)
                 z = self.vars_
                 jacobian = np.eye(self.model_v.input_size, self.model_v.input_size)
-                for idx, layer in enumerate(self.model_v.layers_v[:]):
+                for idx, layer in enumerate(self.model_v.layers_v[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
                     z = smt_verification.hyper_tan_dr(zhat)
-                    # Vdot
+                    # Vdot computation
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-                V_learn = z[0]
+                # Last layer for Lyapunov Function
+                w_last = self.model_v.layers_v[-1].weight.data.cpu().numpy()
+                b_last = self.model_v.layers_v[-1].bias.data.cpu().numpy()
+                V_learn = (w_last @ z + b_last)[0]
                 gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 V_learn_dot = (gradV @ f_learn)[0]
                 print_info('===========Verifying==========')
@@ -194,35 +266,43 @@ class MotionPlanner:
                     print_success("Satisfy conditions")
                     print_success(f"{V_learn} is a Lyapunov function with Epsilon: {self.beta}")
                     verified_flag = True
-                    name = config["dataset"]["name"]
-                    file_path = f"./models/{name}_model_v.pth"
-                    torch.save(self.model_v.state_dict(), file_path)
-                    wandb.save(file_path)
+                    name = self.args.lasa_name
+                    folder_path = os.path.join(os.curdir, "models")
+                    if os.path.isdir(folder_path):
+                        torch.save(self.model_v.state_dict(), os.path.join(folder_path, f"{name}_model_v.pth"))
+                    else:
+                        try:
+                            os.makedirs(folder_path)
+                            torch.save(self.model_v.state_dict(), os.path.join(folder_path, f"{name}_model_v.pth"))
+                        except OSError as e:
+                            print_error(f"Error creating folder '{folder_path}': {e}")
                     break
+                    
         stop = timeit.default_timer()
         print_info(f"Total Verification Time: {stop - start}")
         return verified_flag
 
     def trainBarrierCertificate(self):
-        hidden_neurons_b = config["model_b"]["hidden_neurons"]
-        hidden_layers_b = config["model_b"]["layers"]
+        hidden_neurons_b = self.config["model_b"]["hidden_neurons"]
+        hidden_layers_b  = self.config["model_b"]["layers"]
         hidden_b = [hidden_neurons_b] * hidden_layers_b
         self.model_b = NNModels.BarrierNet(
             n_input=self.dim_in,
-            hidden_b=hidden_b).to(self.device)      
-        max_iters = config["model_b"]["max_iters"]
-        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = config["model_v"]["learning_rate"])
+            hidden_b=hidden_b,
+            sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)      
+        max_iters = self.config["model_b"]["max_iters"]
+        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"])
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
-        optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = config["model_b"]["learning_rate"])
+        optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"])
         scheduler_b = torch.optim.lr_scheduler.LinearLR(optimizer_b, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
-        self.model_v.train()
-        self.model_b.train()
+        #self.model_v.train()
+        #self.model_b.train()
         # Starting with Sampling Based Verification
         start = timeit.default_timer()
         for i in range(max_iters):
-            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
-            barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i)
-            total_loss = lyapunov_risk + barrier_risk
+            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
+            barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i, self.config)
+            total_loss = lyapunov_risk + barrier_risk #I think the barrier training should not be independent of the dynamical system.
             optimizer_v.zero_grad()
             optimizer_b.zero_grad()
             total_loss.backward()
@@ -231,24 +311,24 @@ class MotionPlanner:
             scheduler_v.step()
             scheduler_b.step()
             if i%100 == 0:
-                self.x_domain, flag_v = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i)    
-                self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center)    
+                self.x_domain, flag_v = Loss_Functions.lyapunovVerify(self.model_v, self.x_domain, i, self.config, DOMAIN=self.limits)    
+                self.x_init, self.x_unsafe, self.x_domain, flag_b = Loss_Functions.barrierVerify(self.model_v, self.model_b, self.x_domain, self.x_unsafe, self.x_init, self.initial_set_center, self.config, DOMAIN=self.limits)    
                 if flag_v and flag_b:
                     print_info("Completed with Sampling Based Training. Proceeding with SMT Verification")
                     break
         stop_ = timeit.default_timer()
         print_info(f"Sampling Verification Time: {stop_ - start}")
         # SMT Verification
-        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = config["model_v"]["learning_rate"])
+        optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"])
         scheduler_v = torch.optim.lr_scheduler.LinearLR(optimizer_v, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
-        optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = config["model_b"]["learning_rate"])
+        optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"])
         scheduler_b = torch.optim.lr_scheduler.LinearLR(optimizer_b, start_factor=1.0, end_factor=0.001, total_iters=max_iters)
-        self.model_v.train()
-        self.model_b.train()
+        #self.model_v.train()
+        #self.model_b.train()
         verified_flag = False
         for i in range(max_iters):
-            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i)
-            barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i)
+            lyapunov_risk = Loss_Functions.loss_function_v(self.model_v, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), torch.tensor(self.y_train,dtype=torch.float32).to(self.device), i, self.config)
+            barrier_risk = Loss_Functions.loss_function_b(self.model_b, self.model_v, self.x_init, self.x_unsafe, self.x_domain, torch.tensor(self.X_train,dtype=torch.float32).to(self.device), i, self.config)
             total_loss = lyapunov_risk + barrier_risk
             optimizer_v.zero_grad()
             optimizer_b.zero_grad()
@@ -259,7 +339,8 @@ class MotionPlanner:
             scheduler_b.step()
             if i%200 == 0:
                 # Finding the values for the new model function
-                z = self.vars_
+                z = self.vars_  # Initial input
+                # Dynamics Function (Fout)
                 for idx, layer in enumerate(self.model_v.layers_f[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
@@ -269,24 +350,28 @@ class MotionPlanner:
                 z = last_layer @ z
                 z += self.model_v.layers_f[-1].bias.data.cpu().numpy()
                 f_learn = z
-                # save the weights and biases
+
+                # Lyapunov Function (Vout)
                 z = self.vars_
                 jacobian = np.eye(self.model_v.input_size, self.model_v.input_size)
-                for idx, layer in enumerate(self.model_v.layers_v[:]):
+                for idx, layer in enumerate(self.model_v.layers_v[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
                     z = smt_verification.hyper_tan_dr(zhat)
-                    # Vdot
+                    # Vdot computation
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-                V_learn = z[0]
+                # Last layer for Lyapunov Function
+                w_last = self.model_v.layers_v[-1].weight.data.cpu().numpy()
+                b_last = self.model_v.layers_v[-1].bias.data.cpu().numpy()
+                V_learn = (w_last @ z + b_last)[0]
                 gradV = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 V_learn_dot = (gradV @ f_learn)[0]
                 # save the weights and biases
                 z = self.vars_
                 jacobian = np.eye(self.model_b.input_size, self.model_b.input_size)
-                for idx, layer in enumerate(self.model_b.layers_b[:]):
+                for idx, layer in enumerate(self.model_b.layers_b[:-1]):
                     w = layer.weight.data.cpu().numpy()
                     b = layer.bias.data.cpu().numpy()
                     zhat = w @ z + b
@@ -294,7 +379,10 @@ class MotionPlanner:
                     # Vdot
                     jacobian = w @ jacobian
                     jacobian = np.diagflat(smt_verification.hyper_tan_der_dr(zhat)) @ jacobian
-                B_learn = z[0]
+                # For the final layer
+                w_last = self.model_b.layers_b[-1].weight.data.cpu().numpy()
+                b_last = self.model_b.layers_b[-1].bias.data.cpu().numpy()
+                B_learn = (w_last @ z + b_last)[0]
                 gradB = np.multiply(jacobian, np.broadcast_to(1, jacobian.shape))
                 B_learn_dot = (gradB @ f_learn)[0]
                 print('===========Verifying==========')
@@ -310,11 +398,11 @@ class MotionPlanner:
                 init_ball = Expression(0)
                 unsafe_ball = Expression(0)
                 #init_ball = logical_and(self.vars_[0] >= INIT[0][0], self.vars_[0] <= INIT[0][1], self.vars_[1] >= INIT[1][0], self.vars_[1] <= INIT[1][1])
-                initial_set_radius = config["init"]["radius"]
+                initial_set_radius = self.config["init"]["radius"]
                 init_ball = logical_and((self.vars_[0] - self.initial_set_center[0])**2 + (self.vars_[1] - self.initial_set_center[1])**2 <= initial_set_radius**2)
                 #unsafe_ball = logical_and(self.vars_[0] >= UNSAFE[0][0], self.vars_[0] <= UNSAFE[0][1], self.vars_[1] >= UNSAFE[1][0], self.vars_[1] <= UNSAFE[1][1])
-                unsafe_set_center = config["unsafe"]["centre"]
-                unsafe_set_radius = config["unsafe"]["radius"]
+                unsafe_set_center = self.config["unsafe"]["centre"]
+                unsafe_set_radius = self.config["unsafe"]["radius"]
                 unsafe_ball = logical_and((self.vars_[0] - unsafe_set_center[0])**2 + (self.vars_[1] - unsafe_set_center[1])**2 <= unsafe_set_radius**2)
                 # Constraint: x ∈ Ball → (B(c, xin) < 0 ∧ B(c, xun) >= 0)
                 condition = logical_imply(init_ball, B_learn < 0)
@@ -336,7 +424,7 @@ class MotionPlanner:
                         self.x_unsafe = x_unsafe.to(self.device)
                     else:
                         epsi = 1e-3
-                        DOMAIN = config["domain"]["range"]
+                        DOMAIN = self.config["domain"]["range"]
                         domain_ball = logical_and(self.vars_[0] >= DOMAIN[0][0], self.vars_[0] <= DOMAIN[0][1], self.vars_[1] >= DOMAIN[1][0], self.vars_[1] <= DOMAIN[1][1])
                         condition = logical_imply(logical_and(B_learn <= epsi, B_learn >= -epsi, domain_ball), B_learn_dot <= 0)
                         result = CheckSatisfiability(logical_not(condition),self.smt_config)
@@ -350,30 +438,36 @@ class MotionPlanner:
                             verified_flag = True
                             print_success("Satisfy conditions")
                             print_success(f"{B_learn} is a Barrier function with Epsilon: {self.beta}")
-                            name = config["dataset"]["name"]
-                            file_path = f"./models/{name}_model_v.pth"
-                            torch.save(self.model_v.state_dict(), file_path)
-                            wandb.save(file_path)
-                            file_path = f"./models/{name}_model_b.pth"
-                            torch.save(self.model_b.state_dict(), file_path)
-                            wandb.save(file_path)
+                            name = self.args.lasa_name
+                            folder_path = os.path.join(os.curdir, "models")
+                            if os.path.isdir(folder_path):
+                                torch.save(self.model_v.state_dict(), os.path.join(folder_path, f"{name}_model_v.pth"))
+                                torch.save(self.model_b.state_dict(), os.path.join(folder_path, f"{name}_model_b.pth"))
+                            else:
+                                try:
+                                    os.makedirs(folder_path)
+                                    torch.save(self.model_v.state_dict(), os.path.join(folder_path, f"{name}_model_v.pth"))
+                                    torch.save(self.model_b.state_dict(), os.path.join(folder_path, f"{name}_model_b.pth"))
+                                except OSError as e:
+                                    print_error(f"Error creating folder '{folder_path}': {e}")
                             break
         stop = timeit.default_timer()
         print_info(f"Total Verification Time: {stop - start}")
         return verified_flag
     
 if __name__ == "__main__":
-    mp = MotionPlanner()
+    args = pyrallis.parse(ConfigFile)
+    mp = MotionPlanner(args)
     mp.generateData()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
     Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center)
     print_info("LYAPUNOV FUNCTION TRAINING")
     lyapunov_verified = mp.trainLyapunovFunction()
-    check_barrier = config["Barrier"]
+    check_barrier = mp.config["Barrier"]
     if check_barrier:
         _ = mp.trainBarrierCertificate()
-    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.model_b)
-    wandb.finish()
+        Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.config, mp.model_b)
+    Plotter.lyapunovBarrierPlot(mp.model_v, mp.X_train, mp.initial_set_center, mp.config)
 
     

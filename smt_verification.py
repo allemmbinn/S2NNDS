@@ -1,11 +1,6 @@
 from common_header import *
 from dreal import *
-
-# Load the configuration file
-config_file = os.environ.get('CONFIG_FILE', 'config.json')
-with open(config_file) as file:
-    config = json.load(file)
-    
+   
 def hyper_tan_dr(x):
     y = x.copy()
     for idx in range(len(y)):
