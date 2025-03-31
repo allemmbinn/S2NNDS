@@ -6,6 +6,10 @@ def assignActivationFunction(activation_function):
         return nn.Tanh()
     elif activation_function == 'ReLU':
         return nn.ReLU()
+    elif activation_function == 'eLU':
+        return nn.ELU()    
+    elif activation_function == 'softplus':
+        return nn.Softplus()
 
 #Class of Neural Network for Dynamics Function
 class DyanmicsNet(nn.Module):
@@ -16,15 +20,17 @@ class DyanmicsNet(nn.Module):
         n_prev = self.input_size
         ## For the Dynamics Function
         for n_hid in hidden_f:
-            layer = nn.Linear(n_prev, n_hid)
+            layer = nn.Linear(n_prev, n_hid, bias = False)
             nn.init.xavier_uniform_(layer.weight)
             self.layers_f.append(layer)
             n_prev = n_hid
         # Last Layer
-        layer = nn.Linear(n_prev, n_input)
+        layer = nn.Linear(n_prev, n_input, bias = False)
         nn.init.xavier_uniform_(layer.weight)
         self.layers_f.append(layer)
         self.sigmoid_f = sigmoid_f
+        self.output_act_f= nn.Tanh()
+
         
     # Forward Propogation
     def forward(self,x):
@@ -32,7 +38,7 @@ class DyanmicsNet(nn.Module):
         y = x
         for idx, layer in enumerate(self.layers_f[:-1]):
             y = self.sigmoid_f(layer(y))
-        Fout = self.sigmoid_f(self.layers_f[-1](y))
+        Fout = self.output_act_f(self.layers_f[-1](y))
         return Fout
     
 #Class of Neural Network for Lyapunov Function along with Dynamics Function
@@ -58,18 +64,15 @@ class LyapunovNet(nn.Module):
         for idx, ly in enumerate(model_f.layers_f[:-1]):
             layer = nn.Linear(n_prev, hidden_f[idx], bias=True)
             layer.weight = nn.Parameter(ly.weight.data.cpu())
-            layer.bias = nn.Parameter(ly.bias.data.cpu())
-            layer.bias.requires_grad = True
             self.layers_f.append(layer)
             n_prev = hidden_f[idx]
         # Last Layer
         layer = nn.Linear(n_prev, 1, bias=True)
         layer.weight = nn.Parameter(model_f.layers_f[-1].weight.data.cpu())
-        layer.bias = nn.Parameter(model_f.layers_f[-1].bias.data.cpu())
-        layer.bias.requires_grad = True
         self.layers_f.append(layer)
         self.sigmoid_v = sigmoid_v
         self.sigmoid_f = sigmoid_f
+        self.output_act_f= nn.Tanh()
 
     # Forward Propogation
     def forward(self, x):
@@ -78,7 +81,7 @@ class LyapunovNet(nn.Module):
         for idx, layer in enumerate(self.layers_f[:-1]):
             z = layer(y)
             y = self.sigmoid_f(z)
-        Fout = self.sigmoid_f(self.layers_f[-1](y))
+        Fout = self.output_act_f(self.layers_f[-1](y))
         # For the Lyapunov Function
         y = x
         for idx, layer in enumerate(self.layers_v[:-1]):

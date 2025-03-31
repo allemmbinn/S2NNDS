@@ -1,7 +1,8 @@
 from common_header import *
-import NNModels
+import NNModels_old as NNModels
 import data_new as data
-import Loss_Functions_new as Loss_Functions
+# import Loss_Functions_new as Loss_Functions
+import Loss_Functions
 import opt 
 import Plotter
 from dreal import *
@@ -239,7 +240,7 @@ class MotionPlanner:
             elif self.dim_in == 3:
                 self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0], self.unsafe[2][0]])        
                 self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1], self.unsafe[2][1]])
-            self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+            self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
         elif self.config["unsafe"]["shape"] == 'Circle':
             self.uns_center = torch.tensor(self.config["unsafe"]["center"])
             self.uns_rad = self.config["unsafe"]["radius"]
@@ -422,7 +423,9 @@ class MotionPlanner:
             for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
                 mse = loss_fn(y_pred, y_batch.float().to(self.device))
-                total_loss += mse.item()
+                total_loss += mse.item() * len(y_batch)
+            # Normalise the loss
+            total_loss /= len(self.test_loader)
             history.append(total_loss)
             if total_loss < best_mse:
                 best_mse = total_loss
@@ -443,11 +446,17 @@ class MotionPlanner:
             hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
             hidden_layers_v = self.config["model_v"]["layers"]
             hidden_v = [hidden_neurons_v] * hidden_layers_v            
+            # self.model_v = NNModels.LyapunovNet(
+            # n_input=self.dim_in,
+            # hidden_v=hidden_v,
+            # sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
             self.model_v = NNModels.LyapunovNet(
-            n_input=self.dim_in,
-            hidden_v=hidden_v,
-            #thresholds=self.config["model_v"]["clip"],
-            sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
+                n_input=self.dim_in, 
+                hidden_v=hidden_v, 
+                hidden_f=self.hidden_f, 
+                model_f=self.model_f, 
+                sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function']),
+                sigmoid_f=NNModels.assignActivationFunction(self.config['model_f']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Lyapunov Function
             self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
             warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
@@ -470,11 +479,8 @@ class MotionPlanner:
             
             self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                     patience = self.config["model_b"]["lr_patience"], verbose = True)
-
             # Load the stored model state dictionary if available
-            
             self.load_model_states()        
-
             # Start Training
             start = timeit.default_timer() 
             max_iter = self.config["hyperparameters"]["max_iters"]
@@ -487,26 +493,30 @@ class MotionPlanner:
                 for batches in itertools.zip_longest(self.domain_loader, self.train_loader, self.init_loader, self.unsafe_loader, fillvalue=None):
                     if batches[0] is not None:
                         input_domain = batches[0][0].to(self.device)
-                        self.optimizer_f.zero_grad()   
+                        # self.optimizer_f.zero_grad()   
                         self.optimizer_v.zero_grad()
-                        loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                        # loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                        loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
-                        torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        # torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
-                        self.optimizer_f.step()
+                        # self.optimizer_f.step()
                         #self.model_v.clip_weights()
                     else:
                         loss_domain_v = torch.tensor(0.0, requires_grad = True)
 
                     if batches[0] is not None or batches[2] is not None or batches[3] is not None:
-                        self.optimizer_f.zero_grad()
+                        # self.optimizer_f.zero_grad()
+                        self.optimizer_v.zero_grad()
                         self.optimizer_b.zero_grad()
                         loss_domain_b = torch.tensor(0.0, requires_grad=True)
                         loss_init_b = torch.tensor(0.0, requires_grad=True)
                         loss_unsafe_b = torch.tensor(0.0, requires_grad=True)
 
                         if batches[0] is not None:
-                            _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                            # _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                            _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, input_domain, self.config)
+
                         if batches[2] is not None:
                             input_init = batches[2][0].to(self.device)
                             loss_init_b = Loss_Functions.loss_function_init(self.model_b, input_init, self.config)
@@ -516,28 +526,31 @@ class MotionPlanner:
 
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
-                        torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+                        # torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
-                        self.optimizer_f.step()    
+                        # self.optimizer_f.step()    
+                        self.optimizer_v.step()    
                         #self.model_b.clip_weights()
 
                     if batches[1] is not None:
-                         input_train = batches[1][0].to(self.device)
-                         output_train = batches[1][1].to(self.device)
-                         self.optimizer_f.zero_grad()
-                         loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
-                         loss_train.backward()
-                         torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
-                         self.optimizer_f.step()
-                         #self.model_f.clip_weights()
+                        input_train = batches[1][0].to(self.device)
+                        output_train = batches[1][1].to(self.device)
+                        # self.optimizer_f.zero_grad()
+                        self.optimizer_v.zero_grad()
+                        # loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
+                        loss_train = Loss_Functions.loss_function_dyn(self.model_v, input_train, output_train, self.config)
+                        loss_train.backward()
+                        # torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        self.optimizer_v.step()
+                        #self.model_f.clip_weights()
  
                     else:
                         loss_train = torch.tensor(0.0, requires_grad=True)
                     
                     # Calculate average training loss for the epoch
-                    cert_loss_b += loss_b
-                    cert_loss_v += loss_domain_v
-                    dyn_loss += loss_train
+                    cert_loss_b += loss_b.item()
+                    cert_loss_v += loss_domain_v.item()
+                    dyn_loss += loss_train.item()
 
                     avg_loss_f = dyn_loss / len(self.train_loader)
                     # Step the scheduler with training loss
@@ -558,15 +571,15 @@ class MotionPlanner:
                 
                 # Log the training loss
                 decay=self.config["hyperparameters"]["decay_mse"]
-                print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
-                print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss_v.item() + cert_loss_b.item()}")
+                print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss/decay}")
+                print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss_v + cert_loss_b}")
 
             # Save the recent versions of model_v and model_b in memory
             self.model_v_state_dict = self.model_v.state_dict()
             self.model_b_state_dict = self.model_b.state_dict()
             self.model_f_state_dict = self.model_f.state_dict()
-            self.final_mse_loss = dyn_loss.item()
-            self.final_cert_loss = cert_loss_v.item() + cert_loss_b.item()
+            self.final_mse_loss = dyn_loss
+            self.final_cert_loss = cert_loss_v + cert_loss_b
 
     def verifyCertificate(self):
         weights_f = [params.weight.detach() for name, params in self.model_f.named_modules()
@@ -634,26 +647,13 @@ class MotionPlanner:
         total_samples = 0
 
         for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
-            y_pred = self.model_f(X_batch.float().to(self.device))
+            # y_pred = self.model_f(X_batch.float().to(self.device))
+            y_pred = self.model_v(X_batch.float().to(self.device))[1]
             loss_fn = nn.MSELoss(reduction = 'mean')
             batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
             self.mse += batch_mse.item()
             total_samples += X_batch.size(0)  
         self.mse = self.mse / total_samples
-
-    # def prune_models(self, prune_amount):
-    #     for name, module in self.model_v.named_modules():
-    #         if isinstance(module, nn.Linear):
-    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
-    #             prune.remove(module, 'weight')  # Remove the pruning reparameterization
-    #     for name, module in self.model_b.named_modules():
-    #         if isinstance(module, nn.Linear):
-    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
-    #             prune.remove(module, 'weight')
-    #     for name, module in self.model_f.named_modules():           
-    #         if isinstance(module, nn.Linear):
-    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
-    #             prune.remove(module, 'weight')
 
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
@@ -717,21 +717,4 @@ if __name__ == "__main__":
     mp.save_all_models()
     mp.final_model_eval()
     print_info(f"MSE for test data after certificate training: {mp.mse}")
-    save_seed(seed,seed_filepath)
-    
-    #     mp.verifyCertificate()
-    #     if not mp.flag_verified:
-    #         print_info("RETRAINING... ADDING NEW DATA")
-    #         mp.generate_domain_data()    
-    #         print_info(f"N_domain value: {mp.N_domain}")
-    #         # print_info("PRUNE THE MODELS FOR FINE-TUNING")
-    #         # mp.prune_models(0.2)
-    #         mp.counterexamples_added = True
-    #         mp.flag_finetune = True
-    #         iters +=1
-    #     else:
-    #         print_info("VERIFICATION SUCCESSFUL")
-    #         break    
-    # save_seed(seed,seed_filepath) 
-    # Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
- 
+    save_seed(seed,seed_filepath) 

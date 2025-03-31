@@ -44,6 +44,7 @@ The official repository for the Neural Network Dynamical System based on my work
     The following datasets are available:
     
     - 3D_CShape_bottom
+    - 3D_CShape_top
     - 3D_sink
     - 3D_viapoint_1
     - 3D_viapoint_2

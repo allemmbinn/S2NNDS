@@ -22,7 +22,7 @@ def assignActivationFunction(activation_function):
 
 #Class of Neural Network for Dynamics Function
 class DyanmicsNet(nn.Module):
-    def __init__(self,n_input, hidden_f, sigmoid_f):
+    def __init__(self, n_input, hidden_f, sigmoid_f):
         super(DyanmicsNet, self).__init__()
         self.input_size = n_input
         self.layers_f = nn.ModuleList()

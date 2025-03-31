@@ -58,6 +58,92 @@ def initial3DDSPlot(model_f, demos, initial_set_center):
     plt.grid(True)
     plt.show()
 
+def plotFinalDS(model_f, X_train, initial_set_center, dt):
+    device = next(model_f.parameters()).device
+    if X_train.shape[1] == 3:
+        x = np.linspace(-1.2, 1.2, 50)
+        y = np.linspace(-1.2, 1.2, 50)
+        z = np.linspace(-1.2, 1.2, 50)
+        X, Y, Z = np.meshgrid(x, y, z)
+        # Convert to tensor
+        X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
+        Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+        Z_tensor = torch.tensor(Z, dtype=torch.float32).to(device)
+        # Concatenate X, Y, Z to create input data tensor
+        input_data = torch.stack((X_tensor, Y_tensor, Z_tensor), dim=-1).reshape(-1, 3).to(device)
+        unflatten = torch.nn.Unflatten(0, (50, 50, 50))
+    elif X_train.shape[1] == 2:
+        x = np.linspace(-1.2, 1.2, 50)
+        y = np.linspace(-1.2, 1.2, 50)
+        X, Y = np.meshgrid(x, y)
+        # Convert to tensor
+        X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
+        Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+        # Concatenate X, Y to create input data tensor
+        input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
+        unflatten = torch.nn.Unflatten(0, (50, 50))
+    with torch.no_grad():
+        F_out = model_f(input_data)
+        vect_out = unflatten(F_out).cpu().detach().numpy()
+        U = vect_out[:,:, 0]
+        V = vect_out[:,:,1]
+        if X_train.shape[1] == 3:
+            W = vect_out[:,:,2]
+            # Create a figure and 3D axes
+            fig = plt.figure(figsize=(10, 8))
+            ax = plt.axes(projection='3d')
+            # Plot the vector field
+            ax.quiver(X, Y, Z, U, V, W, length=0.1, normalize=True)
+            # Plot the initial set
+            ax.scatter(initial_set_center[0], initial_set_center[1], initial_set_center[2], color='red', s=100, label='Initial Set')
+            # Plot the training data
+            ax.plot(X_train[:, 0], X_train[:, 1], X_train[:, 2], color='blue', label='Training Data')
+            # Plot the final trajectory
+            n = 3000
+            x = torch.zeros((n, 3))
+            x[0, :] = initial_set_center
+            x = x.to(device)
+            for j in range(1, n):
+                Fout = model_f(x[j-1])
+                x[j] = x[j-1] + Fout * dt
+            x = x.cpu().detach().numpy()
+            ax.plot(x[:, 0], x[:, 1], x[:, 2], color='green', label='Final Trajectory')
+            ax.set_xlabel('X Label')
+            ax.set_ylabel('Y Label')
+            ax.set_zlabel('Z Label')
+            plt.title('Trajectories of the Dynamical System')
+            plt.legend()
+            plt.grid(True)
+            plt.show()
+        elif X_train.shape[1] == 2:
+            # Create a figure and 2D axes
+            fig, ax = plt.subplots(figsize=(10, 8))
+            # Plot the vector field
+            strm = ax.streamplot(X, Y, U, V, color='blue', linewidth=1, density=2)
+            # Plot the initial set
+            circle = plt.Circle((initial_set_center[0], initial_set_center[1]), 0.05, color='red', label='Initial Set')
+            ax.add_patch(circle)
+            # Plot the training data
+            ax.plot(X_train[:, 0], X_train[:, 1], color='blue', label='Training Data')
+            # Plot the final trajectory
+            n = 3000
+            x = torch.zeros((n, 2))
+            x[0, :] = initial_set_center
+            x = x.to(device)
+            for j in range(1, n):
+                Fout = model_f(x[j-1])
+                x[j] = x[j-1] + Fout * dt
+            x = x.cpu().detach().numpy()
+            ax.plot(x[:, 0], x[:, 1], color='green', label='Final Trajectory')
+            ax.set_xlabel('X Label')
+            ax.set_ylabel('Y Label')
+            plt.title('Trajectories of the Dynamical System')
+            plt.legend()
+            plt.grid(True)
+            plt.axis('equal')
+            plt.show()
+            
+            
 def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
     device = next(model_v.parameters()).device
     N = 1000
