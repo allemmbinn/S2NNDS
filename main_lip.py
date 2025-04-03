@@ -448,10 +448,13 @@ class MotionPlanner:
             hidden_v=hidden_v,
             #thresholds=self.config["model_v"]["clip"],
             sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
+            #Optimizer for Dynamical System 
+            # TODO: I can rather use self.scheduler_f.get_last_lr() to get the last learning rate
+            # self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*0.01,betas=(0.9, 0.999))
             #Optimizer and Scheduler for Lyapunov Function
             self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
+
             warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
-                
             self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
                                                                     patience = self.config["model_v"]["lr_patience"], verbose = True)
             
@@ -759,6 +762,7 @@ if __name__ == "__main__":
             break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
+        sys.exit(1)
     mp.save_all_models()
     mp.final_model_eval()
     print_info(f"MSE for test data after certificate training: {mp.mse}")
