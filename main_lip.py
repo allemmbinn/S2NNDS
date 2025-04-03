@@ -491,7 +491,7 @@ class MotionPlanner:
                         self.optimizer_v.zero_grad()
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
-                        torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        # torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         self.optimizer_f.step()
                         #self.model_v.clip_weights()
@@ -516,7 +516,7 @@ class MotionPlanner:
 
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
-                        torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+                        # torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         self.optimizer_f.step()    
                         #self.model_b.clip_weights()
@@ -525,12 +525,11 @@ class MotionPlanner:
                          input_train = batches[1][0].to(self.device)
                          output_train = batches[1][1].to(self.device)
                          self.optimizer_f.zero_grad()
-                         loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
+                         loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config) 
                          loss_train.backward()
-                         torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        #  torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                          self.optimizer_f.step()
                          #self.model_f.clip_weights()
- 
                     else:
                         loss_train = torch.tensor(0.0, requires_grad=True)
                     
@@ -558,7 +557,7 @@ class MotionPlanner:
                 
                 # Log the training loss
                 decay=self.config["hyperparameters"]["decay_mse"]
-                print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
+                print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay * len(self.train_loader)}")
                 print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss_v.item() + cert_loss_b.item()}")
 
             # Save the recent versions of model_v and model_b in memory
@@ -751,9 +750,9 @@ if __name__ == "__main__":
                 param_group['lr'] = mp.lr_v
             for param_group in mp.optimizer_b.param_groups:
                 param_group['lr'] = mp.lr_b
-            if filtered_args['dataset_type'] == '3D_DSOPT':
+            if args.dataset_type == '3D_DSOPT':
                 Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
-            elif filtered_args['dataset_type'] == 'LASA':
+            elif args.dataset_type == 'LASA':
                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
