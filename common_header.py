@@ -33,9 +33,6 @@ import sys
 import itertools
 import sympy as sp
 
-# Verifier Requirements
-from dreal import *
-
 def print_error(message):
     print(colored(message, 'red'))
 
