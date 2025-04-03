@@ -591,6 +591,51 @@ class MotionPlanner:
             total_samples += X_batch.size(0)  
         self.mse = self.mse / total_samples
 
+    def createModels(self):
+        self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
+        self.hidden_layers_f = self.config["model_f"]["layers"]
+        sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
+        self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
+        self.model_f = NNModels.DyanmicsNet(self.dim_in, 
+                                            self.hidden_f, 
+                                            sigmoid_f).to(self.device)
+        self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
+                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
+        #Building the Lyapunov Model
+        hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
+        hidden_layers_v = self.config["model_v"]["layers"]
+        hidden_v = [hidden_neurons_v] * hidden_layers_v            
+        self.model_v = NNModels.LyapunovNet(
+        n_input=self.dim_in,
+        hidden_v=hidden_v,
+        #thresholds=self.config["model_v"]["clip"],
+        sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
+        #Optimizer for Dynamical System 
+        # TODO: I can rather use self.scheduler_f.get_last_lr() to get the last learning rate
+        # self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*0.01,betas=(0.9, 0.999))
+        #Optimizer and Scheduler for Lyapunov Function
+        self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
+
+        warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
+        self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
+                                                                patience = self.config["model_v"]["lr_patience"], verbose = True)
+        
+        #Building the Barrier Model
+        hidden_neurons_b = self.config["model_b"]["hidden_neurons"]
+        hidden_layers_b = self.config["model_b"]["layers"]
+        hidden_b = [hidden_neurons_b] * hidden_layers_b
+        self.model_b = NNModels.BarrierNet(
+        n_input=self.dim_in,
+        hidden_b=hidden_b,
+        #thresholds = self.config["model_b"]["clip"],
+        sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
+        #Optimizer and Scheduler for Barrier Function
+        self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
+        warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
+        
+        self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
+                                                                patience = self.config["model_b"]["lr_patience"], verbose = True)
     # def prune_models(self, prune_amount):
     #     for name, module in self.model_v.named_modules():
     #         if isinstance(module, nn.Linear):
