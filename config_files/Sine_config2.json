@@ -41,7 +41,7 @@
     },
     "unsafe":{
         "shape" : "Circle",
-        "center" : [-0.4,0.35],
+        "centre" : [-0.4,0.35],
         "radius" : 0.1
     },
     "counterex":{
@@ -60,10 +60,10 @@
     "Barrier" : true,
     "plots" : true,
     "plotting" : {
-        "range" : [[-1.5,0.5],[-0.5, 0.5]],
+        "range" : [[-1.5,0.5],[-0.5, 1.0]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
+        "name" : "Sine LASA with Obstacles"
     },
     "hyperparameters" : {
         "max_iters" : 30,
