@@ -2,90 +2,136 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 64,
-        "layers" : 4,
-        "epochs_warm" : 100,
-        "learning_rate" : 1e-3,
-        "batch_size" : 64,
-        "lr_factor" : 0.1,
-        "lr_patience" :5,
-        "init_decay" : 0.1        
+        "layers": 4,
+        "epochs_warm": 100,
+        "learning_rate": 0.001,
+        "batch_size": 64,
+        "lr_factor": 0.1,
+        "lr_patience": 5,
+        "init_decay": 0.1
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 1e-2,
-        "learning_rate_ft": 7e-3,
+        "learning_rate": 0.01,
+        "learning_rate_ft": 0.007,
         "hidden_neurons": 128,
-        "layers" : 3,
-        "lr_factor" : 0.2,
-        "lr_patience" :10,
-        "warmup" : 10    
+        "layers": 3,
+        "lr_factor": 0.2,
+        "lr_patience": 10,
+        "warmup": 10
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 1e-2,
-        "learning_rate_ft": 7e-3,
+        "learning_rate": 0.01,
+        "learning_rate_ft": 0.007,
         "hidden_neurons": 128,
-        "layers" : 3,
-        "lr_factor" : 0.2,
-        "lr_patience" : 10,
-        "batch_size" : 256,
-        "warmup" : 10
-        },
-
-    "domain":{
-        "N" : 50,
-        "range" : [[-1,1],[-1,1]]
-        },
-    "init":{
-        "radius" : 0.05
+        "layers": 3,
+        "lr_factor": 0.2,
+        "lr_patience": 10,
+        "batch_size": 256,
+        "warmup": 10
     },
-    "unsafe":{
-        "shape" : "Circle",
-        "center" : [-0.4,0.35],
-        "radius" : 0.1
+    "domain": {
+        "N": 50,
+        "range": [
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ]
+        ]
     },
-    "counterex":{
-        "N_cex_domain" : 500,
-        "N" : 1,
-        "no_min" : 10,
-        "radius" : 0.001,
-        "lr_increment_factor" : 1.0,
-        "lyap_tol" : 0.0,
-        "pos_tol" : 0.0,
-        "bar_tol" : 0.0,
-        "inun_tol" : 0.0,
-        "lb" : 0,
-        "ub" : 0
+    "init": {
+        "radius": 0.05
     },
-    "Barrier" : true,
-    "plots" : true,
-    "plotting" : {
-        "range" : [[-1.5,0.5],[-0.5, 0.5]],
-        "contour" : false,
-        "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
+    "unsafe": {
+        "shape": "Circle",
+        "center": [
+            -0.4,
+            0.35
+        ],
+        "radius": 0.1
     },
-    "hyperparameters" : {
-        "max_iters" : 30,
-        "max_iters_ft" : 30,
-        "decay_mse" : 1,
-        "decay_lf" : 0.0,
-        "decay_vpos" : 1,
-        "decay_lv" : 1,
-        "decay_v0" : 1,
-        "decay_init" : 1,
-        "decay_unsafe" : 1,
-        "decay_cut" : 1,
-        "decay_lb" : 1,
-        "alpha" : 1,
-        "epi_bound" : 0.05,
-        "eta" : 1e-4,
-        "lyap_tol" : 0.01,
-        "pos_tol" : 0.01,
-        "bar_tol" : 0.01,
-        "inun_tol" : 0.0001, 
+    "counterex": {
+        "N_cex_domain": 500,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lr_increment_factor": 1.0,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.0,
+        "lb": 0,
+        "ub": 0
+    },
+    "verification": {
+        "N_conf": 800,
+        "epsilon": 0.0001,
+        "beta": 0.0001
+    },
+    "Barrier": true,
+    "plots": true,
+    "plotting": {
+        "range": [
+            [
+                -1.5,
+                0.5
+            ],
+            [
+                -1,
+                1
+            ]
+        ],
+        "contour": false,
+        "legend": true,
+        "name": "Sine LASA with Obstacles",
+        "init_range": [
+            [
+                -1.0,
+                -0.8514084305561762
+            ],
+            [
+                -0.06877934230325349,
+                0.10164319133394745
+            ]
+        ],
+        "initial_conditions": [
+            [
+                -0.9396377801895142,
+                0.028839703649282455
+            ],
+            [
+                -0.9685194492340088,
+                -0.012602806091308594
+            ]
+        ],
+        "dt": 0.005768861400492263
+    },
+    "hyperparameters": {
+        "max_iters": 30,
+        "max_iters_ft": 30,
+        "decay_mse": 1,
+        "decay_lf": 0.0,
+        "decay_vpos": 1,
+        "decay_lv": 1,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_cut": 1,
+        "decay_lb": 1,
+        "alpha": 1,
+        "epi_bound": 0.05,
+        "eta": 0.0001,
+        "lyap_tol": 0.01,
+        "pos_tol": 0.01,
+        "bar_tol": 0.01,
+        "inun_tol": 0.0001,
         "lie_tol": 0.005,
-        "reg_bar" : 0.001,
-        "reg_v" : 0.001 
+        "reg_bar": 0.001,
+        "reg_v": 0.001
     }
 }

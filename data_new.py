@@ -21,3 +21,15 @@ def generateGridData(N, RANGE):
     input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
     eps = np.sqrt(epsilon_x**2 + epsilon_y**2) / 2
     return input_data, eps
+
+def generateRandomData(N, RANGE):
+    uniform_dist_y = torch.distributions.Uniform(RANGE[1][0], RANGE[1][1])
+    y = uniform_dist_y.sample((N,))
+    uniform_dist_x = torch.distributions.Uniform(RANGE[0][0], RANGE[0][1])
+    x = uniform_dist_x.sample((N,))
+    X, Y = torch.meshgrid(x, y, indexing='ij')
+    X_tensor = X.float()
+    Y_tensor = Y.float()
+    input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2)
+    return input_data, N
+

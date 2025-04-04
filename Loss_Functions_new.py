@@ -20,8 +20,6 @@ def loss_function_dyn(model_f, X_train, y_train, config):
     # MSE Loss
     loss_fn = nn.MSELoss(reduction='mean')
     loss_MSE = loss_fn(model_f(X_train_clone),y_train_clone)
-    # Regularization
-    l2_norm = sum(param.pow(2).sum() for layer in model_f.layers_f for param in layer.parameters())
     # Hyperparameters
     DECAY_MSE = config["hyperparameters"]["decay_mse"]
     # Loss

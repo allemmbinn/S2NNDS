@@ -1,6 +1,7 @@
 from common_header import *
 from cmcrameri import cm
 
+
 def initialDSPlot(model_f, X_train, initial_set_center, dt):
     device = next(model_f.parameters()).device
     # Plotting the Training Data after Warm-starting
@@ -31,7 +32,9 @@ def initialDSPlot(model_f, X_train, initial_set_center, dt):
     plt.axis('equal')
     plt.show()
 
-def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
+    return fig
+
+def lyapunovBarrierPlot(model_v, model_b, model_f, X_train, config):
     device = next(model_v.parameters()).device
     N = 1000
     fig, ax = plt.subplots()
@@ -54,9 +57,11 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
     input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
     unflatten = torch.nn.Unflatten(0, len_sample)
 
+
     # Streamplot
     with torch.no_grad():
-        V_out,F_out = model_v(input_data)
+        V_out = model_v(input_data)
+        F_out = model_f(input_data)
         vect_out = unflatten(F_out)
         vect_out = vect_out.cpu().detach().numpy()
         U = vect_out[:,:, 0]
@@ -74,36 +79,79 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
         plt.contourf(X, Y, vout[:,:,0], cmap=cm.lajolla)
     # Plot training data and final trajectory
     # Plotting the Training Data
+    initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
     X_plot = X_train
     n = int(X_plot.shape[0]/N)
     for i in [0,2,3,4]:
         ax.plot(X_plot[(i-1)*N+1:i*N,0], X_plot[(i-1)*N+1:i*N,1],color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
     # Plotting the final trajectory
     n = 10000
-    x = torch.zeros((n, 2)).to(device)
-    x[0,:] = torch.tensor(mean_point, dtype=torch.float32)
-    #x[0] = torch.tensor([1, 0.5], dtype=torch.float32)
-    dt = 0.02
-    for j in range(1, n):
-        Vout, Fout = model_v(x[j-1])
-        x[j] = x[j-1] + Fout * dt
-    x = x.cpu().detach().numpy()
-    ax.plot(x[:, 0], x[:, 1],'#ff00ff', label="Target Trajectory")
+    dt= config["plotting"]["dt"]
+    for i in range(initial_set_center.shape[0]):
+        x = torch.zeros((n, 2)).to(device)
+        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        #x[0] = torch.tensor([1, 0.5], dtype=torch.float32)
+        for j in range(1, n):
+            Fout = model_f(x[j-1])
+            x[j] = x[j-1] + Fout * dt
+        x = x.cpu().detach().numpy()
+        ax.plot(x[:, 0], x[:, 1],'#ff00ff', label="Target Trajectory")
     
-    if flag_barrier and model_b is not None:
-        contour_lines = plt.contour(X, Y, bout[:,:,0], levels=[0], colors='red')
-        contour_fills = plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
+    if flag_barrier:
+        plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
+        plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
         #Create proxy artists for contours
         contour_line_legend = mpl.lines.Line2D([0], [0], color='red', label='Barrier (bout=0)')
-        contour_fill_legend = mpl.patches.Patch(color='green', alpha=0.5, label='Safe Set')
-        unsafe_set_center = config["unsafe"]["centre"]
-        unsafe_set_radius = config["unsafe"]["radius"]
-        circle2 = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
-        ax.add_patch(circle2)
-    # Plotting the Initial and Unsafe Set
-    initial_set_radius = config["init"]["radius"]
-    circle1 = plt.Circle(mean_point, initial_set_radius, facecolor='#00ffff', edgecolor='#008080', linewidth=2, label="Initial Set")
-    ax.add_patch(circle1)
+        contour_fill_legend = mpl.patches.Patch(color='green', alpha=0.5, label='Invariant Set')
+        #unsafe_set_center = config["unsafe"]["centre"]
+        #unsafe_set_radius = config["unsafe"]["radius"]
+        #circle2 = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
+        #ax.add_patch(circle2)
+        
+        # Plotting the Initial Set
+        init_range = config["plotting"]["init_range"]
+        x_min = init_range[0][0]
+        x_max = init_range[0][1]
+        y_min = init_range[1][0]
+        y_max = init_range[1][1]
+        initial = patches.Rectangle(
+        (x_min, y_min),  # Bottom-left corner (x_min, y_min)
+        x_max - x_min,   # Width
+        y_max - y_min,   # Height
+        linewidth=2,     # Border thickness
+        edgecolor='cyan',  # Border color
+        facecolor='cyan',   # Transparent fill
+        label="Initial Set"
+        )
+
+        ax.add_patch(initial)
+
+        if config["unsafe"]["shape"] == 'Rectangle':
+                uns_range = config["unsafe"]["range"]
+                x_min = uns_range[0][0]
+                x_max = uns_range[0][1]
+                y_min = uns_range[1][0]
+                y_max = uns_range[1][1]
+                unsafe = patches.Rectangle(
+                (x_min, y_min),  # Bottom-left corner (x_min, y_min)
+                x_max - x_min,   # Width
+                y_max - y_min,   # Height
+                linewidth=2,     # Border thickness
+                edgecolor='black',  # Border color
+                facecolor='black', # Transparent fill
+                alpha = 0.5, 
+                label = "Unsafe Set"
+                )
+                ax.add_patch(unsafe)
+        elif config["unsafe"]["shape"] == 'Circle':
+            center = config["unsafe"]["center"]
+            radius = config["unsafe"]["radius"]
+            unsafe = plt.Circle(center, radius, facecolor='black', edgecolor='black', linewidth=2, label="Unsafe Set", alpha = 0.5)
+            ax.add_patch(unsafe)
+    
+    # initial_set_radius = config["init"]["radius"]
+    # circle1 = plt.Circle(initia, initial_set_radius, facecolor='#00ffff', edgecolor='#008080', linewidth=2, label="Initial Set")
+    # ax.add_patch(circle1)
 
     # Equilibrium Point
     plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
@@ -111,25 +159,32 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
     # Setting labels and grid
     plt.xlabel('x')
     plt.ylabel('y')
+    plt.xlim(RANGE[0][0], RANGE[0][1])
+    plt.xlim(RANGE[1][0], RANGE[1][1])
     dataset = config["plotting"]["name"]
     plt.title(dataset)
     plt.grid(True)
-    plt.axis('equal')
+    plt.axis('auto')
+    plt.tight_layout()
 
     #Adding all legends
     
     if flag_legend:
         if flag_barrier and model_b is not None:
             ax.legend(handles=[arrow_proxy, contour_line_legend, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Actual Trajectory'),
-                   mpl.lines.Line2D([0], [0], color='#ff00ff', label='Target Trajectory'), circle1, circle2,
+                   mpl.lines.Line2D([0], [0], color='#ff00ff', label='Target Trajectory'), initial, unsafe,
                    mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                   bbox_to_anchor=(0, 1))
+                   bbox_to_anchor=(1.05, 1), fontsize = 8)
         else:
             ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Actual Trajectory'),
-                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Target Trajectory'), circle1,
+                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Target Trajectory'), initial,
                         mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                        bbox_to_anchor=(0, 1))
-    plt.show()
+                        bbox_to_anchor=(1.05, 1), fontsize = 8)
+
+    return fig
+
+
+
 
 def plotLyapunov(model_v):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1

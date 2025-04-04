@@ -1,10 +1,10 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 16,
+        "hidden_neurons": 64,
         "layers" : 4,
-        "epochs_warm" : 300,
-        "learning_rate" : 1e-4,
+        "epochs_warm" : 250,
+        "learning_rate" : 1e-5,
         "batch_size" : 64,
         "lr_factor" : 0.1,
         "lr_patience" :5,
@@ -13,7 +13,8 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 1e-2,
-        "hidden_neurons": 128,
+        "learning_rate_ft": 7e-3,
+        "hidden_neurons": 64,
         "layers" : 4,
         "lr_factor" : 0.2,
         "lr_patience" :10,
@@ -22,8 +23,9 @@
     "model_b": {
         "activation_function": "eLU",
         "learning_rate": 1e-2,
-        "hidden_neurons": 128,
-        "layers" : 3,
+        "learning_rate_ft": 7e-3,
+        "hidden_neurons": 64,
+        "layers" : 4,
         "lr_factor" : 0.2,
         "lr_patience" : 10,
         "batch_size" : 256,
@@ -35,14 +37,16 @@
         "range" : [[-1,1],[-1,1]]
         },
     "init":{
-        "radius" : 0.05
+        "radius" : 0.03
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "range" : [[-0.55, 0], [0.2,0.4]]
+        "unbounded" : "x",
+        "max_min" : "min",
+        "range" : [[0.3], [0.55,0.65]]
     },
     "counterex":{
-        "N_cex_domain" : 300,
+        "N_cex_domain" : 700,
         "N" : 1,
         "no_min" : 10,
         "radius" : 0.001,
@@ -65,12 +69,12 @@
         "range" : [[-1.5,0.5],[-0.5, 0.5]],
         "contour" : false,
         "legend"  : false,
-        "name" : "Sine LASA with Obstacles"
+        "name" : "Sshape LASA with Obstacles"
     },
     "hyperparameters" : {
         "max_iters" : 30,
         "max_iters_ft" : 30,
-        "decay_mse" : 1,
+        "decay_mse" : 100,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
         "decay_lv" : 1,
@@ -79,14 +83,14 @@
         "decay_unsafe" : 1,
         "decay_cut" : 1,
         "decay_lb" : 1,
-        "alpha" : 0.01,
+        "alpha" : 1,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
         "lyap_tol" : 0.01,
         "pos_tol" : 0.01,
         "bar_tol" : 0.01,
         "inun_tol" : 0.0001, 
-        "lie_tol": 0.005,
+        "lie_tol": 0.02,
         "reg_bar" : 0.001,
         "reg_v" : 0.001 
     }

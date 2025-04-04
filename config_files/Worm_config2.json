@@ -34,15 +34,14 @@
 
     "domain":{
         "N" : 50,
-        "range" : [[-1,1],[-1,1]],
-        "additional_N_domain" : 10
+        "range" : [[-1,1],[-1,1]]
     },
     "init":{
-        "radius" : 0.05
+        "radius" : 0.03
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "range" : [[-0.6, -0.4], [-0.2,-0.1]]
+        "range" : [[-0.6, -0.4], [-0.1,-0.0]]
     },
     "counterex":{
         "N_cex_domain" : 800,
@@ -56,6 +55,11 @@
         "inun_tol" : 0.0,
         "lb" : 0.0,
         "ub" : 0.0
+    },
+    "verification" : {
+        "N_conf" : 800,
+        "epsilon": 0.0001,
+        "beta" : 0.0001
     },
     "Barrier" : true,
     "plots" : true,

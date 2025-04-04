@@ -10,6 +10,8 @@ import torch.nn.utils as utils
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.patches as patches
+
 
 # Other Requirements
 import os
@@ -17,7 +19,7 @@ import timeit
 import numpy as np
 import tqdm
 import copy
-import scipy.io
+import scipy.special as sp
 from math import e
 from termcolor import colored
 from scipy.linalg import solve_continuous_lyapunov
@@ -31,10 +33,7 @@ import random
 import wandb
 import sys
 import itertools
-import sympy as sp
-
-# Verifier Requirements
-from dreal import *
+import onnx
 
 def print_error(message):
     print(colored(message, 'red'))
