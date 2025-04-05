@@ -1,7 +1,7 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 32,
+        "hidden_neurons": 64,
         "layers" : 2,
         "epochs_warm" : 300,
         "learning_rate" : 7e-2,
@@ -45,7 +45,7 @@
         "range" : [[-0.6, -0.4], [-0.2,-0.1], [-0.5, 0.5]]
     },
     "counterex":{
-        "N_cex_domain" : 200,
+        "N_cex_domain" : 50,
         "N" : 1,
         "no_min" : 10,
         "radius" : 0.001,
@@ -58,13 +58,6 @@
         "ub" : 0.0
     },
     "Barrier" : true,
-    "plots" : true,
-    "plotting" : {
-        "range" : [[-1.5,0.5],[-0.5, 0.5]],
-        "contour" : false,
-        "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
-    },
     "hyperparameters" : {
         "max_iters" : 30,
         "max_iters_ft" : 30,
