@@ -6,7 +6,6 @@ import opt
 import Plotter
 import verification
 
-
 @dataclass
 class ConfigFile:
     lasa_name : str = "Worm"
@@ -91,13 +90,9 @@ class MotionPlanner:
         if self.scheduler_f_state_dict is not None:
             self.scheduler_f.load_state_dict(self.scheduler_f_state_dict)
 
-    def save_model(self, model, optimizer, scheduler, model_path):
+    def save_model(self, model, model_path):
         os.makedirs(os.path.dirname(model_path), exist_ok=True)
-        torch.save({
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'scheduler_state_dict': scheduler.state_dict()
-        }, model_path)
+        torch.save(model.state_dict(), model_path)
 
     def save_all_models(self):
         if self.args.dataset_type == 'LASA':
@@ -105,10 +100,36 @@ class MotionPlanner:
         elif self.args.dataset_type == '3D_Shapes':
             base_path = os.path.join('models', '3D_Shapes', self.args.name_3d)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
-        self.save_model(self.model_f, self.optimizer_f, self.scheduler_f, os.path.join(base_path, 'model_f.pth'))
-        self.save_model(self.model_v, self.optimizer_v, self.scheduler_v, os.path.join(base_path, 'model_v.pth'))
-        self.save_model(self.model_b, self.optimizer_b, self.scheduler_b, os.path.join(base_path, 'model_b.pth'))
-      
+        # Save the model states 
+        self.save_model(self.model_f, os.path.join(base_path, 'model_f.pth'))
+        self.save_model(self.model_v, os.path.join(base_path, 'model_v.pth'))
+        self.save_model(self.model_b, os.path.join(base_path, 'model_b.pth'))
+     
+    def export_onnx(self):
+        if self.args.dataset_type == 'LASA':
+            base_path = os.path.join('models_onnx', 'LASA')
+            os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+            file_path = os.path.join(base_path, self.args.lasa_name + ".onnx")
+        elif self.args.dataset_type == '3D_Shapes':
+            base_path = os.path.join('models_onnx', '3D_Shapes')
+            os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+            file_path = os.path.join(base_path, self.args.name_3d + ".onnx")
+        self.model_f.eval()
+        self.initial_set_center = self.initial_set_center.to(dtype=torch.float32) 
+        torch.onnx.export(
+                self.model_f,
+                self.initial_set_center,
+                file_path,
+                export_params=True,  # Store the trained parameters in the model file
+                opset_version=11,    # ONNX opset version
+                do_constant_folding=True,  # Optimize constant folding for inference
+                input_names=["position"],     # Name of the input tensor
+                output_names=["velocity"],   # Name of the output tensor
+                dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}  # Dynamic batch size
+            )
+        onnx_model = onnx.load(os.path.join(base_path, self.args.lasa_name + ".onnx"))
+        onnx.checker.check_model(onnx_model)         
+        
     def generate_demo_data(self): #Trains data for MSE minimization, learning from demos
         if self.args.dataset_type == 'LASA':
             if self.args.lasa_name == "Angle":
@@ -572,66 +593,6 @@ class MotionPlanner:
             self.final_mse_loss = dyn_loss.item()
             self.final_cert_loss = cert_loss_v.item() + cert_loss_b.item()
 
-    def verifyCertificate(self):
-        weights_f = [params.weight.detach() for name, params in self.model_f.named_modules()
-             if hasattr(params, 'weight')]        
-        weights_v = [params.weight.detach() for name, params in self.model_v.named_modules()
-             if hasattr(params, 'weight')]
-        weights_b = [params.weight.detach() for name, params in self.model_b.named_modules()
-             if hasattr(params, 'weight')]
-
-        self.lip_f = verification.lipschitz_network(weights_f)
-        self.lip_v = verification.lipschitz_network(weights_v)
-        self.lip_b = verification.lipschitz_network(weights_b)
-
-        #lipschitz constant for derivatives
-        self.lip_dv = verification.bounds(self.model_v)*self.lip_f + verification.lipschitz_gradient(weights_v)
-        self.lip_db = verification.bounds(self.model_b)*self.lip_f + verification.lipschitz_gradient(weights_b)
-        print_info(f"Discretization Parameter: {self.eps}")
-        print_info(f"Lipschitz Constant of Dynamics: {self.lip_f}")
-        print_info(f"Lipschitz Constant of Lyapunov: {self.lip_v}")
-        print_info(f"Lipschitz Constant of Barrier: {self.lip_b}")
-        print_info(f"Lipschitz Constant of Lyapunov Gradient: {self.lip_dv}")
-        print_info(f"Lipschitz Constant of Barrier Gradient: {self.lip_db}")
-        #Lyapunov conditions to be checked
-        self.pos_verify = False
-        self.grad_verify = False
-        self.lyap_verify = False
-        if self.lip_v*self.eps + self.config["counterex"]["pos_tol"] <= 0:
-            self.pos_verify = True
-        if self.lip_dv*self.eps + self.config["counterex"]["lyap_tol"] <= 0:
-            self.grad_verify = True
-        if self.pos_verify and self.grad_verify:
-            self.lyap_verify = True
-
-        #Barrier conditions to be checked 
-        self.inun_verify = False
-        self.dec_verify = False
-        self.bar_verify = False
-        if self.lip_b*self.eps + self.config["counterex"]["inun_tol"] <= 0:
-            self.inun_verify = True
-        if self.lip_db*self.eps + self.config["counterex"]["bar_tol"] <= 0:
-            self.dec_verify = True
-        if self.inun_verify and self.dec_verify:
-            self.bar_verify = True
-
-        if not self.lyap_verify:
-            print_info("Lyapunov Verification Failed:")
-            if not self.pos_verify:
-                print_info("Positivity Failed")
-            if not self.grad_verify:
-                print_info("Decrease Condition Failed")
-
-        if not self.bar_verify:
-            print_info("Barrier Verification Failed:")
-            if not self.pos_verify:
-                print_info("Initial/Unsafe Condition Failed")
-            if not self.grad_verify:
-                print_info("Decrease Condition Failed")
-
-        if self.lyap_verify and self.bar_verify:
-            print_success("Formal Verification Successful!")
-
     def final_model_eval(self):
         self.model_f.eval()
         self.mse = 0
@@ -644,6 +605,30 @@ class MotionPlanner:
             self.mse += batch_mse.item()
             total_samples += X_batch.size(0)  
         self.mse = self.mse / total_samples
+
+    def update_config(self):
+        # Construct the init_range value
+        if self.args.dataset_type == 'LASA':
+            file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
+        elif self.args.dataset_type == '3D_Shapes':
+            file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
+        init_range = [[self.init_min[0][0], self.init_max[0][0]], [self.init_min[0][1], self.init_max[0][1]]]
+        initial_conditions = self.initial_set_center.tolist()
+
+        # Load the existing configuration file
+        with open(file_path, 'r') as config_file:
+            config = json.load(config_file)
+
+        # Update the 'plotting' key with the init_range
+        if "plotting" not in config:
+            config["plotting"] = {}
+        config["plotting"]["init_range"] = init_range
+        config["plotting"]["initial_conditions"] = initial_conditions
+        config["plotting"]["dt"] = self.dt
+
+        # Save the updated configuration back to the file
+        with open(file_path, 'w') as config_file:
+            json.dump(config, config_file, indent=4)
 
     def createModels(self):
         self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
@@ -690,20 +675,6 @@ class MotionPlanner:
         
         self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                 patience = self.config["model_b"]["lr_patience"], verbose = True)
-
-    # def prune_models(self, prune_amount):
-    #     for name, module in self.model_v.named_modules():
-    #         if isinstance(module, nn.Linear):
-    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
-    #             prune.remove(module, 'weight')  # Remove the pruning reparameterization
-    #     for name, module in self.model_b.named_modules():
-    #         if isinstance(module, nn.Linear):
-    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
-    #             prune.remove(module, 'weight')
-    #     for name, module in self.model_f.named_modules():           
-    #         if isinstance(module, nn.Linear):
-    #             prune.l1_unstructured(module, name='weight', amount=prune_amount)
-    #             prune.remove(module, 'weight')
 
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
@@ -772,20 +743,4 @@ if __name__ == "__main__":
     mp.final_model_eval()
     print_info(f"MSE for test data after certificate training: {mp.mse}")
     save_seed(seed,seed_filepath)
-    
-    #     mp.verifyCertificate()
-    #     if not mp.flag_verified:
-    #         print_info("RETRAINING... ADDING NEW DATA")
-    #         mp.generate_domain_data()    
-    #         print_info(f"N_domain value: {mp.N_domain}")
-    #         # print_info("PRUNE THE MODELS FOR FINE-TUNING")
-    #         # mp.prune_models(0.2)
-    #         mp.counterexamples_added = True
-    #         mp.flag_finetune = True
-    #         iters +=1
-    #     else:
-    #         print_info("VERIFICATION SUCCESSFUL")
-    #         break    
-    # save_seed(seed,seed_filepath) 
-    # Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
- 
+    mp.export_onnx() 

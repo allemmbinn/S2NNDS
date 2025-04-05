@@ -46,18 +46,9 @@ if __name__ == "__main__":
     if not os.path.exists(base_path):
         print_error(f"Folder {base_path} does not exist. Returning...")
         sys.exit(1)
-    mp.model_f, mp.optimizer_f, mp.scheduler_f = load_model(
-        mp.model_f, mp.optimizer_f, mp.scheduler_f, 
-        os.path.join(base_path, 'model_f.pth')
-    )
-    mp.model_v, mp.optimizer_v, mp.scheduler_v = load_model(
-        mp.model_v, mp.optimizer_v, mp.scheduler_v,
-        os.path.join(base_path, 'model_v.pth')
-    )
-    mp.model_b, mp.optimizer_b, mp.scheduler_b = load_model(
-        mp.model_b, mp.optimizer_b, mp.scheduler_b,
-        os.path.join(base_path, 'model_b.pth')
-    )
+    mp.model_f.load_state_dict(torch.load(os.path.join(base_path, 'model_f.pth')))
+    mp.model_v.load_state_dict(torch.load(os.path.join(base_path, 'model_v.pth')))
+    mp.model_b.load_state_dict(torch.load(os.path.join(base_path, 'model_b.pth')))
     mp.final_model_eval()
     print_info(f"MSE for test data after certificate training: {mp.mse}")
     if args.dataset_type == '3D_DSOPT':
