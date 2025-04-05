@@ -2,13 +2,13 @@ from common_header import *
 import NNModels
 import Plotter
 import data as data
-from main_lip import MotionPlanner, filter_args, load_seed, set_seed
+from main import MotionPlanner, filter_args, load_seed, set_seed
 
 @dataclass
 class ConfigFile:
     lasa_name : str = "Worm"
     dataset_type : str = "LASA" # This can also be 3D_DSOPT
-    dsopt_name: str = "Cshape_bottom"
+    name_3d: str = "Cshape_bottom"
 
 def load_model(model, optimizer, scheduler, model_path):
     checkpoint = torch.load(model_path)
@@ -23,7 +23,10 @@ if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])
     args = pyrallis.parse(ConfigFile, args=filtered_args)
-    seed_filepath = f'seeds/{args.lasa_name}_seed.json'
+    if args.dataset_type == '3D_DSOPT':
+        seed_filepath = f'seeds/3D_Shapes/{args.name_3d}_seed.json'
+    else:
+        seed_filepath = f'seeds/LASA/{args.lasa_name}_seed.json'
     #Check if the seed file exists
     try:
        seed = load_seed(seed_filepath)
@@ -35,7 +38,10 @@ if __name__ == "__main__":
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
     mp.createModels()
-    base_path = os.path.join(os.getcwd(), 'models', args.lasa_name)
+    if args.dataset_type == '3D_DSOPT':
+        base_path = os.path.join(os.getcwd(), 'models', '3D_Shapes',args.name_3d)
+    else:
+        base_path = os.path.join(os.getcwd(), 'models', 'LASA',args.lasa_name)
     # Check if the folder exists
     if not os.path.exists(base_path):
         print_error(f"Folder {base_path} does not exist. Returning...")

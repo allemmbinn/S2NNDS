@@ -10,11 +10,11 @@ import verification
 @dataclass
 class ConfigFile:
     lasa_name : str = "Worm"
-    dataset_type : str = "LASA" # This can also be 3D_DSOPT
-    dsopt_name: str = "Cshape_bottom"
+    dataset_type : str = "LASA" # This can also be 3D_Shapes
+    name_3d: str = "Cshape_bottom"
 
 def filter_args(args):
-    known_args = ['--lasa_name', '--dataset_type', '--dsopt_name']
+    known_args = ['--lasa_name', '--dataset_type', '--name_3d']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
 
 def save_seed(seed, seed_filepath):
@@ -41,9 +41,9 @@ class MotionPlanner:
         self.args = args
         # Load the configuration file
         if self.args.dataset_type == 'LASA':
-            file_path = "./config_files/" + self.args.lasa_name + "_config2.json"
-        elif self.args.dataset_type == '3D_DSOPT':
-            file_path = "./config_files/" + self.args.dsopt_name + "_config2.json"
+            file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
+        elif self.args.dataset_type == '3D_Shapes':
+            file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -100,7 +100,10 @@ class MotionPlanner:
         }, model_path)
 
     def save_all_models(self):
-        base_path = os.path.join('models', self.args.lasa_name)
+        if self.args.dataset_type == 'LASA':
+            base_path = os.path.join('models', 'LASA', self.args.lasa_name)
+        elif self.args.dataset_type == '3D_Shapes':
+            base_path = os.path.join('models', '3D_Shapes', self.args.name_3d)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         self.save_model(self.model_f, self.optimizer_f, self.scheduler_f, os.path.join(base_path, 'model_f.pth'))
         self.save_model(self.model_v, self.optimizer_v, self.scheduler_v, os.path.join(base_path, 'model_v.pth'))
@@ -155,11 +158,11 @@ class MotionPlanner:
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
             self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
             self.initial_set_center = np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)
-        elif self.args.dataset_type == '3D_DSOPT':
-            folder_path = os.path.join(os.getcwd(),"datasets")
+        elif self.args.dataset_type == '3D_Shapes':
+            folder_path = os.path.join(os.getcwd(),"datasets_3D")
             if not os.path.isdir(folder_path):
                 print_error("Run dsopt_dataset.sh to get the dataset")
-            path_name = os.path.join(folder_path, "3D_" + self.args.dsopt_name + ".mat")
+            path_name = os.path.join(folder_path, "3D_" + self.args.name_3d + ".mat")
             if os.path.exists(path_name):
                 mat = scipy.io.loadmat(path_name)
             else:
@@ -210,7 +213,7 @@ class MotionPlanner:
             self.init_min = np.where(self.init_min < -1, -1, self.init_min)
             self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
             self.init_max = np.where(self.init_max > 1, 1, self.init_max)
-        elif self.args.dataset_type == '3D_DSOPT':
+        elif self.args.dataset_type == '3D_Shapes':
             self.init_min = (np.min([self.demos[i][:3,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,3)
             self.init_min = np.where(self.init_min < -1, -1, self.init_min)
             self.init_max = (np.max([self.demos[i][:3,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,3)
@@ -706,8 +709,11 @@ if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])
     args = pyrallis.parse(ConfigFile, args=filtered_args)
-    seed_filepath = f'seeds/{args.lasa_name}_seed.json'
-    #Check if the seed file exists
+    if args.dataset_type == 'LASA':
+        seed_filepath = f'seeds/LASA/{args.lasa_name}_seed.json'
+    elif args.dataset_type == '3D_Shapes':
+        seed_filepath = f'seeds/3D_Shapes/{args.name_3d}_seed.json'
+    #Check if the seed file exists  
     try:
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
@@ -719,7 +725,7 @@ if __name__ == "__main__":
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    if args.dataset_type == '3D_DSOPT':
+    if args.dataset_type == '3D_Shapes':
         Plotter.initial3DDSPlot(mp.model_f, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
     elif args.dataset_type == 'LASA':
         Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
@@ -752,7 +758,7 @@ if __name__ == "__main__":
                 param_group['lr'] = mp.lr_v
             for param_group in mp.optimizer_b.param_groups:
                 param_group['lr'] = mp.lr_b
-            if args.dataset_type == '3D_DSOPT':
+            if args.dataset_type == '3D_Shapes':
                 Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
             elif args.dataset_type == 'LASA':
                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
