@@ -17,6 +17,7 @@ import matplotlib.patches as patches
 import os
 import timeit
 import numpy as np
+import pandas as pd
 import tqdm
 import copy
 import scipy.special as sp

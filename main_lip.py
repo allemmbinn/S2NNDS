@@ -528,14 +528,14 @@ class MotionPlanner:
                         #self.model_b.clip_weights()
 
                     if batches[1] is not None:
-                         input_train = batches[1][0].to(self.device)
-                         output_train = batches[1][1].to(self.device)
-                         self.optimizer_f.zero_grad()
-                         loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
-                         loss_train.backward()
-                         torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
-                         self.optimizer_f.step()
-                         #self.model_f.clip_weights()
+                        input_train = batches[1][0].to(self.device)
+                        output_train = batches[1][1].to(self.device)
+                        self.optimizer_f.zero_grad()
+                        loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
+                        loss_train.backward()
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        self.optimizer_f.step()
+                        #self.model_f.clip_weights()
  
                     else:
                         loss_train = torch.tensor(0.0, requires_grad=True)
@@ -660,7 +660,7 @@ if __name__ == "__main__":
    # while not mp.flag_verified and iters <= 20: 
     print_info("CERTIFICATE TRAINING")
     for param_group in mp.optimizer_f.param_groups:
-        param_group['lr'] *= 1e-6
+        param_group['lr'] = 1e-10
     mp.trainCertificate()
     trial = 1
     lr_inc = mp.config["counterex"]["lr_increment_factor"]
@@ -687,8 +687,8 @@ if __name__ == "__main__":
             for param_group in mp.optimizer_b.param_groups:
                 param_group['lr'] = mp.lr_b
             Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
-            Plotter.plotLyapunov(mp.model_v)
-            Plotter.plotBarrier(mp.model_b)
+            # Plotter.plotLyapunov(mp.model_v)
+            # Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
                 mp.save_all_models()

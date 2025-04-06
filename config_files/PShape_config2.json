@@ -4,7 +4,7 @@
         "hidden_neurons": 64,
         "layers" : 2,
         "epochs_warm" : 500,
-        "learning_rate" : 7e-3,
+        "learning_rate" : 7e-5,
         "batch_size" : 64,
         "lr_factor" : 0.1,
         "lr_patience" :10,
@@ -41,7 +41,7 @@
     },
     "unsafe":{
         "shape" : "Rectangle",
-        "range" : [[-0.6, -0.4], [-0.1,-0.0]]
+        "range" : [[-0.25, 0.0], [0.25,0.50]]
     },
     "counterex":{
         "N_cex_domain" : 400,
@@ -72,16 +72,16 @@
     "hyperparameters" : {
         "max_iters" : 30,
         "max_iters_ft" : 30,
-        "decay_mse" : 5,
+        "decay_mse" : 3,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
-        "decay_lv" : 1,
+        "decay_lv" : 0.5,
         "decay_v0" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,
         "decay_cut" : 1,
-        "decay_lb" : 1,
-        "alpha" : 1,
+        "decay_lb" : 0.5,
+        "alpha" : 0.0001,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
         "lyap_tol" : 0.1,
