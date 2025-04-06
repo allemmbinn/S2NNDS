@@ -183,9 +183,6 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, X_train, config):
 
     return fig
 
-
-
-
 def plotObstacle(model_f, model_b, X_train, mean_point, config):
     mean_point = mean_point.numpy().squeeze()
     device = next(model_f.parameters()).device
@@ -289,13 +286,12 @@ def plotObstacle(model_f, model_b, X_train, mean_point, config):
                         bbox_to_anchor=(0, 1))
     plt.show()
 
-
 def plotLyapunov(model_v):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
     x2 = torch.linspace(-1, 1, 50)
     X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
     # Flatten to pass into the model
-    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1).to(model_v.device)
     V_value = model_v(inputs).detach().numpy()
     V_value = V_value.reshape(50,50)
     plt.figure(figsize=(8, 6))
@@ -311,7 +307,7 @@ def plotBarrier(model_b):
     x2 = torch.linspace(-1, 1, 50)
     X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
     # Flatten to pass into the model
-    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
+    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1).to(model_b.device)
     B_value = model_b(inputs).detach().numpy()
     B_value = B_value.reshape(50,50)
     plt.figure(figsize=(8, 6))
