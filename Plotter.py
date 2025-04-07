@@ -32,6 +32,30 @@ def initialDSPlot(model_f, X_train, initial_set_center, dt):
     plt.axis('equal')
     plt.show()
 
+def initial2DDSPlot(model_f, demos, initial_set_center):
+    device = next(model_f.parameters()).device
+    # Create a figure and 2D axes
+    fig, ax = plt.subplots(figsize=(10, 8))
+    for i in range(demos.shape[0]):
+        ax.plot(demos[i][:,0], demos[i][:,1], 'blue')
+    # Plotting the final trajectory
+    n = 3000
+    dt = 0.01
+    x = torch.zeros((n, 2))
+    x[0, :] = initial_set_center
+    x = x.to(device)
+    for j in range(1, n):
+        Fout = model_f(x[j-1])
+        x[j] = x[j-1] + Fout * dt
+    x = x.cpu().detach().numpy()
+    ax.plot(x[:, 0], x[:, 1],'red')
+
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    plt.title('Trajectories of the Dynamical System')
+    plt.grid(True)
+    plt.show()
+
 def initial3DDSPlot(model_f, demos, initial_set_center):
     device = next(model_f.parameters()).device
     # Create a figure and 3D axes

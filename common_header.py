@@ -13,12 +13,17 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits import mplot3d
 
-# Other Requirements
+# Python Essentials
 import os
-import timeit
 import numpy as np
+import pandas as pd
+import time
+
+# Essentials for Models 
 import tqdm
 import copy
+
+# Other Requirements
 import scipy.io
 from math import e
 from termcolor import colored

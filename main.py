@@ -11,9 +11,10 @@ class ConfigFile:
     lasa_name : str = "Worm"
     dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
-
+    name_2d: str = "Five_Obstacle_DS"
+    
 def filter_args(args):
-    known_args = ['--lasa_name', '--dataset_type', '--name_3d']
+    known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
 
 def save_seed(seed, seed_filepath):
@@ -43,6 +44,8 @@ class MotionPlanner:
             file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
         elif self.args.dataset_type == '3D_Shapes':
             file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
+        elif self.args.dataset_type == '2D_Shapes':
+            file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -92,13 +95,15 @@ class MotionPlanner:
 
     def save_model(self, model, model_path):
         os.makedirs(os.path.dirname(model_path), exist_ok=True)
-        torch.save(model.state_dict(), model_path)
+        torch.save(model, model_path)
 
     def save_all_models(self):
         if self.args.dataset_type == 'LASA':
             base_path = os.path.join('models', 'LASA', self.args.lasa_name)
         elif self.args.dataset_type == '3D_Shapes':
             base_path = os.path.join('models', '3D_Shapes', self.args.name_3d)
+        elif self.args.dataset_type == '2D_Shapes':
+            base_path = os.path.join('models', '2D_Shapes', self.args.name_2d)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         # Save the model states 
         self.save_model(self.model_f, os.path.join(base_path, 'model_f.pth'))
@@ -114,6 +119,10 @@ class MotionPlanner:
             base_path = os.path.join('models_onnx', '3D_Shapes')
             os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
             file_path = os.path.join(base_path, self.args.name_3d + ".onnx")
+        elif self.args.dataset_type == '2D_Shapes':
+            base_path = os.path.join('models_onnx', '2D_Shapes')
+            os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+            file_path = os.path.join(base_path, self.args.name_2d + ".onnx")
         self.model_f.eval()
         self.initial_set_center = self.initial_set_center.to(dtype=torch.float32) 
         torch.onnx.export(
@@ -173,11 +182,6 @@ class MotionPlanner:
             self.y_test = torch.tensor(self.y_test, dtype=torch.float32)  
             assert self.X_train.shape[0] == self.y_train.shape[0], "Mismatch in number of samples between X_train and y_train"
             assert self.X_test.shape[0] == self.y_test.shape[0], "Mismatch in number of samples between X_test and y_test" 
-            train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
-            test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
-            batch_size = self.config["model_f"]["batch_size"]
-            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
-            self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
             self.initial_set_center = np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)
         elif self.args.dataset_type == '3D_Shapes':
             folder_path = os.path.join(os.getcwd(),"datasets_3D")
@@ -206,12 +210,47 @@ class MotionPlanner:
             self.y_test = torch.tensor(self.y_test, dtype=torch.float32)  
             assert self.X_train.shape[0] == self.y_train.shape[0], "Mismatch in number of samples between X_train and y_train"
             assert self.X_test.shape[0] == self.y_test.shape[0], "Mismatch in number of samples between X_test and y_test" 
-            train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
-            test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
-            batch_size = self.config["model_f"]["batch_size"]
-            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
-            self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
             self.initial_set_center = np.mean([self.demos[i][:3, 0] for i in range(self.total_demos)], axis=0)
+        elif self.args.dataset_type == '2D_Shapes':
+            folder_path = os.path.join("datasets_2D", "Five_Obstacle_DS")
+            if not os.path.exists(folder_path):
+                print_error(f"Error: Folder '{folder_path}' does not exist!")
+                sys.exit(1)
+            csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
+            self.demos_pos = []
+            self.demos_vel = []
+            subsample = 4
+            for csv_file in csv_files:
+                file_path = os.path.join(folder_path, csv_file)
+                try:
+                    df = pd.read_csv(file_path)
+                    pos_array = np.vstack([np.array(df['x']), np.array(df['y'])]).T
+                    vel_array = np.vstack([np.array(df['dx']), np.array(df['dy'])]).T
+                    # After Subsampling
+                    pos_array = pos_array[::subsample]
+                    vel_array = vel_array[::subsample]
+                    self.demos_pos.append(pos_array)
+                    self.demos_vel.append(vel_array)
+                except pd.errors.EmptyDataError:
+                    print_error(f"Error: File '{file_path}' is empty!")
+                    continue
+            self.total_demos = len(self.demos_pos)
+            self.dim_in = 2
+            train_size = int(0.75 * self.total_demos)
+            train_indices = random.sample(range(self.total_demos), train_size)
+            test_indices = list(set(range(self.total_demos)) - set(train_indices))
+            self.X_train = np.concatenate([self.demos_pos[i] for i in train_indices], axis=0)
+            self.X_test = np.concatenate([self.demos_pos[i] for i in test_indices], axis=0)
+            self.y_train = np.concatenate([self.demos_vel[i] for i in train_indices], axis=0)
+            self.y_test = np.concatenate([self.demos_vel[i] for i in test_indices], axis=0)
+            # Convert to Pytorch Tensors
+            self.X_train = torch.tensor(self.X_train, dtype=torch.float32)
+            self.X_test = torch.tensor(self.X_test, dtype=torch.float32)
+            self.y_train = torch.tensor(self.y_train, dtype=torch.float32)
+            self.y_test = torch.tensor(self.y_test, dtype=torch.float32)
+            assert self.X_train.shape[0] == self.y_train.shape[0], "Mismatch in number of samples between X_train and y_train"
+            assert self.X_test.shape[0] == self.y_test.shape[0], "Mismatch in number of samples between X_test and y_test"
+            self.initial_set_center = np.mean([self.demos_pos[i][0] for i in range(self.total_demos)], axis=0)
         else:
             print_error("Non-LASA Dataset has been choosen")
         # Normalise the Trajectories to [-1, 1] #Use the maximum value to normalize and scale the data.
@@ -239,10 +278,12 @@ class MotionPlanner:
             self.init_min = np.where(self.init_min < -1, -1, self.init_min)
             self.init_max = (np.max([self.demos[i][:3,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,3)
             self.init_max = np.where(self.init_max > 1, 1, self.init_max)
-
-
+        elif self.args.dataset_type == '2D_Shapes':
+            self.init_min = (np.min([self.demos_pos[i][0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,2)
+            self.init_min = np.where(self.init_min < -1, -1, self.init_min)
+            self.init_max = (np.max([self.demos_pos[i][0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
+            self.init_max = np.where(self.init_max > 1, 1, self.init_max)
         self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
-        
         num_rows = self.init_domain.size(0)
         random_index = torch.randint(0, num_rows, (1,)).item()
         self.initial_set_random = self.init_domain[random_index].reshape(1,self.dim_in)
@@ -269,6 +310,9 @@ class MotionPlanner:
             mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
             self.unsafe_domain = self.domain[mask]
         #Dataset Generation and Shuffling
+        if self.unsafe_domain is None:
+            self.unsafe_domain = torch.empty((0, self.dim_in))
+
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
         init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
         unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
@@ -279,8 +323,9 @@ class MotionPlanner:
         self.batch_size = self.config["model_b"]["batch_size"]
 
         domain_batch_size = int(len(self.domain) / total_size * self.batch_size)	
-        init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
-        unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
+        init_batch_size = max(2, int(len(self.init_domain) / total_size * self.batch_size))
+        unsafe_batch_size = max(2, int(len(self.unsafe_domain) / total_size * self.batch_size))
+
 
         self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
         self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
@@ -426,11 +471,8 @@ class MotionPlanner:
                 x_val = X_batch.float().to(self.device)
                 y_pred = self.model_f(x_val)
                 #hyperparameter for l2 regularization
-                loss_mse = loss_fn(y_pred, y_batch.float().to(self.device)) #+ DECAY_L2*sum(param.pow(2).sum() for param in self.model_f.parameters())
-                #alpha = self.config["hyperparameters"]["alpha"]
-                #dec = self.config["model_f"]["init_decay"]
-                #loss_lyap = dec*torch.sum(F.leaky_relu(2*x_val*y_pred,alpha))
-                loss = loss_mse #+ loss_lyap
+                loss_mse = loss_fn(y_pred, y_batch.float().to(self.device))
+                loss = loss_mse
                 # backward pass
                 self.optimizer_f.zero_grad()
                 loss.backward()
@@ -441,11 +483,14 @@ class MotionPlanner:
             # wandb.log({"DS_training_loss": total_loss})
             #evaluate accuracy at end of each epoch           
             self.model_f.eval()
-            total_loss = 0
-            for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
-                y_pred = self.model_f(X_batch.float().to(self.device))
-                mse = loss_fn(y_pred, y_batch.float().to(self.device))
-                total_loss += mse.item()
+            # total_loss = 0
+            # for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
+            #     y_pred = self.model_f(X_batch.float().to(self.device))
+            #     mse = loss_fn(y_pred, y_batch.float().to(self.device))
+            #     total_loss += mse.item()
+            y_pred = self.model_f(self.X_test.float().to(self.device))
+            mse = loss_fn(y_pred, self.y_test.float().to(self.device))
+            total_loss = mse.item()
             history.append(total_loss)
             if total_loss < best_mse:
                 best_mse = total_loss
@@ -502,7 +547,6 @@ class MotionPlanner:
             self.load_model_states()        
 
             # Start Training
-            start = timeit.default_timer() 
             max_iter = self.config["hyperparameters"]["max_iters"]
 
             for epoch in range(max_iter):
@@ -612,6 +656,8 @@ class MotionPlanner:
             file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
         elif self.args.dataset_type == '3D_Shapes':
             file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
+        elif self.args.dataset_type == '2D_Shapes':
+            file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
         init_range = [[self.init_min[0][0], self.init_max[0][0]], [self.init_min[0][1], self.init_max[0][1]]]
         initial_conditions = self.initial_set_center.tolist()
 
@@ -682,6 +728,8 @@ if __name__ == "__main__":
     args = pyrallis.parse(ConfigFile, args=filtered_args)
     if args.dataset_type == 'LASA':
         seed_filepath = f'seeds/LASA/{args.lasa_name}_seed.json'
+    elif args.dataset_type == '2D_Shapes':
+        seed_filepath = f'seeds/2D_Shapes/{args.name_2d}_seed.json'
     elif args.dataset_type == '3D_Shapes':
         seed_filepath = f'seeds/3D_Shapes/{args.name_3d}_seed.json'
     #Check if the seed file exists  
@@ -698,6 +746,8 @@ if __name__ == "__main__":
     mp.trainInitialDynamics()
     if args.dataset_type == '3D_Shapes':
         Plotter.initial3DDSPlot(mp.model_f, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
+    elif args.dataset_type == '2D_Shapes':
+        Plotter.initial2DDSPlot(mp.model_f, mp.demos_pos/np.array(mp.pos_scaling), mp.initial_set_center)
     elif args.dataset_type == 'LASA':
         Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
     print_info("OBTAINING TRAINING DATA")
