@@ -260,13 +260,18 @@ class MotionPlanner:
         self.X_test /= self.pos_scaling
         self.y_train /= self.vel_scaling
         self.y_test /= self.vel_scaling
+        train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
+        test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
+        batch_size = self.config["model_f"]["batch_size"]
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
     def generate_domain_data(self):
         self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
         self.RANGE = self.config["domain"]["range"] #The number of samples we want in the domain region
-        self.domain, _ = data.generateGridData(self.N_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
-
+        # self.domain, _ = data.generateGridData(self.N_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
+        self.domain, _ = data.generateRandomData(self.N_domain, self.RANGE, self.dim_in)
         #Generate data for initial set
         if self.args.dataset_type == 'LASA':
             self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,2)
@@ -345,7 +350,8 @@ class MotionPlanner:
 
     def generate_counterexample_data(self):
         self.load_model_states()     
-        input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
+        # input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
+        input_domain, _ = data.generateRandomData(self.N_cex_domain, self.RANGE, self.dim_in)
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
         
         if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -373,6 +379,7 @@ class MotionPlanner:
         for counterexample in counterexamples_domain:
             #for _ in range(self.config["counterex"]["N"]):
                 #random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
+            print_warning(f"DOMAIN COUNTEREXAMPLE: {counterexample}") 
             add_data_domain.append(counterexample)
             
         if len(add_data_domain) > 0:
@@ -383,8 +390,8 @@ class MotionPlanner:
         for counterexample in counterexamples_init:
             #for _ in range(self.config["counterex"]["N"]):
              #   random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
-                add_data_init.append(counterexample)
-        
+            print_warning(f"INIT COUNTEREXAMPLE: {counterexample}")
+            add_data_init.append(counterexample)
         if len(add_data_init) > 0:
             add_data_init = torch.stack(add_data_init).detach()
         else:
@@ -393,40 +400,56 @@ class MotionPlanner:
         for counterexample in counterexamples_unsafe:
             #for _ in range(self.config["counterex"]["N"]):
              #   random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
-                add_data_unsafe.append(counterexample)
+            print_warning(f"UNSAFE COUNTEREXAMPLE: {counterexample}") 
+            add_data_unsafe.append(counterexample)
 
         if len(add_data_unsafe) > 0:
-             add_data_unsafe = torch.stack(add_data_unsafe).detach()
+            add_data_unsafe = torch.stack(add_data_unsafe).detach()
+            
         else:
             add_data_unsafe = None
 
         # Add the counterexamples to the domain data
 
-        if not hasattr(self, 'domain_cex'):
-            self.domain_cex = self.domain.clone()
-        if not hasattr(self, 'input_domain_cex'):
-            self.init_domain_cex = self.init_domain.clone()
-        if not hasattr(self, 'unsafe_cex'):
-            self.unsafe_domain_cex = self.unsafe_domain.clone()
+        # if not hasattr(self, 'domain_cex'):
+        #     self.domain_cex = self.domain.clone()
+        # if not hasattr(self, 'input_domain_cex'):
+        #     self.init_domain_cex = self.init_domain.clone()
+        # if not hasattr(self, 'unsafe_cex'):
+        #     self.unsafe_domain_cex = self.unsafe_domain.clone()
 
 
         if add_data_domain is not None:
-             print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
-             self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_domain], dim=0), dim = 0)
-             self.init_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.init_min)) & (self.domain_cex <= torch.tensor(self.init_max))).all(dim=1)]
-             if self.config["unsafe"]["shape"] == 'Rectangle':
-                self.unsafe_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.unsafe_min)) & (self.domain_cex <= torch.tensor(self.unsafe_max))).all(dim=1)]
-             elif self.config["unsafe"]["shape"] == 'Circle':
-                self.unsafe_domain_cex = self.domain_cex[(torch.linalg.norm(self.domain_cex - self.uns_center, dim =1) <= self.uns_rad )]
+            #  print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
+            #  self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_domain], dim=0), dim = 0)
+            #  self.init_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.init_min)) & (self.domain_cex <= torch.tensor(self.init_max))).all(dim=1)]
+            #  if self.config["unsafe"]["shape"] == 'Rectangle':
+            #     self.unsafe_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.unsafe_min)) & (self.domain_cex <= torch.tensor(self.unsafe_max))).all(dim=1)]
+            #  elif self.config["unsafe"]["shape"] == 'Circle':
+            #     self.unsafe_domain_cex = self.domain_cex[(torch.linalg.norm(self.domain_cex - self.uns_center, dim =1) <= self.uns_rad )]
+            print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
+            self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
+            self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
+            
+            if self.config["unsafe"]["shape"] == 'Rectangle':
+                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+            elif self.config["unsafe"]["shape"] == 'Circle':
+                self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )]
+
         if add_data_init is not None:
             print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
-            self.init_domain_cex = torch.unique(torch.cat([self.init_domain_cex, add_data_init], dim=0), dim = 0)
-            self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_init], dim=0), dim = 0)
+            # self.init_domain_cex = torch.unique(torch.cat([self.init_domain_cex, add_data_init], dim=0), dim = 0)
+            # self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_init], dim=0), dim = 0)
+            self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
+            self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
+
         
         if add_data_unsafe is not None:
             print_info(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
-            self.unsafe_domain_cex = torch.unique(torch.cat([self.unsafe_domain_cex, add_data_unsafe], dim=0), dim =0)
-            self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_unsafe], dim=0), dim = 0)
+            # self.unsafe_domain_cex = torch.unique(torch.cat([self.unsafe_domain_cex, add_data_unsafe], dim=0), dim =0)
+            # self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_unsafe], dim=0), dim = 0)
+            self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim = 0)
+            self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
                 
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
             print_info("NO COUNTEREXAMPLES ADDED")
@@ -434,16 +457,23 @@ class MotionPlanner:
 
         #Dataset Generation and Shuffling
 
-        domain_dataset = torch.utils.data.TensorDataset(self.domain_cex)
-        init_dataset  = torch.utils.data.TensorDataset(self.init_domain_cex)
-        unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain_cex)
+        # domain_dataset = torch.utils.data.TensorDataset(self.domain_cex)
+        # init_dataset  = torch.utils.data.TensorDataset(self.init_domain_cex)
+        # unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain_cex)
+        domain_dataset = torch.utils.data.TensorDataset(self.domain)
+        init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
+        unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
 
-        total_size = len(self.domain_cex) + len(self.init_domain_cex) + len(self.unsafe_domain_cex)
+        # total_size = len(self.domain_cex) + len(self.init_domain_cex) + len(self.unsafe_domain_cex)
+        total_size = len(self.domain) + len(self.init_domain) + len(self.unsafe_domain)
 
-        domain_batch_size = int(len(self.domain_cex) / total_size * self.batch_size)	
-        init_batch_size = max(4, int(len(self.init_domain_cex) / total_size * self.batch_size))
-        unsafe_batch_size = max(3, int(len(self.unsafe_domain_cex) / total_size * self.batch_size))
-
+        # domain_batch_size = int(len(self.domain_cex) / total_size * self.batch_size)	
+        # init_batch_size = max(4, int(len(self.init_domain_cex) / total_size * self.batch_size))
+        # unsafe_batch_size = max(3, int(len(self.unsafe_domain_cex) / total_size * self.batch_size))
+        domain_batch_size = int(len(self.domain) / total_size * self.batch_size)       
+        init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
+        unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
+ 
         self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
         self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
         self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
@@ -785,12 +815,18 @@ if __name__ == "__main__":
                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
+            mp.verifyCertificate()
+            if mp.flag_verified:
+                mp.save_all_models()
+                mp.final_model_eval()
+                print_info(f"MSE for test data after certificate training: {mp.mse}")
+                #mp.config["plott"]
+                save_seed(seed,seed_filepath)
+                mp.export_onnx()
+                #save initial set for plotting
+                mp.update_config()
+                #save datasets for results
             break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
         sys.exit(1)
-    mp.save_all_models()
-    mp.final_model_eval()
-    print_info(f"MSE for test data after certificate training: {mp.mse}")
-    save_seed(seed,seed_filepath)
-    mp.export_onnx() 
