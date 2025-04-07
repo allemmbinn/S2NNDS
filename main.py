@@ -41,11 +41,14 @@ class MotionPlanner:
         self.args = args
         # Load the configuration file
         if self.args.dataset_type == 'LASA':
-            file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
+            file_path = os.path.join(os.getcwd, "config_files", "LASA", self.args.lasa_name + "_config.json")
+            # file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
         elif self.args.dataset_type == '3D_Shapes':
-            file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
+            file_path = os.path.join(os.getcwd, "config_files", "3D_Shapes", self.args.name_3d + "_config.json")
+            # file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
         elif self.args.dataset_type == '2D_Shapes':
-            file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
+            file_path = os.path.join(os.getcwd, "config_files", "2D_Shapes", self.args.name_2d + "_config.json")
+            # file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
