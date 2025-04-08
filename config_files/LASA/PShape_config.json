@@ -3,7 +3,7 @@
         "activation_function": "Tanh",
         "hidden_neurons": 64,
         "layers" : 4,
-        "epochs_warm" : 400,
+        "epochs_warm" : 100,
         "learning_rate" : 1e-4,
         "batch_size" : 64,
         "lr_factor" : 0.1,
@@ -33,19 +33,19 @@
         },
 
     "domain":{
-        "N" : 200,
-        "range" : [[-1,1],[-1,1]],
-        "additional_N_domain" : 10
-    },
+        "N" : 50,
+        "range" : [[-1,1],[-1,1]]
+        },
     "init":{
-        "radius" : 0.15
+        "radius" : 0.05
     },
     "unsafe":{
-        "shape" : "Rectangle",
-        "range" : [[0.4, 0.6], [-0.70,-0.48]]
+        "shape" : "Circle",
+        "centre" : [-0.4,0.35],
+        "radius" : 0.1
     },
     "counterex":{
-        "N_cex_domain" : 400,
+        "N_cex_domain" : 500,
         "N" : 1,
         "no_min" : 10,
         "radius" : 0.001,
@@ -57,18 +57,18 @@
         "lb" : 0,
         "ub" : 0
     },
+    "Barrier" : true,
+    "plots" : true,
+    "plotting" : {
+        "range" : [[-1.5,0.5],[-0.5, 1.0]],
+        "contour" : false,
+        "legend"  : false,
+        "name" : "Sine LASA with Obstacles"
+    },
     "verification": {
         "N_conf": 800,
         "epsilon": 0.0001,
         "beta": 0.0001
-    },
-    "Barrier" : true,
-    "plots" : true,
-    "plotting" : {
-        "range" : [[-1.5,0.5],[-0.5, 0.5]],
-        "contour" : false,
-        "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
     },
     "hyperparameters" : {
         "max_iters" : 30,
@@ -76,12 +76,12 @@
         "decay_mse" : 5,
         "decay_lf" : 0.0,
         "decay_vpos" : 1,
-        "decay_lv" : 0.3,
+        "decay_lv" : 0.4,
         "decay_v0" : 1,
         "decay_init" : 1,
         "decay_unsafe" : 1,
         "decay_cut" : 1,
-        "decay_lb" : 0.3,
+        "decay_lb" : 0.4,
         "alpha" : 1,
         "epi_bound" : 0.05,
         "eta" : 1e-4,

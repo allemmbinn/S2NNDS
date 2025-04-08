@@ -1,6 +1,6 @@
 from common_header import *
 from torch.utils.data import DataLoader, TensorDataset
-
+import sympy.special as sc
 def bounds(model):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
     x2 = torch.linspace(-1, 1, 50)
@@ -186,9 +186,9 @@ def verify_unsafe(model_b, unsafe_domain, config):
 def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, unsafe_domain, config):
     N=config ["verification"]["N_conf"]**2
     epsilon = config["verification"]["epsilon"]
-    alpha = 0.1*epsilon
+    alpha = 0.01*epsilon
     l = math.floor((N+1)*(alpha))
-    beta = sp.betainc(N - l + 1, l, 1-epsilon)
+    beta = sc.betainc(N - l + 1, l, 1-epsilon)
     #Defining the conformal score functions
     device = next(model_v.parameters()).device
     model_v = model_v.to(device)
