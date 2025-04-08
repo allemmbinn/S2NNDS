@@ -755,6 +755,26 @@ class MotionPlanner:
         self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                 patience = self.config["model_b"]["lr_patience"], verbose = True)
 
+    def verifyCertificate(self):
+        self.load_model_states()     
+        input_domain, _ = data.generateRandomData(self.config["counterex"]["N_cex_domain"],self.RANGE) #the domain is limited to [-1,1] due to normalization
+        init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
+        
+        if self.config["unsafe"]["shape"] == 'Rectangle':
+            unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
+        elif self.config["unsafe"]["shape"] == 'Circle':
+            mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
+            unsafe_domain = input_domain[mask]
+
+        beta, q = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
+        if q <= 0:
+            self.flag_verified = True
+            conf = 1-self.config["verification"]["epsilon"]
+            print(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
+        else:
+            self.flag_verified = False
+            print(f"Verification failed with marginal safety error: {q}")
+
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])

@@ -183,5 +183,71 @@ def verify_unsafe(model_b, unsafe_domain, config):
 
     return cex.cpu()
 
+def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, unsafe_domain, config):
+    N=config ["verification"]["N_conf"]**2
+    epsilon = config["verification"]["epsilon"]
+    alpha = 0.1*epsilon
+    l = math.floor((N+1)*(alpha))
+    beta = sp.betainc(N - l + 1, l, 1-epsilon)
+    #Defining the conformal score functions
+    device = next(model_v.parameters()).device
+    model_v = model_v.to(device)
+    model_b = model_b.to(device)
+    model_f = model_f.to(device)
+    input_domain = input_domain.float().to(device)
+    input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
+    #remove points close to equilibrium
+    # Define the bounds
+    lower_bound = config["counterex"]["lb"]
+    upper_bound = config["counterex"]["ub"]
 
-        
+    # Create a boolean mask for points within the bounds
+    mask_x = (input_domain_clone[:, 0] < lower_bound) | (input_domain_clone[:, 0] > upper_bound)
+    mask_y = (input_domain_clone[:, 1] < lower_bound) | (input_domain_clone[:, 1] > upper_bound)
+    mask = mask_x & mask_y
+
+    # Apply the mask to filter out the points
+    input_domain_clone = input_domain_clone[mask]    
+    V_value = model_v(input_domain_clone)
+
+    f_value = model_f(input_domain_clone)
+    #lyapunov lie derivative counterexamples
+    lyap_tol = config["counterex"]["lyap_tol"]
+    grad_lyap = torch.autograd.grad(
+                    torch.sum(V_value),
+                    input_domain_clone,
+                    grad_outputs=None,
+                    create_graph=True,
+                    only_inputs=True,
+                    allow_unused=True)[0]
+    lie_lyap = torch.sum(grad_lyap * f_value, dim=1)
+    V_pos = -V_value
+
+    lie_tol = config["hyperparameters"]["lie_tol"]
+    B_value = model_b(input_domain_clone)
+    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol)
+    B_value = B_value[bar_mask]
+    grad_bar = torch.autograd.grad(
+                    torch.sum(B_value),
+                    input_domain_clone,
+                    grad_outputs=None,
+                    create_graph=True,
+                    only_inputs=True,
+                    allow_unused=True)[0]
+    lie_bar = torch.sum(grad_bar * f_value, dim=1)
+
+    init_domain_clone = init_domain.float().to(device)
+    B_init = model_b(init_domain_clone)
+    
+    unsafe_domain_clone = unsafe_domain.float().to(device)
+    B_uns = -model_b(unsafe_domain_clone)
+
+    #Compute the non conformity prediction scores
+    quantile_n = math.ceil((N+1)*(1-epsilon))/N
+    score_lie_lyap = torch.quantile(lie_lyap,quantile_n, interpolation='lower')
+    score_V_pos = torch.quantile(V_pos,quantile_n, interpolation='lower')
+    score_lie_bar = torch.quantile(lie_bar, quantile_n, interpolation='lower')
+    score_B_init = torch.quantile(B_init, quantile_n, interpolation='lower')
+    score_B_uns = torch.quantile(B_uns, quantile_n, interpolation='lower')
+    q = max(score_lie_lyap, score_V_pos, score_lie_bar, score_B_init, score_B_uns)
+    return beta, q
