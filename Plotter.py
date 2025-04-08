@@ -283,7 +283,7 @@ def plotLyapunov(model_v, dim_in=2):
         # Flatten to pass into the model
         inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
     model_v = model_v.to(inputs.device)
-    V_value = model_v(inputs).detach().numpy()
+    V_value = model_v(inputs).detach().cpu().numpy()
     V_value = V_value.reshape(50,50)
     plt.figure(figsize=(8, 6))
     plt.contourf(X1, X2, V_value, levels=50, cmap="inferno")
@@ -308,7 +308,7 @@ def plotBarrier(model_b, dim_in=2):
         # Flatten to pass into the model
         inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1)
     model_b = model_b.to(inputs.device)
-    B_value = model_b(inputs).detach().numpy()
+    B_value = model_b(inputs).detach().cpu().numpy()
     B_value = B_value.reshape(50,50)
     plt.figure(figsize=(8, 6))
     plt.contourf(X1, X2, B_value, levels=50, cmap="inferno")

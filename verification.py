@@ -1,6 +1,6 @@
 from common_header import *
 from torch.utils.data import DataLoader, TensorDataset
-import sympy.special as sc
+import scipy.special as sc
 def bounds(model):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
     x2 = torch.linspace(-1, 1, 50)
