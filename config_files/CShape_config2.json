@@ -1,11 +1,11 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 16,
+        "hidden_neurons": 32,
         "layers": 2,
-        "epochs_warm": 150,
+        "epochs_warm": 100,
         "learning_rate": 0.001,
-        "learning_rate_cert": 1e-06,
+        "learning_rate_cert": 1e-08,
         "batch_size": 64,
         "lr_factor": 0.1,
         "lr_patience": 5,
@@ -45,20 +45,11 @@
         ]
     },
     "init": {
-        "radius": 0.005
+        "radius": 0.01
     },
     "unsafe": {
-        "shape": "Rectangle",
-        "range": [
-            [
-                -0.4,
-                -0.3
-            ],
-            [
-                -0.1,
-                0.05
-            ]
-        ]
+        "shape": "Custom",
+        "function": "(((x + 0.3)/6)**2)**(1/3) +(((y - 0.4)/3)**2)**(1/3) - 0.15"
     },
     "counterex": {
         "N_cex_domain": 500,
@@ -68,7 +59,7 @@
         "lyap_tol": 0.0,
         "pos_tol": 0.0,
         "bar_tol": 0.0,
-        "inun_tol": 0.001,
+        "inun_tol": 0.0,
         "lb": 0.0,
         "ub": 0.0
     },
@@ -82,42 +73,42 @@
     "plotting": {
         "range": [
             [
-                -1.5,
-                0.5
+                -1.2,
+                1.0
             ],
             [
-                -0.5,
-                0.5
+                -0.2,
+                1.0
             ]
         ],
         "contour": false,
         "legend": false,
-        "name": "Worm LASA with Obstacles",
+        "name": "CShape LASA with Obstacles",
         "init_range": [
             [
-                -1.0,
-                -0.9397674207432672
+                -0.047594000458234004,
+                0.07015040073317397
             ],
             [
-                -0.06604651026341109,
-                -0.006627906716840197
+                0.6366168078816258,
+                0.9348124112725584
             ]
         ],
         "initial_conditions": [
             [
-                -0.965946822263226,
-                -0.037790696829730665
+                0.023630514573747013,
+                0.8313644672763763
             ],
             [
-                -0.9691370725631714,
-                -0.02435171604156494
+                0.004175305366516113,
+                0.6684210300445557
             ]
         ],
-        "dt": 0.005266017443299982
+        "dt": 0.0038637225557244434
     },
     "hyperparameters": {
         "max_iters": 30,
-        "decay_mse": 5,
+        "decay_mse": 10,
         "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,
@@ -127,10 +118,10 @@
         "decay_cut": 1,
         "decay_lb": 1,
         "alpha": 1,
-        "lyap_tol": 0.1,
-        "pos_tol": 0.1,
-        "bar_tol": 0.1,
-        "inun_tol": 0.01,
+        "lyap_tol": 0.001,
+        "pos_tol": 0.001,
+        "bar_tol": 0.01,
+        "inun_tol": 0.0001,
         "lie_tol": 0.01,
         "reg_bar": 0.001,
         "reg_v": 0.001

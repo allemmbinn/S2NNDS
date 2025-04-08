@@ -135,7 +135,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     #     V_pos_cex = torch.empty((0, input_domain.shape[1]), device=device)
 
     #barrier lie derivative counterexamples
-    bar_tol =  config["hyperparameters"]["bar_tol"]
+    bar_tol =  config["counterex"]["bar_tol"]
     lie_tol = config["hyperparameters"]["lie_tol"]
     B_value = model_b(input_domain_clone)
     grad_bar = torch.autograd.grad(
@@ -196,7 +196,6 @@ def verify_init(model_b,init_domain, config):
     filtered_B_value = B_value[mask].view(-1)
     filtered_init_domain = init_domain_clone[mask]
 
-        # Compute softmax-like probabilities
     if filtered_B_value.numel() > 0:    
         num_elements = filtered_B_value.numel()
         num_samples = min(N, num_elements)
@@ -263,7 +262,6 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
 
     f_value = model_f(input_domain_clone)
     #lyapunov lie derivative counterexamples
-    lyap_tol = config["counterex"]["lyap_tol"]
     grad_lyap = torch.autograd.grad(
                     torch.sum(V_value),
                     input_domain_clone,
