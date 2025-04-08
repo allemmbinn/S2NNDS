@@ -222,7 +222,7 @@ class MotionPlanner:
             csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
             self.demos_pos = []
             self.demos_vel = []
-            subsample = 4
+            subsample = 1
             for csv_file in csv_files:
                 file_path = os.path.join(folder_path, csv_file)
                 try:
@@ -836,6 +836,8 @@ if __name__ == "__main__":
                 Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
             elif args.dataset_type == 'LASA':
                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+            elif args.dataset_type == '2D_Shapes':
+                Plotter.initial2DDSPlot(mp.model_f, mp.demos_pos/mp.pos_scaling, mp.initial_set_center)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
