@@ -832,12 +832,13 @@ if __name__ == "__main__":
                 param_group['lr'] = mp.lr_v
             for param_group in mp.optimizer_b.param_groups:
                 param_group['lr'] = mp.lr_b
+            import pdb; pdb.set_trace()
             if args.dataset_type == '3D_Shapes':
                 Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
             elif args.dataset_type == 'LASA':
                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             elif args.dataset_type == '2D_Shapes':
-                Plotter.initial2DDSPlot(mp.model_f, mp.demos_pos/mp.pos_scaling, mp.initial_set_center)
+                Plotter.initial2DDSPlot(mp.model_f, np.array(mp.demos_pos)/int(mp.pos_scaling), mp.initial_set_center)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
