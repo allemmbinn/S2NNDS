@@ -46,14 +46,14 @@ if __name__ == "__main__":
     if not os.path.exists(base_path):
         print_error(f"Folder {base_path} does not exist. Returning...")
         sys.exit(1)
-    mp.model_f.load_state_dict(torch.load(os.path.join(base_path, 'model_f.pth')))
-    mp.model_v.load_state_dict(torch.load(os.path.join(base_path, 'model_v.pth')))
-    mp.model_b.load_state_dict(torch.load(os.path.join(base_path, 'model_b.pth')))
+    torch.load(os.path.join(base_path, 'model_f.pth'))
+    torch.load(os.path.join(base_path, 'model_v.pth'))
+    torch.load(os.path.join(base_path, 'model_b.pth'))
     mp.final_model_eval()
     print_info(f"MSE for test data after certificate training: {mp.mse}")
     if args.dataset_type == '3D_DSOPT':
         Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
     elif args.dataset_type == 'LASA':
-        Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+        Plotter.plotFinalDS(mp.model_f, mp.X_train, mp.initial_set_center.squeeze(), mp.dt)
     Plotter.plotLyapunov(mp.model_v)
     Plotter.plotBarrier(mp.model_b)
