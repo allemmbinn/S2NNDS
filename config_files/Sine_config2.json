@@ -12,8 +12,7 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
-        "learning_rate_ft": 0.007,
+        "learning_rate": 0.05,
         "hidden_neurons": 128,
         "layers": 3,
         "lr_factor": 0.2,
@@ -22,17 +21,16 @@
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
-        "learning_rate_ft": 0.007,
+        "learning_rate": 0.05,
         "hidden_neurons": 128,
         "layers": 3,
         "lr_factor": 0.2,
         "lr_patience": 10,
-        "batch_size": 256,
+        "batch_size": 512,
         "warmup": 10
     },
     "domain": {
-        "N": 50,
+        "N": 5000,
         "range": [
             [
                 -1,
@@ -56,11 +54,10 @@
         "radius": 0.1
     },
     "counterex": {
-        "N_cex_domain": 500,
+        "N_cex_domain": 200000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
-        "lr_increment_factor": 1.0,
         "lyap_tol": 0.0,
         "pos_tol": 0.0,
         "bar_tol": 0.0,
@@ -69,7 +66,7 @@
         "ub": 0
     },
     "verification": {
-        "N_conf": 800,
+        "N_conf": 650000,
         "epsilon": 0.0001,
         "beta": 0.0001
     },
@@ -101,12 +98,12 @@
         ],
         "initial_conditions": [
             [
-                -0.9396377801895142,
-                0.028839703649282455
+                -0.9396378059592285,
+                0.02883970425142531
             ],
             [
-                -0.9685194492340088,
-                -0.012602806091308594
+                -0.9833395481109619,
+                0.06312179565429688
             ]
         ],
         "dt": 0.005768861400492263
@@ -114,7 +111,7 @@
     "hyperparameters": {
         "max_iters": 30,
         "max_iters_ft": 30,
-        "decay_mse": 1,
+        "decay_mse": 5,
         "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,

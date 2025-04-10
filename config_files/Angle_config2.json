@@ -12,8 +12,7 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
-        "learning_rate_ft": 0.007,
+        "learning_rate": 0.05,
         "hidden_neurons": 64,
         "layers": 2,
         "lr_factor": 0.2,
@@ -22,8 +21,7 @@
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
-        "learning_rate_ft": 0.007,
+        "learning_rate": 0.05,
         "hidden_neurons": 64,
         "layers": 2,
         "lr_factor": 0.2,
@@ -32,7 +30,7 @@
         "warmup": 10
     },
     "domain": {
-        "N": 50,
+        "N": 2500,
         "range": [
             [
                 -1,
@@ -61,7 +59,7 @@
         ]
     },
     "counterex": {
-        "N_cex_domain": 800,
+        "N_cex_domain": 640000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -74,7 +72,7 @@
         "ub": 0
     },
     "verification": {
-        "N_conf": 800,
+        "N_conf": 640000,
         "epsilon": 0.0001,
         "beta": 0.0001
     },
@@ -106,12 +104,12 @@
         ],
         "initial_conditions": [
             [
-                -0.9346076250076294,
-                -0.02213279716670513
+                -0.934607636990952,
+                -0.022132796570291574
             ],
             [
-                -0.9277104139328003,
-                -0.0970606803894043
+                -0.8788306713104248,
+                -0.07381820678710938
             ]
         ],
         "dt": 0.002968502735264841

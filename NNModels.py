@@ -1,4 +1,13 @@
 from common_header import *
+
+class SineActivation(nn.Module):
+    def __init__(self):
+        super(SineActivation, self).__init__()
+
+    def forward(self, x):
+        return torch.sin(x)
+
+
 # Activation Function
 def assignActivationFunction(activation_function):
     if activation_function == 'Tanh':
@@ -9,6 +18,8 @@ def assignActivationFunction(activation_function):
         return nn.ELU()    
     elif activation_function == 'softplus':
         return nn.Softplus()
+    elif activation_function == 'Sine':
+        return SineActivation()
     
 # def spec_norm(layer, norm_value):
 #     layer = spectral_norm(layer)

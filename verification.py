@@ -135,7 +135,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     #     V_pos_cex = torch.empty((0, input_domain.shape[1]), device=device)
 
     #barrier lie derivative counterexamples
-    bar_tol =  config["hyperparameters"]["bar_tol"]
+    bar_tol =  config["counterex"]["bar_tol"]
     lie_tol = config["hyperparameters"]["lie_tol"]
     B_value = model_b(input_domain_clone)
     grad_bar = torch.autograd.grad(
@@ -196,7 +196,6 @@ def verify_init(model_b,init_domain, config):
     filtered_B_value = B_value[mask].view(-1)
     filtered_init_domain = init_domain_clone[mask]
 
-        # Compute softmax-like probabilities
     if filtered_B_value.numel() > 0:    
         num_elements = filtered_B_value.numel()
         num_samples = min(N, num_elements)
@@ -235,7 +234,7 @@ def verify_unsafe(model_b, unsafe_domain, config):
     return cex.cpu()
 
 def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, unsafe_domain, config):
-    N=config ["verification"]["N_conf"]**2
+    N=config ["verification"]["N_conf"]
     epsilon = config["verification"]["epsilon"]
     alpha = 0.1*epsilon
     l = math.floor((N+1)*(alpha))
@@ -263,7 +262,6 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
 
     f_value = model_f(input_domain_clone)
     #lyapunov lie derivative counterexamples
-    lyap_tol = config["counterex"]["lyap_tol"]
     grad_lyap = torch.autograd.grad(
                     torch.sum(V_value),
                     input_domain_clone,
@@ -276,8 +274,6 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
 
     lie_tol = config["hyperparameters"]["lie_tol"]
     B_value = model_b(input_domain_clone)
-    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol)
-    B_value = B_value[bar_mask]
     grad_bar = torch.autograd.grad(
                     torch.sum(B_value),
                     input_domain_clone,
@@ -286,7 +282,8 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
                     only_inputs=True,
                     allow_unused=True)[0]
     lie_bar = torch.sum(grad_bar * f_value, dim=1)
-
+    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol)
+    lie_bar = lie_bar[bar_mask]
     init_domain_clone = init_domain.float().to(device)
     B_init = model_b(init_domain_clone)
     

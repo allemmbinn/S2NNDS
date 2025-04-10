@@ -1,5 +1,6 @@
 {
     "model_f": {
+<<<<<<< HEAD
         "activation_function": "Tanh",
         "hidden_neurons": 32,
         "layers" : 2,

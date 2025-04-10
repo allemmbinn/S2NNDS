@@ -9,7 +9,7 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Angle"
+    lasa_name : str = "GShape"
     dataset_type : str = "LASA"
 
 def filter_args(args):
@@ -102,17 +102,17 @@ class MotionPlanner:
         base_path = os.path.join('models_onnx')
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         self.model_f.eval()
-        self.initial_set_center = self.initial_set_center.to(dtype=torch.float32)
+        self.initial_point = self.initial_set_center[0].reshape(1,2).to(dtype=torch.float32)
         torch.onnx.export(
                 self.model_f,
-                self.initial_set_center,
+                self.initial_point,
                 os.path.join(base_path, self.args.lasa_name + ".onnx"),
-                export_params=True,  # Store the trained parameters in the model file
-                opset_version=11,    # ONNX opset version
-                do_constant_folding=True,  # Optimize constant folding for inference
+                export_params=True,
+                opset_version=11,
+                do_constant_folding=True,
                 input_names=["position"],     # Name of the input tensor
                 output_names=["velocity"],   # Name of the output tensor
-                dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}  # Dynamic batch size
+                dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}
             )
         onnx_model = onnx.load(os.path.join(base_path, self.args.lasa_name + ".onnx"))
         onnx.checker.check_model(onnx_model)
@@ -183,54 +183,57 @@ class MotionPlanner:
     def generate_domain_data(self):
         self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
         self.RANGE = self.config["domain"]["range"] #The number of samples we want in the domain region
-        self.domain, _ = data.generateRandomData(self.N_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
-        #Generate data for initial set
-        self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,2)
-        self.init_min = np.where(self.init_min < -1, -1, self.init_min)
-        self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
-        self.init_max = np.where(self.init_max > 1, 1, self.init_max)
+        self.unsafe_domain = torch.empty(0,)
+        self.init_domain = torch.empty(0,)
+        while len(self.unsafe_domain) < 2 or len(self.init_domain) < 2:
+            self.domain, _ = data.generateRandomData(self.N_domain, self.RANGE) #the domain is limited to [-1,1] due to normalization
+            #Generate data for initial set
+            self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"]["radius"]).reshape(1,2)
+            self.init_min = np.where(self.init_min < -1, -1, self.init_min)
+            self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
+            self.init_max = np.where(self.init_max > 1, 1, self.init_max)
 
+            self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
 
-        self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
-        
+            if self.config["unsafe"]["shape"] == 'Rectangle':
+                self.unsafe = self.config["unsafe"]["range"]
+                if not "unbounded" in self.config["unsafe"]:
+                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                else:
+                    if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
+                        self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
+                        self.unsafe_max = torch.tensor([100, self.unsafe[1][1]])       
+                    if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'max':
+                        self.unsafe_min = torch.tensor([-100, self.unsafe[1][0]]) 
+                        self.unsafe_max = torch.tensor([self.unsafe[0][0], self.unsafe[1][1]])       
+                    if self.config["unsafe"]["unbounded"] == 'y' and self.config["unsafe"]["max_min"] == 'min':
+                        self.unsafe_min = torch.tensor([self.unsafe[0][0], self.unsafe[1][0]]) 
+                        self.unsafe_max = torch.tensor([self.unsafe[0][1], 100])       
+                    if self.config["unsafe"]["unbounded"] == 'y' and self.config["unsafe"]["max_min"] == 'max':
+                        self.unsafe_min = torch.tensor([self.unsafe[0][0], -100]) 
+                        self.unsafe_max = torch.tensor([self.unsafe[0][1], self.unsafe[1][0]])       
+
+                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+
+            elif self.config["unsafe"]["shape"] == 'Circle':
+                self.uns_center = torch.tensor(self.config["unsafe"]["center"])
+                self.uns_rad = self.config["unsafe"]["radius"]
+                mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
+                self.unsafe_domain = self.domain[mask]
+
+            elif self.config["unsafe"]["shape"] == 'Custom':
+                x= self.domain[:,0]
+                y = self.domain[:,1]
+                result = eval(self.config["unsafe"]["function"])
+                mask = (result <= 0)
+                self.unsafe_domain = self.domain[mask]
+
+        #Dataset Generation and Shuffling
         num_rows = self.init_domain.size(0)
         random_index = torch.randint(0, num_rows, (1,)).item()
         self.initial_set_random = self.init_domain[random_index].reshape(1,2)
         self.initial_set_center = torch.cat([self.initial_set_center, self.initial_set_random])
-        
-        #self.N_init = self.config["init"]["N"]
-        #self.init_range = ((np.concatenate((init_min, init_max), axis = 0)).transpose()).tolist()
-        #self.init_domain, _ = data.generateGridData(self.N_init, self.init_range)
-
-        #Generate data for unsafe set
-        #self.N_unsafe = self.config["unsafe"]["N"]
-        if self.config["unsafe"]["shape"] == 'Rectangle':
-            self.unsafe = self.config["unsafe"]["range"]
-            if not "unbounded" in self.config["unsafe"]:
-                self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
-            else:
-                if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
-                    self.unsafe_max = torch.tensor([100, self.unsafe[1][1]])       
-                if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'max':
-                    self.unsafe_min = torch.tensor([-100, self.unsafe[1][0]]) 
-                    self.unsafe_max = torch.tensor([self.unsafe[0][0], self.unsafe[1][1]])       
-                if self.config["unsafe"]["unbounded"] == 'y' and self.config["unsafe"]["max_min"] == 'min':
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0], self.unsafe[1][0]]) 
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1], 100])       
-                if self.config["unsafe"]["unbounded"] == 'y' and self.config["unsafe"]["max_min"] == 'max':
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0], -100]) 
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1], self.unsafe[1][0]])       
-
-            self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
-
-        elif self.config["unsafe"]["shape"] == 'Circle':
-            self.uns_center = torch.tensor(self.config["unsafe"]["center"])
-            self.uns_rad = self.config["unsafe"]["radius"]
-            mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
-            self.unsafe_domain = self.domain[mask]
-        #Dataset Generation and Shuffling
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
         init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
         unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
@@ -260,6 +263,13 @@ class MotionPlanner:
         # if hasattr(self, 'unsafe_cex'):
         #     del self.unsafe_domain_cex 
 
+        #Reset learning rate, will be called after training the initial dynamics
+
+        if "learning_rate_cert" in self.config["model_f"]:
+            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
+                                                lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
+    
+
     def generate_counterexample_data(self):
         self.load_model_states()     
         input_domain, _ = data.generateRandomData(self.config["counterex"]["N_cex_domain"],self.RANGE) #the domain is limited to [-1,1] due to normalization
@@ -270,18 +280,16 @@ class MotionPlanner:
         elif self.config["unsafe"]["shape"] == 'Circle':
             mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
             unsafe_domain = input_domain[mask]
+        elif self.config["unsafe"]["shape"] == 'Custom':
+            x= input_domain[:,0]
+            y = input_domain[:,1]
+            result = eval(self.config["unsafe"]["function"])
+            unsafe_domain = input_domain[result <= 0]
+
 
         counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
         counterexamples_init = verification.verify_init(self.model_b, init_domain, self.config)
         counterexamples_unsafe = verification.verify_unsafe(self.model_b, unsafe_domain, self.config)
-        # if counterexamples_domain.dim() == 1:
-        #      counterexamples_domain = counterexamples_domain.unsqueeze(0)
-
-        # if counterexamples_init.dim() == 1:
-        #         counterexamples_init = counterexamples_init.unsqueeze(0)     
-
-        # if counterexamples_unsafe.dim() == 1:
-        #      counterexamples_unsafe = counterexamples_unsafe.unsqueeze(0)
         add_data_domain = []
         add_data_init = []
         add_data_unsafe = []
@@ -385,6 +393,7 @@ class MotionPlanner:
         for epoch in range(self.config["model_f"]["epochs_warm"]):
             #"""
             total_loss = 0
+            print(epoch)
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
                 # Calculate the loss
@@ -584,6 +593,11 @@ class MotionPlanner:
         elif self.config["unsafe"]["shape"] == 'Circle':
             mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
             unsafe_domain = input_domain[mask]
+        elif self.config["unsafe"]["shape"] == 'Custom':
+            x= input_domain[:,0]
+            y = input_domain[:,1]
+            result = eval(self.config["unsafe"]["function"])
+            unsafe_domain = input_domain[result <= 0]
 
         beta, q = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
         if q <= 0:
@@ -645,8 +659,9 @@ if __name__ == "__main__":
     try:
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
-       seed = 0  # seed value
-    #seed = random.randint(0, 100)
+       seed = random.randint(0, 100)  # seed value
+    seed = random.randint(0, 100)  # seed value
+    print(seed)
     set_seed(seed)
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
@@ -663,45 +678,39 @@ if __name__ == "__main__":
         param_group['lr'] = 1e-10
     mp.trainCertificate()
     trial = 1
-    lr_inc = mp.config["counterex"]["lr_increment_factor"]
+    #lr_inc = mp.config["counterex"]["lr_increment_factor"]
     while trial < 100:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
-            #Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+            if trial % 5 == 0:
+                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             mp.trainCertificate()
             trial += 1      
-            for param_group in mp.optimizer_f.param_groups:
-                param_group['lr'] *= lr_inc
-            for param_group in mp.optimizer_v.param_groups:
-                param_group['lr'] *= lr_inc
-            for param_group in mp.optimizer_b.param_groups:
-                param_group['lr'] *= lr_inc
+            # for param_group in mp.optimizer_f.param_groups:
+            #     param_group['lr'] *= lr_inc
+            # for param_group in mp.optimizer_v.param_groups:
+            #     param_group['lr'] *= lr_inc
+            # for param_group in mp.optimizer_b.param_groups:
+            #     param_group['lr'] *= lr_inc
         else:
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            for param_group in mp.optimizer_f.param_groups:
-                param_group['lr'] = mp.lr_f
-            for param_group in mp.optimizer_v.param_groups:
-                param_group['lr'] = mp.lr_v
-            for param_group in mp.optimizer_b.param_groups:
-                param_group['lr'] = mp.lr_b
             Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             # Plotter.plotLyapunov(mp.model_v)
             # Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
-                mp.save_all_models()
+                '''mp.save_all_models()
                 mp.final_model_eval()
-                print_info(f"MSE for test data after certificate training: {mp.mse}")
-                #mp.config["plott"]
+                #print_info(f"MSE for test data after certificate training: {mp.mse}")
                 save_seed(seed,seed_filepath)
                 mp.export_onnx()
                 #save initial set for plotting
                 mp.update_config()
                 #save datasets for results
-                mp.save_datasets()
-            break
+                mp.save_datasets()'''
+                break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
      
