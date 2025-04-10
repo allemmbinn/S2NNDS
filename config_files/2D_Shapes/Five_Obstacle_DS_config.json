@@ -82,7 +82,7 @@
         "decay_unsafe" : 1,
         "decay_cut" : 1,
         "decay_lb" : 0.6,
-        "alpha" : 1,
+        "alpha" : 0.00001,
         "epi_bound" : 0.05,
         "eta" : 1e-4,
         "lyap_tol" : 0.01,
