@@ -5,7 +5,7 @@
         "layers": 2,
         "epochs_warm": 100,
         "learning_rate": 0.001,
-        "learning_rate_cert": 1e-08,
+        "learning_rate_cert": 1e-07,
         "batch_size": 64,
         "lr_factor": 0.1,
         "lr_patience": 5,
@@ -13,12 +13,12 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
+        "learning_rate": 0.001,
         "hidden_neurons": 64,
         "layers": 3,
         "lr_factor": 0.2,
-        "lr_patience": 10,
-        "warmup": 10
+        "lr_patience": 15,
+        "warmup": 30
     },
     "model_b": {
         "activation_function": "eLU",
@@ -27,12 +27,12 @@
         "hidden_neurons": 64,
         "layers": 3,
         "lr_factor": 0.2,
-        "lr_patience": 10,
-        "batch_size": 256,
-        "warmup": 10
+        "lr_patience": 15,
+        "batch_size": 512,
+        "warmup": 30
     },
     "domain": {
-        "N": 50,
+        "N": 5000,
         "range": [
             [
                 -1,
@@ -52,7 +52,7 @@
         "function": "(((x + 0.3)/6)**2)**(1/3) +(((y - 0.4)/3)**2)**(1/3) - 0.15"
     },
     "counterex": {
-        "N_cex_domain": 500,
+        "N_cex_domain": 250000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -64,7 +64,7 @@
         "ub": 0.0
     },
     "verification": {
-        "N_conf": 800,
+        "N_conf": 640000,
         "epsilon": 0.0001,
         "beta": 0.0001
     },
@@ -100,8 +100,8 @@
                 0.8313644672763763
             ],
             [
-                0.004175305366516113,
-                0.6684210300445557
+                -0.03230321407318115,
+                0.9128694534301758
             ]
         ],
         "dt": 0.0038637225557244434
@@ -118,8 +118,8 @@
         "decay_cut": 1,
         "decay_lb": 1,
         "alpha": 1,
-        "lyap_tol": 0.001,
-        "pos_tol": 0.001,
+        "lyap_tol": 0.01,
+        "pos_tol": 0.01,
         "bar_tol": 0.01,
         "inun_tol": 0.0001,
         "lie_tol": 0.01,

@@ -9,7 +9,7 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Worm"
+    lasa_name : str = "GShape"
     dataset_type : str = "LASA"
 
 def filter_args(args):
@@ -655,6 +655,7 @@ if __name__ == "__main__":
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
+    seed = random.randint(0, 100)  # seed value
     print(seed)
     set_seed(seed)
     mp = MotionPlanner(args)
@@ -676,7 +677,8 @@ if __name__ == "__main__":
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
-            Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+            if trial % 5 == 0:
+                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
             mp.trainCertificate()
             trial += 1      
             # for param_group in mp.optimizer_f.param_groups:
@@ -692,16 +694,16 @@ if __name__ == "__main__":
             Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
-                mp.save_all_models()
+                '''mp.save_all_models()
                 mp.final_model_eval()
-                print_info(f"MSE for test data after certificate training: {mp.mse}")
+                #print_info(f"MSE for test data after certificate training: {mp.mse}")
                 save_seed(seed,seed_filepath)
                 mp.export_onnx()
                 #save initial set for plotting
                 mp.update_config()
                 #save datasets for results
-                #mp.save_datasets()
-            break
+                mp.save_datasets()'''
+                break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
      

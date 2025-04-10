@@ -234,7 +234,7 @@ def verify_unsafe(model_b, unsafe_domain, config):
     return cex.cpu()
 
 def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, unsafe_domain, config):
-    N=config ["verification"]["N_conf"]**2
+    N=config ["verification"]["N_conf"]
     epsilon = config["verification"]["epsilon"]
     alpha = 0.1*epsilon
     l = math.floor((N+1)*(alpha))
@@ -274,8 +274,6 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
 
     lie_tol = config["hyperparameters"]["lie_tol"]
     B_value = model_b(input_domain_clone)
-    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol)
-    B_value = B_value[bar_mask]
     grad_bar = torch.autograd.grad(
                     torch.sum(B_value),
                     input_domain_clone,
@@ -284,7 +282,8 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
                     only_inputs=True,
                     allow_unused=True)[0]
     lie_bar = torch.sum(grad_bar * f_value, dim=1)
-
+    bar_mask = (torch.abs(B_value[:,0]) <= lie_tol)
+    lie_bar = lie_bar[bar_mask]
     init_domain_clone = init_domain.float().to(device)
     B_init = model_b(init_domain_clone)
     
