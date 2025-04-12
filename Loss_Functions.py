@@ -28,7 +28,7 @@ def loss_function_dyn(model_f, X_train, y_train, config):
     loss_mse = DECAY_MSE*loss_MSE
     return loss_mse #, loss_reg
 
-def loss_function_domain(model_v, model_b, model_f, input_domain, config):
+def loss_function_domain(model_v, model_b, model_f, model_f_init, input_domain, config):
     alpha = config["hyperparameters"]["alpha"] #Parameter for leaky relu
     act= F.elu
     device = next(model_v.parameters()).device
@@ -77,13 +77,23 @@ def loss_function_domain(model_v, model_b, model_f, input_domain, config):
     DECAY_VPOS = config["hyperparameters"]["decay_vpos"]
     DECAY_LV = config["hyperparameters"]["decay_lv"]
     DECAY_LB = config["hyperparameters"]["decay_lb"]
+    try:    
+        DECAY_REG = config["hyperparameters"]["reg_f"]
+    except:
+        DECAY_REG = 0.0
     #Invidual weighted losses
     loss_zero = DECAY_V0 * (V_0).pow(2)
     loss_lie_v  = DECAY_LV * (act(lie_lyap + lyap_tol, alpha)).mean()
     loss_lie_b = DECAY_LB * (act(lie_barr + bar_tol, alpha)).mean() 
     loss_vpos = DECAY_VPOS * (act(pos_tol  - V_value)).mean()
+    
+    # Regularization Loss
+    reg_loss = 0.0
+    for param_trainable, param_fixed in zip(model_f.parameters(), model_f_init.parameters()):
+        # L2 regularization between parameters
+        reg_loss += DECAY_REG * torch.sum((param_trainable - param_fixed) ** 2)
     #total loss
-    return loss_lie_v + loss_vpos + loss_zero, loss_lie_b 
+    return loss_lie_v + loss_vpos + loss_zero + reg_loss, loss_lie_b + reg_loss
 
 def loss_function_init(model_b, input_init, config):
     alpha = config["hyperparameters"]["alpha"]

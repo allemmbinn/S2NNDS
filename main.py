@@ -513,60 +513,62 @@ class MotionPlanner:
         self.hidden_layers_f = self.config["model_f"]["layers"]
         sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
-        self.model_f = NNModels.DyanmicsNet(self.dim_in, 
+        self.model_f_init = NNModels.DyanmicsNet(self.dim_in, 
                                             self.hidden_f, 
                                             sigmoid_f).to(self.device)
         best_mse = np.inf   # init to infinity
         best_weights = None
         history = []
         loss_fn = nn.MSELoss()  # mean square error #TODO: Add Lyapunov, barrier, regularization loss
-        self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
-        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
+        optimizer_f = torch.optim.Adam(self.model_f_init.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+        scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
                                                                     patience=self.config["model_f"]["lr_patience"], verbose=True)
         for epoch in range(self.config["model_f"]["epochs_warm"]):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
-                self.model_f.train()
+                self.model_f_init.train()
                 # Calculate the loss
                 x_val = X_batch.float().to(self.device)
-                y_pred = self.model_f(x_val)
-                #hyperparameter for l2 regularization
+                y_pred = self.model_f_init(x_val)
                 loss_mse = loss_fn(y_pred, y_batch.float().to(self.device))
                 loss = loss_mse
                 # backward pass
-                self.optimizer_f.zero_grad()
+                optimizer_f.zero_grad()
                 loss.backward()
-                self.optimizer_f.step()
-                #self.model_f.clip_weights()
+                optimizer_f.step()
                 total_loss += loss.item()
-            # Log the Training Loss
-            # wandb.log({"DS_training_loss": total_loss})
-            #evaluate accuracy at end of each epoch           
-            self.model_f.eval()
-            # total_loss = 0
-            # for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
-            #     y_pred = self.model_f(X_batch.float().to(self.device))
-            #     mse = loss_fn(y_pred, y_batch.float().to(self.device))
-            #     total_loss += mse.item()
-            y_pred = self.model_f(self.X_test.float().to(self.device))
+            self.model_f_init.eval()
+            y_pred = self.model_f_init(self.X_test.float().to(self.device))
             mse = loss_fn(y_pred, self.y_test.float().to(self.device))
             total_loss = mse.item()
             history.append(total_loss)
             if total_loss < best_mse:
                 best_mse = total_loss
-                best_weights = copy.deepcopy(self.model_f.state_dict())
+                best_weights = copy.deepcopy(self.model_f_init.state_dict())
             with torch.no_grad():
                 torch.cuda.empty_cache()
         # restore model and return best accuracy
-        self.model_f.load_state_dict(best_weights)
+        self.model_f_init.load_state_dict(best_weights)
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
-        self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-
+        self.optimizer_f_state_dict = optimizer_f.state_dict()
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def trainCertificate(self):
         if self.config["Barrier"]:
+            # Building the Dynamics Model
+            self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
+            self.hidden_layers_f = self.config["model_f"]["layers"]
+            sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
+            self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
+            self.model_f = NNModels.DyanmicsNet(self.dim_in, 
+                                                self.hidden_f, 
+                                                sigmoid_f).to(self.device)
+            self.model_f.load_state_dict(self.model_f_state_dict)
+            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*1e-2,betas=(0.9, 0.999))
+            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
+                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
+
             #Building the Lyapunov Model
             hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
             hidden_layers_v = self.config["model_v"]["layers"]
@@ -574,14 +576,9 @@ class MotionPlanner:
             self.model_v = NNModels.LyapunovNet(
             n_input=self.dim_in,
             hidden_v=hidden_v,
-            #thresholds=self.config["model_v"]["clip"],
             sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
-            #Optimizer for Dynamical System 
-            # TODO: I can rather use self.scheduler_f.get_last_lr() to get the last learning rate
-            # self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*0.01,betas=(0.9, 0.999))
             #Optimizer and Scheduler for Lyapunov Function
             self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
-
             warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
             self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
                                                                     patience = self.config["model_v"]["lr_patience"], verbose = True)
@@ -593,7 +590,6 @@ class MotionPlanner:
             self.model_b = NNModels.BarrierNet(
             n_input=self.dim_in,
             hidden_b=hidden_b,
-            #thresholds = self.config["model_b"]["clip"],
             sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Barrier Function
             self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
@@ -619,7 +615,7 @@ class MotionPlanner:
                         input_domain = batches[0][0].to(self.device)
                         self.optimizer_f.zero_grad()   
                         self.optimizer_v.zero_grad()
-                        loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                        loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, self.model_f_init, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         # torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
@@ -636,7 +632,7 @@ class MotionPlanner:
                         loss_unsafe_b = torch.tensor(0.0, requires_grad=True)
 
                         if batches[0] is not None:
-                            _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
+                            _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, self.model_f_init, input_domain, self.config)
                         if batches[2] is not None:
                             input_init = batches[2][0].to(self.device)
                             loss_init_b = Loss_Functions.loss_function_init(self.model_b, input_init, self.config)
