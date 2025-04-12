@@ -42,7 +42,7 @@ def initial2DDSPlot(model_f, demos, initial_set_center):
     n = 3000
     dt = 0.01
     x = torch.zeros((n, 2))
-    x[0, :] = initial_set_center
+    x[0, :] = initial_set_center[0]
     x = x.to(device)
     for j in range(1, n):
         Fout = model_f(x[j-1])
