@@ -28,7 +28,7 @@ def load_config_models(model_name):
         print(f"Error: Failed to parse JSON file '{config_path}'. {e}")
         return None
 
-model_name = "Worm"  # Replace with the results of the dataset you want to plot
+model_name = "NShape"  # Replace with the results of the dataset you want to plot
 config, model_v, model_b, model_f = load_config_models(model_name)
 path = os.path.join('Datasets_2D', model_name)
 X_train = torch.load(os.path.join(path, "X_train.pt"))

@@ -161,6 +161,8 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, X_train, config):
             ax.add_patch(unsafe)
         elif config["unsafe"]["shape"] == 'Custom':
             function = config["unsafe"]["function"]
+            function = function.replace("torch.max", "np.maximum")
+            function = function.replace("torch.", "np.")
             x = np.linspace(RANGE[0][0], RANGE[0][1], 500)
             y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
             x,y = np.meshgrid(x, y)

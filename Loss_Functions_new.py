@@ -22,7 +22,8 @@ def loss_function_dyn(model_f, X_train, y_train, config):
     loss_MSE = loss_fn(model_f(X_train_clone),y_train_clone)
     # Hyperparameters
     DECAY_MSE = config["hyperparameters"]["decay_mse"]
-    # Loss
+    # if "reg_f" in config["hyperparameters"]:
+    #     loss_mse = DECAY_MSE*loss_MSE + config["hyperparameters"]["reg_f"]*
     loss_mse = DECAY_MSE*loss_MSE
     return loss_mse #, loss_reg
 
