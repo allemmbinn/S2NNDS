@@ -82,7 +82,7 @@ def initial3DDSPlot(model_f, demos, initial_set_center):
     plt.grid(True)
     plt.show()
 
-def plotFinalDS(model_f, X_train, initial_set_center, dt):
+def plotFinalDS(model_f, model_b, X_train, initial_set_center, dt):
     device = next(model_f.parameters()).device
     if X_train.shape[1] == 3:
         x = np.linspace(-1.2, 1.2, 50)
@@ -108,7 +108,9 @@ def plotFinalDS(model_f, X_train, initial_set_center, dt):
         unflatten = torch.nn.Unflatten(0, (50, 50))
     with torch.no_grad():
         F_out = model_f(input_data)
+        B_out = model_b(input_data)
         vect_out = unflatten(F_out).cpu().detach().numpy()
+        bout = unflatten(B_out).cpu().detach().numpy()
         U = vect_out[:,:, 0]
         V = vect_out[:,:,1]
         if X_train.shape[1] == 3:
@@ -166,8 +168,7 @@ def plotFinalDS(model_f, X_train, initial_set_center, dt):
             plt.grid(True)
             plt.axis('equal')
             plt.show()
-            
-            
+              
 def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
     device = next(model_v.parameters()).device
     N = 1000
@@ -233,7 +234,7 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
         #Create proxy artists for contours
         contour_line_legend = mpl.lines.Line2D([0], [0], color='red', label='Barrier (bout=0)')
         contour_fill_legend = mpl.patches.Patch(color='green', alpha=0.5, label='Safe Set')
-        unsafe_set_center = config["unsafe"]["centre"]
+        unsafe_set_center = config["unsafe"]["center"]
         unsafe_set_radius = config["unsafe"]["radius"]
         circle2 = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
         ax.add_patch(circle2)
@@ -267,6 +268,127 @@ def lyapunovBarrierPlot(model_v, X_train, mean_point, config, model_b = None):
                         mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(0, 1))
     plt.show()
+    
+def plotObstacle(model_f, model_b, X_train, initial_set_center, config):
+    initial_set_center = initial_set_center.numpy().squeeze()
+    device = next(model_f.parameters()).device
+    if X_train.shape[1] == 3:
+        x = np.linspace(-1.2, 1.2, 50)
+        y = np.linspace(-1.2, 1.2, 50)
+        z = np.linspace(-1.2, 1.2, 50)
+        X, Y, Z = np.meshgrid(x, y, z)
+        # Convert to tensor
+        X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
+        Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+        Z_tensor = torch.tensor(Z, dtype=torch.float32).to(device)
+        # Concatenate X, Y, Z to create input data tensor
+        input_data = torch.stack((X_tensor, Y_tensor, Z_tensor), dim=-1).reshape(-1, 3).to(device)
+        unflatten = torch.nn.Unflatten(0, (50, 50, 50))
+    elif X_train.shape[1] == 2:
+        x = np.linspace(-1.2, 1.2, 50)
+        y = np.linspace(-1.2, 1.2, 50)
+        X, Y = np.meshgrid(x, y)
+        # Convert to tensor
+        X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
+        Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+        # Concatenate X, Y to create input data tensor
+        input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
+        unflatten = torch.nn.Unflatten(0, (50, 50))
+    with torch.no_grad():
+        F_out = model_f(input_data)
+        B_out = model_b(input_data)
+        vect_out = unflatten(F_out).cpu().detach().numpy()
+        bout = unflatten(B_out).cpu().detach().numpy()
+        U = vect_out[:,:, 0]
+        V = vect_out[:,:,1]
+        if X_train.shape[1] == 3:
+            W = vect_out[:,:,2]
+            # Create a figure and 3D axes
+            fig = plt.figure(figsize=(10, 8))
+            ax = plt.axes(projection='3d')
+            # Plot the vector field
+            ax.quiver(X, Y, Z, U, V, W, length=0.1, normalize=True)
+            # Plot the initial set
+            ax.scatter(initial_set_center[0], initial_set_center[1], initial_set_center[2], color='green', s=100, label='Initial Set')
+            # Plot the training data
+            ax.plot(X_train[:, 0], X_train[:, 1], X_train[:, 2], color='black', label='Training Data')
+            # Plot the final trajectory
+            n = 3000
+            x = torch.zeros((n, 3))
+            x[0, :] = torch.tensor(initial_set_center)
+            x = x.to(device)
+            for j in range(1, n):
+                Fout = model_f(x[j-1])
+                x[j] = x[j-1] + Fout * 0.05
+            x = x.cpu().detach().numpy()
+            ax.plot(x[:, 0], x[:, 1], x[:, 2], color='green', label='Final Trajectory')
+            ax.set_xlabel('X Label')
+            ax.set_ylabel('Y Label')
+            ax.set_zlabel('Z Label')
+            plt.title('Trajectories of the Dynamical System')
+            plt.legend()
+            plt.grid(True)
+            plt.show()
+        elif X_train.shape[1] == 2:
+            # Create a figure and 2D axes
+            fig, ax = plt.subplots(figsize=(10, 8))
+            # Plot the vector field
+            strm = ax.streamplot(X, Y, U, V, color='blue', linewidth=1, density=2)
+            # Plot the initial set
+            circle = plt.Circle((initial_set_center[0], initial_set_center[1]), 0.05, color='green', label='Initial Set')
+            ax.add_patch(circle)
+            # Plot the training data
+            ax.plot(X_train[:, 0], X_train[:, 1], color='black', label='Training Data')
+            # Plot the final trajectory
+            n = 3000
+            x = torch.zeros((n, 2))
+            x[0, :] = torch.tensor(initial_set_center)
+            x = x.to(device)
+            for j in range(1, n):
+                Fout = model_f(x[j-1])
+                x[j] = x[j-1] + Fout * 0.05
+            x = x.cpu().detach().numpy()
+            ax.plot(x[:, 0], x[:, 1], color='green', label='Final Trajectory')
+            plt.contour(X, Y, bout[:,:,0], levels=[0], colors='red')
+            plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
+            #Create proxy artists for contours
+            mpl.lines.Line2D([0], [0], color='red', label='Barrier (bout=0)')
+            mpl.patches.Patch(color='green', alpha=0.5, label='Safe Set')
+            unsafe_set_shape = config["unsafe"]["shape"]
+            if unsafe_set_shape == "Circle":
+                unsafe_set_center = config["unsafe"]["center"]
+                unsafe_set_radius = config["unsafe"]["radius"]
+                if isinstance(unsafe_set_center[0], (int, float)):
+                    unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
+                    ax.add_patch(unsafe_shape)
+                else:
+                    for center in unsafe_set_center:
+                        unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
+                        ax.add_patch(unsafe_shape)
+                        
+            elif unsafe_set_shape == "Rectangle":
+
+                unsafe_rect_range = config["unsafe"]["range"]
+                if "unbounded" in config["unsafe"]:
+                    flag_max_min = config["unsafe"]["max_min"]
+                    flag_xy = config["unsafe"]["unbounded"]
+                    if flag_max_min == "min" and flag_xy == "x":
+                        unsafe_rect_range[0].append(1.0)
+                    elif flag_max_min == "max" and flag_xy == "x":
+                        unsafe_rect_range[0].insert(0,-1)
+                    elif flag_max_min == "min" and flag_xy == "y":
+                        unsafe_rect_range[1].append(1.0)
+                    elif flag_max_min == "max" and flag_xy == "y":
+                        unsafe_rect_range[1].insert(0,-1) 
+                unsafe_shape = plt.Polygon([[unsafe_rect_range[0][0], unsafe_rect_range[1][0]], [unsafe_rect_range[0][1],unsafe_rect_range[1][0]], [unsafe_rect_range[0][1], unsafe_rect_range[1][1]], [unsafe_rect_range[0][0], unsafe_rect_range[1][1]]] , facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
+                ax.add_patch(unsafe_shape)
+            ax.set_xlabel('X Label')
+            ax.set_ylabel('Y Label')
+            plt.title('Trajectories of the Dynamical System')
+            plt.legend()
+            plt.grid(True)
+            plt.axis('equal')
+            plt.show()
 
 def plotLyapunov(model_v, dim_in=2):
     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
@@ -317,3 +439,4 @@ def plotBarrier(model_b, dim_in=2):
     plt.ylabel("x2")
     plt.title("Barrier Heatmap")
     plt.show()
+
