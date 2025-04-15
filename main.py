@@ -238,7 +238,7 @@ class MotionPlanner:
             csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
             self.demos_pos = []
             self.demos_vel = []
-            subsample = 3
+            subsample = 10
             for csv_file in csv_files:
                 file_path = os.path.join(folder_path, csv_file)
                 try:
@@ -392,6 +392,14 @@ class MotionPlanner:
         #     del self.input_domain_cex 
         # if hasattr(self, 'unsafe_cex'):
         #     del self.unsafe_domain_cex 
+                # if "learning_rate_cert" in self.config["model_f"]:
+        if "reg_f" in self.config["hyperparameters"]:
+            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
+                lr=self.config["model_f"]["learning_rate_cert"], weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
+        else:
+            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
+                lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
+        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], patience=self.config["model_f"]["lr_patience"], verbose=True)
 
     def generate_counterexample_data(self):
         self.load_model_states()     
@@ -523,8 +531,7 @@ class MotionPlanner:
         best_weights = None
         history = []
         loss_fn = nn.MSELoss()  # mean square error #TODO: Add Lyapunov, barrier, regularization loss
-        self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
-        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], patience=self.config["model_f"]["lr_patience"], verbose=True)
+        optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
         for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
@@ -534,9 +541,9 @@ class MotionPlanner:
                 y_pred = self.model_f(x_val)
                 loss_mse = loss_fn(y_pred, y_batch.float().to(self.device))
                 # backward pass
-                self.optimizer_f.zero_grad()
+                optimizer_f.zero_grad()
                 loss_mse.backward()
-                self.optimizer_f.step()
+                optimizer_f.step()
                 total_loss += loss_mse.item()
             self.model_f.eval()
             y_pred = self.model_f(self.X_test.float().to(self.device))
@@ -552,12 +559,11 @@ class MotionPlanner:
         self.model_f.load_state_dict(best_weights)
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
-        self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+        # self.optimizer_f_state_dict = optimizer_f.state_dict()
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
-
-    def initialiseCertificate(self):
+    
+    def trainCertificate(self):
         if self.config["Barrier"]:
-            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
             #Building the Lyapunov Model
             hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
             hidden_layers_v = self.config["model_v"]["layers"]
@@ -586,9 +592,7 @@ class MotionPlanner:
             
             self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                     patience = self.config["model_b"]["lr_patience"], verbose = True)
-    
-    def trainCertificate(self):
-        if self.config["Barrier"]:
+
             # Load the stored model state dictionary if available
             self.load_model_states()        
             # Start Training
@@ -606,6 +610,7 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         self.optimizer_f.step()
                         if "train_f_cert" not in self.config["model_f"]:    
@@ -638,6 +643,7 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -654,7 +660,7 @@ class MotionPlanner:
                         self.optimizer_f.zero_grad()
                         loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config) 
                         loss_train.backward()
-                        # torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_f.step()
                         # self.model_f.clip_weights()
                     else:
@@ -694,6 +700,7 @@ class MotionPlanner:
             self.final_cert_loss = cert_loss_v.item() + cert_loss_b.item()
 
     def final_model_eval(self):
+        self.model_f = self.model_f.to(self.device)
         self.model_f.eval()
         self.mse = 0
         total_samples = 0
@@ -714,8 +721,15 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-            unsafe_domain = input_domain[mask]
+            if isinstance(self.uns_center[0], (int, float)):
+                mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
+                unsafe_domain = input_domain[mask]
+            else:
+                all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                unsafe_domain = input_domain[all_masks]
         elif self.config["unsafe"]["shape"] == 'Custom':
             x= input_domain[:,0]
             y = input_domain[:,1]
@@ -802,27 +816,6 @@ class MotionPlanner:
         self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                 patience = self.config["model_b"]["lr_patience"], verbose = True)
 
-    def verifyCertificate(self):
-        self.load_model_states()     
-        input_domain, _ = data.generateRandomData(self.config["counterex"]["N_cex_domain"],self.RANGE) #the domain is limited to [-1,1] due to normalization
-        init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
-        
-        if self.config["unsafe"]["shape"] == 'Rectangle':
-            unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
-        elif self.config["unsafe"]["shape"] == 'Circle':
-            mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-            unsafe_domain = input_domain[mask]
-
-        beta, q = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
-        if q <= 0:
-            self.flag_verified = True
-            conf = 1-self.config["verification"]["epsilon"]
-            print(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
-        else:
-            self.flag_verified = False
-            print(f"Verification failed with marginal safety error: {q}")
-
-
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])
@@ -856,11 +849,8 @@ if __name__ == "__main__":
     iters = 1
     # while not mp.flag_verified and iters <= 20: 
     print_info("CERTIFICATE TRAINING")
-    mp.initialiseCertificate()
     mp.trainCertificate()
     trial = 1
-    for param_group in mp.optimizer_f.param_groups:
-        param_group['lr'] = 1e-10
     # lr_inc = mp.config["counterex"]["lr_increment_factor"]
     while trial < 100:
         print_info("ADDING COUNTEREXAMPLES")
@@ -868,9 +858,21 @@ if __name__ == "__main__":
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
             if trial % 10 == 0:
-                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-                Plotter.plotLyapunov(mp.model_v)
-                Plotter.plotBarrier(mp.model_b)
+                # Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+                # Plotter.plotLyapunov(mp.model_v)
+                # Plotter.plotBarrier(mp.model_b)
+                mp.verifyCertificate()
+                if mp.flag_verified:
+                    Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+                    mp.save_all_models()
+                    mp.final_model_eval()
+                    print_info(f"MSE for test data after certificate training: {mp.mse}")
+                    #mp.config["plott"]
+                    save_seed(seed,seed_filepath)
+                    mp.export_onnx()
+                    #save initial set for plotting
+                    mp.update_config()
+                    break
             mp.trainCertificate()
             trial += 1      
             # for param_group in mp.optimizer_f.param_groups:

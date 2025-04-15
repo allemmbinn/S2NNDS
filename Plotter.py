@@ -348,7 +348,7 @@ def plotObstacle(model_f, model_b, X_train, initial_set_center, config):
                 Fout = model_f(x[j-1])
                 x[j] = x[j-1] + Fout * 0.05
             x = x.cpu().detach().numpy()
-            ax.plot(x[:, 0], x[:, 1], color='green', label='Final Trajectory')
+            ax.plot(x[:, 0], x[:, 1], color='cyan', label='Final Trajectory', markersize=5)
             plt.contour(X, Y, bout[:,:,0], levels=[0], colors='red')
             plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
             #Create proxy artists for contours

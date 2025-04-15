@@ -2,12 +2,12 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 128,
-        "layers": 3,
-        "epochs_warm": 400,
+        "layers": 4,
+        "epochs_warm": 500,
         "learning_rate": 0.001,
-        "learning_rate_cert": 1e-08,
-        "train_f_cert": false,
-        "cert_train_factor": 0.7,
+        "learning_rate_cert": 1e-8,
+        "train_f_cert": true,
+        "cert_train_factor": 0.6,
         "batch_size": 256,
         "lr_factor": 0.1,
         "lr_patience": 5,
@@ -15,26 +15,26 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.005,
-        "hidden_neurons": 64,
-        "layers" : 3,
+        "learning_rate": 0.01,
+        "hidden_neurons": 128,
+        "layers" : 5,
         "lr_factor" : 0.8,
         "lr_patience" :15,
         "warmup" : 30    
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 0.005,
-        "hidden_neurons": 64,
+        "learning_rate": 0.001,
+        "hidden_neurons": 128,
         "layers" : 5,
         "lr_factor" : 0.8,
         "lr_patience" : 15,
-        "batch_size" : 64,
+        "batch_size" : 256,
         "warmup" : 30
         },
     "Barrier" : true,
     "domain":{
-        "N" : 500,
+        "N" : 5000,
         "range" : [[-1,1],[-1,1]]
     },
     "init":{
@@ -42,11 +42,11 @@
     },
     "unsafe":{
         "shape" : "Circle",
-        "center" : [[0.2, -0.3], [0.8, -0.3]],
-        "radius" : 0.07
+        "center" : [[0.2, -0.2], [0.8, -0.2]],
+        "radius" : 0.05
     },
     "counterex": {
-        "N_cex_domain": 500,
+        "N_cex_domain": 50000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -58,7 +58,7 @@
         "ub": 0.0
     },    
     "verification": {
-        "N_conf": 500,
+        "N_conf": 15000,
         "epsilon": 0.0001,
         "beta": 0.0001
     },
