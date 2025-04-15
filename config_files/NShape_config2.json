@@ -5,9 +5,9 @@
         "layers": 4,
         "epochs_warm": 200,
         "learning_rate": 0.001,
-        "learning_rate_cert": 1e-07,
-        "cert_train_factor": 0.35,
+        "learning_rate_cert": 1e-08,
         "train_f_cert": false,
+        "cert_train_factor": 0.5,
         "batch_size": 64,
         "lr_factor": 0.1,
         "lr_patience": 5,
@@ -15,18 +15,18 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
+        "learning_rate": 0.005,
         "hidden_neurons": 128,
-        "layers": 4,
+        "layers": 5,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
+        "learning_rate": 0.005,
         "hidden_neurons": 128,
-        "layers": 3,
+        "layers": 5,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "batch_size": 512,
@@ -36,28 +36,24 @@
         "N": 5000,
         "range": [
             [
-                -1,
-                1
+                -1.5,
+                1.5
             ],
             [
-                -1,
-                1
+                -1.5,
+                1.5
             ]
         ]
     },
-    "init":{
-        "radius" : 0.03
+    "init": {
+        "radius": 0.005
     },
     "unsafe": {
-        "shape": "Circle",
-        "center": [
-            0.0,
-            0.25
-        ],
-        "radius": 0.1
+        "shape": "Custom",
+        "function": "torch.max(torch.max(y, -4*x-0.8*y-1.6), -0.8*y + 4*x +0.8)"
     },
     "counterex": {
-        "N_cex_domain": 150000,
+        "N_cex_domain": 100000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -68,48 +64,48 @@
         "lb": 0.0,
         "ub": 0.0
     },
-    "verification" : {
-        "N_conf" : 800,
+    "verification": {
+        "N_conf": 640000,
         "epsilon": 0.0001,
-        "beta" : 0.0001
+        "beta": 0.0001
     },
     "Barrier": true,
     "plots": true,
     "plotting": {
         "range": [
             [
-                -1.2,
-                1.0
+                -1.0,
+                0.2
             ],
             [
                 -1.0,
-                1.0
+                0.5
             ]
         ],
         "contour": false,
         "legend": false,
-        "name": "CShape LASA with Obstacles",
+        "name": "NShape LASA with Obstacles",
         "init_range": [
             [
-                0.27783328024395826,
-                0.43678727760311026
+                -1.0,
+                -0.8087930852585823
             ],
             [
-                0.49618956180833973,
-                0.7841722710009921
+                -0.9015517040984382,
+                -0.8432758431085225
             ]
         ],
         "initial_conditions": [
             [
-                0.36014607478800686,
-                0.6437256612352563
+                -0.9044334773212817,
+                -0.879802935999896
             ],
             [
-                0.31032609939575195,
-                0.6241980791091919
+                -0.8981621861457825,
+                -0.8862800002098083
             ]
         ],
-        "dt": 0.00591251759479233
+        "dt": 0.004994310008788874
     },
     "hyperparameters": {
         "max_iters": 50,
@@ -128,7 +124,7 @@
         "bar_tol": 0.05,
         "inun_tol": 0.0001,
         "lie_tol": 0.01,
-        "reg_bar" : 0.001,
-        "reg_v" : 0.001   
+        "reg_bar": 0.001,
+        "reg_v": 0.001
     }
 }

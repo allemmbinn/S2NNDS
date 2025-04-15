@@ -9,7 +9,7 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "GShape"
+    lasa_name : str = "NShape"
     dataset_type : str = "LASA"
 
 def filter_args(args):
@@ -139,6 +139,8 @@ class MotionPlanner:
                 dataset = lasa.DataSet.heee
             elif self.args.lasa_name == "PShape":
                 dataset = lasa.DataSet.PShape
+            elif self.args.lasa_name == "NShape":
+                dataset = lasa.DataSet.NShape
             else:
                 print_error("Invalid LASA Dataset has been choosen")
                 raise NotImplementedError
@@ -266,8 +268,14 @@ class MotionPlanner:
         #Reset learning rate, will be called after training the initial dynamics
 
         if "learning_rate_cert" in self.config["model_f"]:
-            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
-                                                lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
+            if "reg_f" in self.config["hyperparameters"]:
+                self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
+                    lr=self.config["model_f"]["learning_rate_cert"], weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
+            else:
+                self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
+                    lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
+
+
     
 
     def generate_counterexample_data(self):
@@ -508,7 +516,14 @@ class MotionPlanner:
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
-                        self.optimizer_f.step()
+                        if "train_f_cert" not in self.config["model_f"]:    
+                            self.optimizer_f.step()   
+                        else:
+                            if self.config["model_f"]["train_f_cert"] == False and epoch <= max_iter*self.config["model_f"]["cert_train_factor"]:
+                                pass
+                            else:
+                                self.optimizer_f.step()
+
                         #self.model_v.clip_weights()
                     else:
                         loss_domain_v = torch.tensor(0.0, requires_grad = True)
@@ -533,7 +548,14 @@ class MotionPlanner:
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
-                        self.optimizer_f.step()    
+                        if "train_f_cert" not in self.config["model_f"]:    
+                            self.optimizer_f.step()   
+                        else:
+                            if self.config["model_f"]["train_f_cert"] == False and epoch <= max_iter*self.config["model_f"]["cert_train_factor"]:
+                                pass
+                            else:
+                                self.optimizer_f.step()
+
                         #self.model_b.clip_weights()
 
                     if batches[1] is not None:
@@ -662,7 +684,7 @@ if __name__ == "__main__":
        seed = random.randint(0, 100)  # seed value
     seed = random.randint(0, 100)  # seed value
     print(seed)
-    set_seed(seed)
+    set_seed(6)
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
