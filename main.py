@@ -5,6 +5,7 @@ import Loss_Functions
 import opt 
 import Plotter
 import verification
+from tqdm import tqdm
 
 @dataclass
 class ConfigFile:
@@ -39,20 +40,24 @@ def set_seed(seed):
 class MotionPlanner:
     def __init__(self, args):
         self.args = args
-        # Load the configuration file
         if self.args.dataset_type == 'LASA':
-            file_path = os.path.join(os.getcwd(), "config_files", "LASA", self.args.lasa_name + "_config.json")
-            # file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
+            self.name = self.args.lasa_name
         elif self.args.dataset_type == '3D_Shapes':
-            file_path = os.path.join(os.getcwd(), "config_files", "3D_Shapes", self.args.name_3d + "_config.json")
-            # file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
+            self.name = self.args.name_3d
         elif self.args.dataset_type == '2D_Shapes':
-            file_path = os.path.join(os.getcwd(), "config_files", "2D_Shapes", self.args.name_2d + "_config.json")
-            # file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
+            self.name = self.args.name_2d
+        # Load the configuration file
+        # if self.args.dataset_type == 'LASA':
+        #     file_path = os.path.join(os.getcwd(), "config_files", "LASA", self.args.lasa_name + "_config.json")
+        # elif self.args.dataset_type == '3D_Shapes':
+        #     file_path = os.path.join(os.getcwd(), "config_files", "3D_Shapes", self.args.name_3d + "_config.json")
+        # elif self.args.dataset_type == '2D_Shapes':
+        #     file_path = os.path.join(os.getcwd(), "config_files", "2D_Shapes", self.args.name_2d + "_config.json")
+        file_path = os.path.join(os.getcwd(), "config_files", self.args.dataset_type, self.name + "_config.json")
         with open(file_path) as file:
             self.config = json.load(file)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -101,44 +106,48 @@ class MotionPlanner:
         torch.save(model, model_path)
 
     def save_all_models(self):
-        if self.args.dataset_type == 'LASA':
-            base_path = os.path.join('models', 'LASA', self.args.lasa_name)
-        elif self.args.dataset_type == '3D_Shapes':
-            base_path = os.path.join('models', '3D_Shapes', self.args.name_3d)
-        elif self.args.dataset_type == '2D_Shapes':
-            base_path = os.path.join('models', '2D_Shapes', self.args.name_2d)
+        # if self.args.dataset_type == 'LASA':
+        #     base_path = os.path.join('models', 'LASA', self.args.lasa_name)
+        # elif self.args.dataset_type == '3D_Shapes':
+        #     base_path = os.path.join('models', '3D_Shapes', self.args.name_3d)
+        # elif self.args.dataset_type == '2D_Shapes':
+        #     base_path = os.path.join('models', '2D_Shapes', self.args.name_2d)
+        base_path = os.path.join('models', self.args.dataset_type, self.name)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         # Save the model states 
         self.save_model(self.model_f, os.path.join(base_path, 'model_f.pth'))
         self.save_model(self.model_v, os.path.join(base_path, 'model_v.pth'))
         self.save_model(self.model_b, os.path.join(base_path, 'model_b.pth'))
-     
+
     def export_onnx(self):
-        if self.args.dataset_type == 'LASA':
-            base_path = os.path.join('models_onnx', 'LASA')
-            os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
-            file_path = os.path.join(base_path, self.args.lasa_name + ".onnx")
-        elif self.args.dataset_type == '3D_Shapes':
-            base_path = os.path.join('models_onnx', '3D_Shapes')
-            os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
-            file_path = os.path.join(base_path, self.args.name_3d + ".onnx")
-        elif self.args.dataset_type == '2D_Shapes':
-            base_path = os.path.join('models_onnx', '2D_Shapes')
-            os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
-            file_path = os.path.join(base_path, self.args.name_2d + ".onnx")
+        # if self.args.dataset_type == 'LASA':
+        #     base_path = os.path.join('models_onnx', 'LASA')
+        #     os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+        #     file_path = os.path.join(base_path, self.args.lasa_name + ".onnx")
+        # elif self.args.dataset_type == '3D_Shapes':
+        #     base_path = os.path.join('models_onnx', '3D_Shapes')
+        #     os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+        #     file_path = os.path.join(base_path, self.args.name_3d + ".onnx")
+        # elif self.args.dataset_type == '2D_Shapes':
+        #     base_path = os.path.join('models_onnx', '2D_Shapes')
+        #     os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+        #     file_path = os.path.join(base_path, self.args.name_2d + ".onnx")
+        base_path = os.path.join('models_onnx', self.args.dataset_type)
+        os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+        file_path = os.path.join(base_path, self.name + ".onnx")
         self.model_f.eval()
         self.initial_set_center
-        self.initial_point = self.initial_set_center[0].to(dtype=torch.float32) 
+        self.initial_point = self.initial_set_center[0].reshape(1,2).to(dtype=torch.float32) 
         torch.onnx.export(
                 self.model_f,
                 self.initial_point,
                 file_path,
-                export_params=True,  # Store the trained parameters in the model file
-                opset_version=11,    # ONNX opset version
-                do_constant_folding=True,  # Optimize constant folding for inference
-                input_names=["position"],     # Name of the input tensor
-                output_names=["velocity"],   # Name of the output tensor
-                dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}  # Dynamic batch size
+                export_params=True,  
+                opset_version=11,    
+                do_constant_folding=True,  
+                input_names=["position"],     
+                output_names=["velocity"], 
+                dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}  
             )
         onnx_model = onnx.load(os.path.join(base_path, self.args.lasa_name + ".onnx"))
         onnx.checker.check_model(onnx_model)         
@@ -155,14 +164,20 @@ class MotionPlanner:
                 dataset = lasa.DataSet.DoubleBendedLine
             elif self.args.lasa_name == "GShape":
                 dataset = lasa.DataSet.GShape
-            elif self.args.lasa_name == "SShape":
-                dataset = lasa.DataSet.SShape
+            elif self.args.lasa_name == "Sshape":
+                dataset = lasa.DataSet.Sshape
             elif self.args.lasa_name == "WShape":
                 dataset = lasa.DataSet.WShape
             elif self.args.lasa_name == "Leaf_2":
                 dataset = lasa.DataSet.Leaf_2
             elif self.args.lasa_name == "Sine":
                 dataset = lasa.DataSet.Sine
+            elif self.args.lasa_name == "heee":
+                dataset = lasa.DataSet.heee
+            elif self.args.lasa_name == "PShape":
+                dataset = lasa.DataSet.PShape
+            elif self.args.lasa_name == "NShape":
+                dataset = lasa.DataSet.NShape
             else:
                 print_error("Invalid LASA Dataset has been choosen")
                 raise NotImplementedError
@@ -223,7 +238,7 @@ class MotionPlanner:
             csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
             self.demos_pos = []
             self.demos_vel = []
-            subsample = 1
+            subsample = 3
             for csv_file in csv_files:
                 file_path = os.path.join(folder_path, csv_file)
                 try:
@@ -292,15 +307,13 @@ class MotionPlanner:
             self.init_min = np.where(self.init_min < -1, -1, self.init_min)
             self.init_max = (np.max([self.demos_pos[i][0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"]["radius"]).reshape(1,2)
             self.init_max = np.where(self.init_max > 1, 1, self.init_max)
+        
         self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
+        #Dataset Generation and Shuffling
         num_rows = self.init_domain.size(0)
         random_index = torch.randint(0, num_rows, (1,)).item()
-        self.initial_set_random = self.init_domain[random_index].reshape(1,self.dim_in)
+        self.initial_set_random = self.init_domain[random_index].reshape(1,2)
         self.initial_set_center = torch.cat([self.initial_set_center, self.initial_set_random])
-        
-        #self.N_init = self.config["init"]["N"]
-        #self.init_range = ((np.concatenate((init_min, init_max), axis = 0)).transpose()).tolist()
-        #self.init_domain, _ = data.generateGridData(self.N_init, self.init_range, self.dim_in)
 
         #Generate data for unsafe set
         if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -373,17 +386,17 @@ class MotionPlanner:
 
         #Erasing these tensors to reset counterexample generation
         #To be run before the generation of counterexamples for a new set of data!
-        if hasattr(self, 'domain_cex'):
-            del self.domain_cex
-        if hasattr(self, 'input_domain_cex'):
-            del self.input_domain_cex 
-        if hasattr(self, 'unsafe_cex'):
-            del self.unsafe_domain_cex 
+        # if hasattr(self, 'domain_cex'):
+        #     del self.domain_cex
+        # if hasattr(self, 'input_domain_cex'):
+        #     del self.input_domain_cex 
+        # if hasattr(self, 'unsafe_cex'):
+        #     del self.unsafe_domain_cex 
 
     def generate_counterexample_data(self):
         self.load_model_states()     
         # input_domain, self.eps = data.generateGridData(self.N_cex_domain, self.RANGE, self.dim_in) #the domain is limited to [-1,1] due to normalization
-        input_domain, _ = data.generateRandomData(self.N_cex_domain, self.RANGE, self.dim_in)
+        input_domain, _ = data.generateRandomData(self.config["counterex"]["N_cex_domain"], self.RANGE, self.dim_in)
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
         
         if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -408,21 +421,11 @@ class MotionPlanner:
         counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
         counterexamples_init = verification.verify_init(self.model_b, init_domain, self.config)
         counterexamples_unsafe = verification.verify_unsafe(self.model_b, unsafe_domain, self.config)
-        # if counterexamples_domain.dim() == 1:
-        #      counterexamples_domain = counterexamples_domain.unsqueeze(0)
-
-        # if counterexamples_init.dim() == 1:
-        #         counterexamples_init = counterexamples_init.unsqueeze(0)     
-
-        # if counterexamples_unsafe.dim() == 1:
-        #      counterexamples_unsafe = counterexamples_unsafe.unsqueeze(0)
         add_data_domain = []
         add_data_init = []
         add_data_unsafe = []
         
         for counterexample in counterexamples_domain:
-            #for _ in range(self.config["counterex"]["N"]):
-                #random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
             print_warning(f"DOMAIN COUNTEREXAMPLE: {counterexample}") 
             add_data_domain.append(counterexample)
             
@@ -432,8 +435,6 @@ class MotionPlanner:
             add_data_domain = None
  
         for counterexample in counterexamples_init:
-            #for _ in range(self.config["counterex"]["N"]):
-             #   random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
             print_warning(f"INIT COUNTEREXAMPLE: {counterexample}")
             add_data_init.append(counterexample)
         if len(add_data_init) > 0:
@@ -442,8 +443,6 @@ class MotionPlanner:
             add_data_init = None
 
         for counterexample in counterexamples_unsafe:
-            #for _ in range(self.config["counterex"]["N"]):
-             #   random_point = counterexample + (torch.rand(counterexample.shape) - 0.5) * 2 * self.config["counterex"]["radius"]
             print_warning(f"UNSAFE COUNTEREXAMPLE: {counterexample}") 
             add_data_unsafe.append(counterexample)
 
@@ -464,13 +463,6 @@ class MotionPlanner:
 
 
         if add_data_domain is not None:
-            #  print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
-            #  self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_domain], dim=0), dim = 0)
-            #  self.init_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.init_min)) & (self.domain_cex <= torch.tensor(self.init_max))).all(dim=1)]
-            #  if self.config["unsafe"]["shape"] == 'Rectangle':
-            #     self.unsafe_domain_cex = self.domain_cex[((self.domain_cex >= torch.tensor(self.unsafe_min)) & (self.domain_cex <= torch.tensor(self.unsafe_max))).all(dim=1)]
-            #  elif self.config["unsafe"]["shape"] == 'Circle':
-            #     self.unsafe_domain_cex = self.domain_cex[(torch.linalg.norm(self.domain_cex - self.uns_center, dim =1) <= self.uns_rad )]
             print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
@@ -490,16 +482,12 @@ class MotionPlanner:
 
         if add_data_init is not None:
             print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
-            # self.init_domain_cex = torch.unique(torch.cat([self.init_domain_cex, add_data_init], dim=0), dim = 0)
-            # self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_init], dim=0), dim = 0)
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
 
         
         if add_data_unsafe is not None:
             print_info(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
-            # self.unsafe_domain_cex = torch.unique(torch.cat([self.unsafe_domain_cex, add_data_unsafe], dim=0), dim =0)
-            # self.domain_cex = torch.unique(torch.cat([self.domain_cex, add_data_unsafe], dim=0), dim = 0)
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
                 
@@ -508,10 +496,6 @@ class MotionPlanner:
             self.counterexamples_added = False
 
         #Dataset Generation and Shuffling
-
-        # domain_dataset = torch.utils.data.TensorDataset(self.domain_cex)
-        # init_dataset  = torch.utils.data.TensorDataset(self.init_domain_cex)
-        # unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain_cex)
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
         init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
         unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
@@ -519,9 +503,6 @@ class MotionPlanner:
         # total_size = len(self.domain_cex) + len(self.init_domain_cex) + len(self.unsafe_domain_cex)
         total_size = len(self.domain) + len(self.init_domain) + len(self.unsafe_domain)
 
-        # domain_batch_size = int(len(self.domain_cex) / total_size * self.batch_size)	
-        # init_batch_size = max(4, int(len(self.init_domain_cex) / total_size * self.batch_size))
-        # unsafe_batch_size = max(3, int(len(self.unsafe_domain_cex) / total_size * self.batch_size))
         domain_batch_size = int(len(self.domain) / total_size * self.batch_size)       
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
@@ -535,62 +516,48 @@ class MotionPlanner:
         self.hidden_layers_f = self.config["model_f"]["layers"]
         sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
-        self.model_f_init = NNModels.DyanmicsNet(self.dim_in, 
+        self.model_f = NNModels.DyanmicsNet(self.dim_in, 
                                             self.hidden_f, 
                                             sigmoid_f).to(self.device)
         best_mse = np.inf   # init to infinity
         best_weights = None
         history = []
         loss_fn = nn.MSELoss()  # mean square error #TODO: Add Lyapunov, barrier, regularization loss
-        optimizer_f = torch.optim.Adam(self.model_f_init.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
-        scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
-                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
-        for epoch in range(self.config["model_f"]["epochs_warm"]):
+        self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], patience=self.config["model_f"]["lr_patience"], verbose=True)
+        for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
-                self.model_f_init.train()
+                self.model_f.train()
                 # Calculate the loss
                 x_val = X_batch.float().to(self.device)
-                y_pred = self.model_f_init(x_val)
+                y_pred = self.model_f(x_val)
                 loss_mse = loss_fn(y_pred, y_batch.float().to(self.device))
-                loss = loss_mse
                 # backward pass
-                optimizer_f.zero_grad()
-                loss.backward()
-                optimizer_f.step()
-                total_loss += loss.item()
-            self.model_f_init.eval()
-            y_pred = self.model_f_init(self.X_test.float().to(self.device))
+                self.optimizer_f.zero_grad()
+                loss_mse.backward()
+                self.optimizer_f.step()
+                total_loss += loss_mse.item()
+            self.model_f.eval()
+            y_pred = self.model_f(self.X_test.float().to(self.device))
             mse = loss_fn(y_pred, self.y_test.float().to(self.device))
             total_loss = mse.item()
             history.append(total_loss)
             if total_loss < best_mse:
                 best_mse = total_loss
-                best_weights = copy.deepcopy(self.model_f_init.state_dict())
+                best_weights = copy.deepcopy(self.model_f.state_dict())
             with torch.no_grad():
                 torch.cuda.empty_cache()
         # restore model and return best accuracy
-        self.model_f_init.load_state_dict(best_weights)
+        self.model_f.load_state_dict(best_weights)
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
-        self.optimizer_f_state_dict = optimizer_f.state_dict()
+        self.optimizer_f_state_dict = self.optimizer_f.state_dict()
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def initialiseCertificate(self):
         if self.config["Barrier"]:
-            # Building the Dynamics Model
-            self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
-            self.hidden_layers_f = self.config["model_f"]["layers"]
-            sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
-            self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
-            self.model_f = NNModels.DyanmicsNet(self.dim_in, 
-                                                self.hidden_f, 
-                                                sigmoid_f).to(self.device)
-            self.model_f.load_state_dict(self.model_f_state_dict)
-            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*1e-1,betas=(0.9, 0.999))
-            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
-                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
-
+            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
             #Building the Lyapunov Model
             hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
             hidden_layers_v = self.config["model_v"]["layers"]
@@ -626,7 +593,7 @@ class MotionPlanner:
             self.load_model_states()        
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
-            for epoch in range(max_iter):
+            for epoch in tqdm(range(max_iter)):
                 cert_loss_b = 0
                 cert_loss_v = 0
                 dyn_loss = 0
@@ -636,11 +603,18 @@ class MotionPlanner:
                         input_domain = batches[0][0].to(self.device)
                         self.optimizer_f.zero_grad()   
                         self.optimizer_v.zero_grad()
-                        loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, self.model_f_init, input_domain, self.config)
+                        loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
-                        # torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         self.optimizer_f.step()
+                        if "train_f_cert" not in self.config["model_f"]:    
+                            self.optimizer_f.step()   
+                        else:
+                            if self.config["model_f"]["train_f_cert"] == False and epoch <= max_iter*self.config["model_f"]["cert_train_factor"]:
+                                pass
+                            else:
+                                self.optimizer_f.step()
                         #self.model_v.clip_weights()
                     else:
                         loss_domain_v = torch.tensor(0.0, requires_grad = True)
@@ -653,7 +627,7 @@ class MotionPlanner:
                         loss_unsafe_b = torch.tensor(0.0, requires_grad=True)
 
                         if batches[0] is not None:
-                            _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, self.model_f_init, input_domain, self.config)
+                            _, loss_domain_b = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         if batches[2] is not None:
                             input_init = batches[2][0].to(self.device)
                             loss_init_b = Loss_Functions.loss_function_init(self.model_b, input_init, self.config)
@@ -663,20 +637,26 @@ class MotionPlanner:
 
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
-                        # torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
-                        self.optimizer_f.step()    
+                        if "train_f_cert" not in self.config["model_f"]:    
+                            self.optimizer_f.step()   
+                        else:
+                            if self.config["model_f"]["train_f_cert"] == False and epoch <= max_iter*self.config["model_f"]["cert_train_factor"]:
+                                pass
+                            else:
+                                self.optimizer_f.step()
                         #self.model_b.clip_weights()
 
                     if batches[1] is not None:
-                         input_train = batches[1][0].to(self.device)
-                         output_train = batches[1][1].to(self.device)
-                         self.optimizer_f.zero_grad()
-                         loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config) 
-                         loss_train.backward()
-                        #  torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
-                         self.optimizer_f.step()
-                         #self.model_f.clip_weights()
+                        input_train = batches[1][0].to(self.device)
+                        output_train = batches[1][1].to(self.device)
+                        self.optimizer_f.zero_grad()
+                        loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config) 
+                        loss_train.backward()
+                        # torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        self.optimizer_f.step()
+                        # self.model_f.clip_weights()
                     else:
                         loss_train = torch.tensor(0.0, requires_grad=True)
                     
@@ -703,8 +683,8 @@ class MotionPlanner:
 
                 # Log the training loss
                 decay=self.config["hyperparameters"]["decay_mse"]
-                print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay * len(self.train_loader)}")
-                print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss_v.item() + cert_loss_b.item()}")
+                # print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay /len(self.train_loader)}")
+                # print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss_v.item() + cert_loss_b.item()}")
 
             # Save the recent versions of model_v and model_b in memory
             self.model_v_state_dict = self.model_v.state_dict()
@@ -753,12 +733,13 @@ class MotionPlanner:
     
     def update_config(self):
         # Construct the init_range value
-        if self.args.dataset_type == 'LASA':
-            file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
-        elif self.args.dataset_type == '3D_Shapes':
-            file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
-        elif self.args.dataset_type == '2D_Shapes':
-            file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
+        # if self.args.dataset_type == 'LASA':
+        #     file_path = "./config_files/LASA/" + self.args.lasa_name + "_config.json"
+        # elif self.args.dataset_type == '3D_Shapes':
+        #     file_path = "./config_files/3D_Shapes/" + self.args.name_3d + "_config.json"
+        # elif self.args.dataset_type == '2D_Shapes':
+        #     file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
+        file_path = os.path.join(os.getcwd(), "config_files", self.args.dataset_type, self.name + "_config.json")
         init_range = [[self.init_min[0][0], self.init_max[0][0]], [self.init_min[0][1], self.init_max[0][1]]]
         initial_conditions = self.initial_set_center.tolist()
 
@@ -786,8 +767,6 @@ class MotionPlanner:
                                             self.hidden_f, 
                                             sigmoid_f).to(self.device)
         self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
-        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
-                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
         #Building the Lyapunov Model
         hidden_neurons_v = self.config["model_v"]["hidden_neurons"]
         hidden_layers_v = self.config["model_v"]["layers"]
@@ -856,67 +835,59 @@ if __name__ == "__main__":
         seed_filepath = f'seeds/3D_Shapes/{args.name_3d}_seed.json'
     #Check if the seed file exists  
     try:
-       seed = load_seed(seed_filepath)
+        seed = load_seed(seed_filepath)
     except FileNotFoundError:
-        seed = 0  # seed value
         seed = random.randint(0, 100)
     set_seed(seed)
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
+    start = time.time() 
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    # if args.dataset_type == '3D_Shapes':
-    #     Plotter.initial3DDSPlot(mp.model_f_init, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
-    # elif args.dataset_type == '2D_Shapes':
-    #     Plotter.initial2DDSPlot(mp.model_f_init, mp.demos_pos/np.array(mp.pos_scaling), mp.initial_set_center)
-    # elif args.dataset_type == 'LASA':
-    #     Plotter.initialDSPlot(mp.model_f_init, mp.X_train, mp.initial_set_center, mp.dt)
+    if args.dataset_type == '3D_Shapes':
+        Plotter.initial3DDSPlot(mp.model_f, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
+    elif args.dataset_type == '2D_Shapes':
+        Plotter.initial2DDSPlot(mp.model_f, mp.demos_pos/np.array(mp.pos_scaling), mp.initial_set_center)
+    elif args.dataset_type == 'LASA':
+        Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-   # while not mp.flag_verified and iters <= 20: 
+    # while not mp.flag_verified and iters <= 20: 
     print_info("CERTIFICATE TRAINING")
     mp.initialiseCertificate()
     mp.trainCertificate()
     trial = 1
-    lr_inc = mp.config["counterex"]["lr_increment_factor"]
+    for param_group in mp.optimizer_f.param_groups:
+        param_group['lr'] = 1e-10
+    # lr_inc = mp.config["counterex"]["lr_increment_factor"]
     while trial < 100:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
-            # if trial % 10 == 0:
-            #     if args.dataset_type == '3D_Shapes':
-            #         Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-            #     elif args.dataset_type == 'LASA':
-            #         Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-            #     elif args.dataset_type == '2D_Shapes':
-            #         Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-            #     Plotter.plotLyapunov(mp.model_v)
-            #     Plotter.plotBarrier(mp.model_b)
+            if trial % 10 == 0:
+                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+                Plotter.plotLyapunov(mp.model_v)
+                Plotter.plotBarrier(mp.model_b)
             mp.trainCertificate()
             trial += 1      
-            for param_group in mp.optimizer_f.param_groups:
-                param_group['lr'] *= lr_inc
-            for param_group in mp.optimizer_v.param_groups:
-                param_group['lr'] *= lr_inc
-            for param_group in mp.optimizer_b.param_groups:
-                param_group['lr'] *= lr_inc
+            # for param_group in mp.optimizer_f.param_groups:
+            #     param_group['lr'] *= lr_inc
+            # for param_group in mp.optimizer_v.param_groups:
+            #     param_group['lr'] *= lr_inc
+            # for param_group in mp.optimizer_b.param_groups:
+            #     param_group['lr'] *= lr_inc
         else:
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            for param_group in mp.optimizer_f.param_groups:
-                param_group['lr'] = mp.lr_f
-            for param_group in mp.optimizer_v.param_groups:
-                param_group['lr'] = mp.lr_v
-            for param_group in mp.optimizer_b.param_groups:
-                param_group['lr'] = mp.lr_b
-            if args.dataset_type == '3D_Shapes':
-                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-            elif args.dataset_type == 'LASA':
-                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-            elif args.dataset_type == '2D_Shapes':
-                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+            # for param_group in mp.optimizer_f.param_groups:
+            #     param_group['lr'] = mp.lr_f
+            # for param_group in mp.optimizer_v.param_groups:
+            #     param_group['lr'] = mp.lr_v
+            # for param_group in mp.optimizer_b.param_groups:
+            #     param_group['lr'] = mp.lr_b
+            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
@@ -933,12 +904,7 @@ if __name__ == "__main__":
             break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
-        if args.dataset_type == '3D_Shapes':
-            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-        elif args.dataset_type == 'LASA':
-            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-        elif args.dataset_type == '2D_Shapes':
-            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+        Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
         Plotter.plotLyapunov(mp.model_v)
         Plotter.plotBarrier(mp.model_b)
         sys.exit(1)
