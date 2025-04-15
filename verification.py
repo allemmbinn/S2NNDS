@@ -144,7 +144,10 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         concatenated_cex = torch.unique(torch.cat(non_empty_tensors, dim=0), dim = 0)   
     else:
         concatenated_cex = torch.empty((0, input_domain_clone.shape[1]))  # Empty tensor with correct shape
-
+    # Print Counterexamples
+    print("Lie Lyapunov CE: \n", lie_lyap_cex)
+    print("Positive Lyapunov CE: \n", V_pos_cex)
+    print("Lie Barrier CE: \n", lie_bar_cex)
     return concatenated_cex.cpu()
 
 def verify_init(model_b,init_domain, config):
