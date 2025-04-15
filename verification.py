@@ -1,57 +1,4 @@
 from common_header import *
-from torch.utils.data import DataLoader, TensorDataset
-
-# def bounds(model):
-#     x1 = torch.linspace(-1, 1, 50)  # 50 points from -1 to 1
-#     x2 = torch.linspace(-1, 1, 50)
-#     X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
-#     # Flatten to pass into the model
-#     inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1).requires_grad_()
-#     Value = model(inputs)
-#     grad= torch.autograd.grad(
-#                     torch.sum(Value),
-#                     inputs,
-#                     grad_outputs=None,
-#                     create_graph=True,
-#                     only_inputs=True,
-#                     allow_unused=True)[0]
-#     return torch.max(torch.linalg.norm(grad,2,dim=1))
-
-# def lipschitz_network(weights):
-#     n= 2
-#     m = len(weights)
-#     if m == 0:
-#         return 1
-#     if m == 1:
-#         return torch.linalg.norm(weights[0],n)
-#     else:
-#         norm = 0
-#         i = m-1
-#         weight = torch.eye(weights[m-1].shape[0])
-#         while i >= 0:
-#             weight = torch.matmul(weight, weights[i])
-#             if i != 0:
-#                 norm += 1/2**(m-i)*torch.linalg.norm(weight,n)*lipschitz_network(weights[0:i])
-#             if i == 0:
-#                 norm += 1/2**(m-1)*torch.linalg.norm(weight,n)*lipschitz_network(weights[0:i])
-#             i -= 1
-#         return norm.item()
-
-# def lipschitz_gradient(weights):
-#     n= 2
-#     m= len(weights)
-#     if m == 1:
-#         return torch.linalg.norm(weights[0]**2,n)
-#     else:
-#         norm = 0
-#         weight_m = weights[m-1]
-#         norm += torch.linalg.norm(weight_m,n) *lipschitz_network(weights[0:m-1])
-#         for i in range(m-2, -1, -1):
-#             weight_m = torch.matmul(weight_m,weights[i])
-#         norm += torch.linalg.norm(weight_m,n)*lipschitz_network(weights)
-
-#         return norm.item()
-
 
 def verify_domain(model_v, model_b, model_f, input_domain, config):
     N = config["counterex"]["no_min"]
@@ -225,8 +172,7 @@ def verify_unsafe(model_b, unsafe_domain, config):
     if filtered_B_value.numel() > 0:    
         num_elements = filtered_B_value.numel()
         num_samples = min(N, num_elements)
-        min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
-        # Select the corresponding counterexample points
+        min_indices = torch.randperm(num_elements)[:num_samples]        
         cex = filtered_uns_domain[min_indices]
     else:
         cex = torch.empty((0, filtered_uns_domain.shape[1]), device=device)

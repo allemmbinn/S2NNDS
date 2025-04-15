@@ -1,17 +1,4 @@
 from common_header import *
-from torch.utils.data import DataLoader, TensorDataset
-
-# Helper Function for Circular Tuning
-def Tune(x):
-    y = []
-    for r in range(0,len(x)):
-        v = 0
-        for j in range(x.shape[1]):
-            v += x[r][j]**2
-        f = [torch.sqrt(v)]
-        y.append(f)
-    y = torch.tensor(y)
-    return y
 
 def loss_function_dyn(model_f, X_train, y_train, config):
     device = next(model_f.parameters()).device
@@ -111,5 +98,3 @@ def loss_function_unsafe(model_b, input_unsafe, config):
     #losses
     loss_unsafe =  DECAY_UNSAFE * (act(- B_unsafe + 0.001 - tol, alpha)).mean()
     return loss_unsafe
-        
-
