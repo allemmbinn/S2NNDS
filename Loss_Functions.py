@@ -32,8 +32,10 @@ def loss_function_domain(model_v, model_b, model_f, model_f_init, input_domain, 
     alpha = config["hyperparameters"]["alpha"] #Parameter for leaky relu
     act= F.elu
     device = next(model_v.parameters()).device
+    model_v = model_v.to(device)
     model_b = model_b.to(device)
     model_f = model_f.to(device)
+    model_f_init = model_f_init.to(device)
     # For the domain
     input_domain = input_domain.float().to(device)
     #Lyapunov Losses
@@ -91,7 +93,7 @@ def loss_function_domain(model_v, model_b, model_f, model_f_init, input_domain, 
     reg_loss = 0.0
     for param_trainable, param_fixed in zip(model_f.parameters(), model_f_init.parameters()):
         # L2 regularization between parameters
-        reg_loss += DECAY_REG * torch.sum((param_trainable - param_fixed) ** 2)
+        reg_loss += DECAY_REG * torch.sum((param_trainable - param_fixed) ** 2).to(device)
     #total loss
     return loss_lie_v + loss_vpos + loss_zero + reg_loss, loss_lie_b + reg_loss
 

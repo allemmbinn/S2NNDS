@@ -51,8 +51,8 @@ class MotionPlanner:
             # file_path = "./config_files/2D_Shapes/" + self.args.name_2d + "_config.json"
         with open(file_path) as file:
             self.config = json.load(file)
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        # self.device = torch.device('cpu')
+        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -330,8 +330,15 @@ class MotionPlanner:
         elif self.config["unsafe"]["shape"] == 'Circle':
             self.uns_center = torch.tensor(self.config["unsafe"]["center"])
             self.uns_rad = self.config["unsafe"]["radius"]
-            mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
-            self.unsafe_domain = self.domain[mask]
+            if isinstance(self.uns_center[0], (int, float)):
+                mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
+                self.unsafe_domain = self.domain[mask]
+            else:
+                all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                self.unsafe_domain = self.domain[all_masks]
 
         elif self.config["unsafe"]["shape"] == 'Custom':
             x = self.domain[:,0]
@@ -383,10 +390,17 @@ class MotionPlanner:
             # unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
             unsafe_domain =  input_domain[((input_domain >= self.unsafe_min.clone().detach()) & (input_domain <= self.unsafe_max.clone().detach())).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-            unsafe_domain = input_domain[mask]
+            if isinstance(self.uns_center[0], (int, float)):
+                mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
+                self.unsafe_domain = input_domain[mask]
+            else:
+                all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                unsafe_domain = input_domain[all_masks]
         elif self.config["unsafe"]["shape"] == 'Custom':
-            x= input_domain[:,0]
+            x = input_domain[:,0]
             y = input_domain[:,1]
             result = eval(self.config["unsafe"]["function"])
             unsafe_domain = input_domain[result <= 0]
@@ -464,7 +478,15 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
-                self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )]
+                if isinstance(self.uns_center[0], (int, float)):
+                    mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
+                    self.unsafe_domain = self.domain[mask]
+                else:
+                    all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                    for center in self.uns_center:
+                        mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                        all_masks = all_masks | mask
+                    self.unsafe_domain = self.domain[all_masks]
 
         if add_data_init is not None:
             print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
@@ -554,7 +576,7 @@ class MotionPlanner:
         self.optimizer_f_state_dict = optimizer_f.state_dict()
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
-    def trainCertificate(self):
+    def initialiseCertificate(self):
         if self.config["Barrier"]:
             # Building the Dynamics Model
             self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
@@ -565,7 +587,7 @@ class MotionPlanner:
                                                 self.hidden_f, 
                                                 sigmoid_f).to(self.device)
             self.model_f.load_state_dict(self.model_f_state_dict)
-            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*1e-2,betas=(0.9, 0.999))
+            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"]*1e-1,betas=(0.9, 0.999))
             self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
                                                                     patience=self.config["model_f"]["lr_patience"], verbose=True)
 
@@ -579,7 +601,7 @@ class MotionPlanner:
             sigmoid_v=NNModels.assignActivationFunction(self.config['model_v']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Lyapunov Function
             self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
-            warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
+            self.warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
             self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
                                                                     patience = self.config["model_v"]["lr_patience"], verbose = True)
             
@@ -593,23 +615,22 @@ class MotionPlanner:
             sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Barrier Function
             self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
-            warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
+            self.warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
             
             self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                     patience = self.config["model_b"]["lr_patience"], verbose = True)
-
+    
+    def trainCertificate(self):
+        if self.config["Barrier"]:
             # Load the stored model state dictionary if available
-            
             self.load_model_states()        
-
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
-
             for epoch in range(max_iter):
                 cert_loss_b = 0
                 cert_loss_v = 0
                 dyn_loss = 0
-
+                
                 for batches in itertools.zip_longest(self.domain_loader, self.train_loader, self.init_loader, self.unsafe_loader, fillvalue=None):
                     if batches[0] is not None:
                         input_domain = batches[0][0].to(self.device)
@@ -669,18 +690,17 @@ class MotionPlanner:
                     self.scheduler_f.step(avg_loss_f)
                     # Update learning rate with warm-up
                     if epoch < self.config["model_v"]["warmup"]:
-                        warmup_scheduler_v.step()
+                        self.warmup_scheduler_v.step()
                     else:
                         avg_loss_cert_v = cert_loss_v/len(self.domain_loader)
                         self.scheduler_v.step(avg_loss_cert_v)
 
                     if epoch < self.config["model_b"]["warmup"]:
-                        warmup_scheduler_b.step()
+                        self.warmup_scheduler_b.step()
                     else:
                         avg_loss_cert_b = cert_loss_b/len(self.domain_loader)
                         self.scheduler_b.step(avg_loss_cert_v)
 
-                
                 # Log the training loss
                 decay=self.config["hyperparameters"]["decay_mse"]
                 print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay * len(self.train_loader)}")
@@ -783,7 +803,7 @@ class MotionPlanner:
         #Optimizer and Scheduler for Lyapunov Function
         self.optimizer_v = torch.optim.Adam(self.model_v.parameters(), lr = self.config["model_v"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_v"])
 
-        warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
+        self.warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
         self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
                                                                 patience = self.config["model_v"]["lr_patience"], verbose = True)
         
@@ -798,7 +818,7 @@ class MotionPlanner:
         sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
         #Optimizer and Scheduler for Barrier Function
         self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
-        warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
+        self.warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
         
         self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
                                                                 patience = self.config["model_b"]["lr_patience"], verbose = True)
@@ -823,6 +843,7 @@ class MotionPlanner:
             self.flag_verified = False
             print(f"Verification failed with marginal safety error: {q}")
 
+
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])
@@ -845,17 +866,18 @@ if __name__ == "__main__":
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    if args.dataset_type == '3D_Shapes':
-        Plotter.initial3DDSPlot(mp.model_f, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
-    elif args.dataset_type == '2D_Shapes':
-        Plotter.initial2DDSPlot(mp.model_f, mp.demos_pos/np.array(mp.pos_scaling), mp.initial_set_center)
-    elif args.dataset_type == 'LASA':
-        Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+    # if args.dataset_type == '3D_Shapes':
+    #     Plotter.initial3DDSPlot(mp.model_f_init, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
+    # elif args.dataset_type == '2D_Shapes':
+    #     Plotter.initial2DDSPlot(mp.model_f_init, mp.demos_pos/np.array(mp.pos_scaling), mp.initial_set_center)
+    # elif args.dataset_type == 'LASA':
+    #     Plotter.initialDSPlot(mp.model_f_init, mp.X_train, mp.initial_set_center, mp.dt)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
    # while not mp.flag_verified and iters <= 20: 
     print_info("CERTIFICATE TRAINING")
+    mp.initialiseCertificate()
     mp.trainCertificate()
     trial = 1
     lr_inc = mp.config["counterex"]["lr_increment_factor"]
@@ -864,14 +886,15 @@ if __name__ == "__main__":
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
-            if trial % 5 == 0:
-                if args.dataset_type == '3D_Shapes':
-                    Plotter.initial3DDSPlot(mp.model_f, mp.demos/np.array(mp.pos_scaling), mp.initial_set_center)
-                elif args.dataset_type == '2D_Shapes':
-                    Plotter.initial2DDSPlot(mp.model_f, mp.demos_pos/np.array(mp.pos_scaling), mp.initial_set_center)
-                elif args.dataset_type == 'LASA':
-                    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
-
+            # if trial % 10 == 0:
+            #     if args.dataset_type == '3D_Shapes':
+            #         Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+            #     elif args.dataset_type == 'LASA':
+            #         Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+            #     elif args.dataset_type == '2D_Shapes':
+            #         Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+            #     Plotter.plotLyapunov(mp.model_v)
+            #     Plotter.plotBarrier(mp.model_b)
             mp.trainCertificate()
             trial += 1      
             for param_group in mp.optimizer_f.param_groups:
@@ -888,13 +911,12 @@ if __name__ == "__main__":
                 param_group['lr'] = mp.lr_v
             for param_group in mp.optimizer_b.param_groups:
                 param_group['lr'] = mp.lr_b
-            import pdb; pdb.set_trace()
             if args.dataset_type == '3D_Shapes':
-                Plotter.initial3DDSPlot(mp.model_f, mp.demos/mp.pos_scaling, mp.initial_set_center)
+                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
             elif args.dataset_type == 'LASA':
-                Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
             elif args.dataset_type == '2D_Shapes':
-                Plotter.initial2DDSPlot(mp.model_f, np.array(mp.demos_pos)/int(mp.pos_scaling), mp.initial_set_center)
+                Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()
@@ -911,4 +933,13 @@ if __name__ == "__main__":
             break
     if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
+        if args.dataset_type == '3D_Shapes':
+            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+        elif args.dataset_type == 'LASA':
+            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+        elif args.dataset_type == '2D_Shapes':
+            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+        Plotter.plotLyapunov(mp.model_v)
+        Plotter.plotBarrier(mp.model_b)
         sys.exit(1)
+        
