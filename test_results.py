@@ -2,7 +2,7 @@ from common_header import *
 import NNModels
 import Plotter
 import data as data
-from main_lip import MotionPlanner, filter_args, load_seed, set_seed
+from main import MotionPlanner, filter_args, load_seed, set_seed
 
 @dataclass
 class ConfigFile:

@@ -12,30 +12,36 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.patches as patches
 
-
-# Other Requirements
-import os
-import timeit
+# Data Processing Requirements
 import numpy as np
 import pandas as pd
-import tqdm
-import copy
-import scipy.special as sp
+
+# Import Python Essentials
+import os
+import json
+import time
+import math
 from math import e
 from termcolor import colored
-from scipy.linalg import solve_continuous_lyapunov
-import math
-import json
+import random
+import sys
 import argparse
 from dataclasses import dataclass
 import pyrallis
-import pyLasaDataset as lasa
-import random
-import wandb
-import sys
 import itertools
-import onnx
 
+# Import Model Requirement
+import onnx
+import copy
+
+# Other Requirements
+import scipy.special as sp
+from scipy.linalg import solve_continuous_lyapunov
+
+# Datasets
+import pyLasaDataset as lasa
+
+# Printing functions
 def print_error(message):
     print(colored(message, 'red'))
 

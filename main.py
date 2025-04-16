@@ -1,7 +1,7 @@
 from common_header import *
 import NNModels
-import data_new as data
-import Loss_Functions_new as Loss_Functions
+import data
+import Loss_Functions 
 import opt 
 import Plotter
 import verification
