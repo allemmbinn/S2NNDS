@@ -7,17 +7,16 @@ def loss_function_dyn(model_f, X_train, y_train, config):
     # MSE Loss
     loss_fn = nn.MSELoss(reduction='mean')
     loss_MSE = loss_fn(model_f(X_train_clone),y_train_clone)
-    # Hyperparameters
+    # Hyperparameter
     DECAY_MSE = config["hyperparameters"]["decay_mse"]
-    # if "reg_f" in config["hyperparameters"]:
-    #     loss_mse = DECAY_MSE*loss_MSE + config["hyperparameters"]["reg_f"]*
     loss_mse = DECAY_MSE*loss_MSE
-    return loss_mse #, loss_reg
+    return loss_mse
 
 def loss_function_domain(model_v, model_b, model_f, input_domain, config):
     alpha = config["hyperparameters"]["alpha"] #Parameter for leaky relu
     act= F.elu
     device = next(model_v.parameters()).device
+    model_v = model_v.to(device)
     model_b = model_b.to(device)
     model_f = model_f.to(device)
     # For the domain
@@ -40,11 +39,6 @@ def loss_function_domain(model_v, model_b, model_f, input_domain, config):
     lie_lyap = torch.sum(grad_lyap * f_value, dim=1)
     #Lie derivative of barrier 
     B_value = model_b(input_domain_clone)
-    #abs_B = torch.abs(B_value)
-    #lie_tol = config["hyperparameters"]["lie_tol"]
-
-    #mask = abs_B <= lie_tol
-    #B_value = B_value[mask] 
     grad_bar = torch.autograd.grad(
                     torch.sum(B_value),
                     input_domain_clone,
@@ -53,7 +47,6 @@ def loss_function_domain(model_v, model_b, model_f, input_domain, config):
                     only_inputs=True,
                     allow_unused=True)[0]
     lie_barr = torch.sum(grad_bar * f_value, dim=1)
-    #SKIP circular tuning for now, add it if needed
     #Getting the hyperparameters
     lyap_tol = config["hyperparameters"]["lyap_tol"]
     bar_tol = config["hyperparameters"]["bar_tol"]
@@ -67,8 +60,7 @@ def loss_function_domain(model_v, model_b, model_f, input_domain, config):
     loss_lie_v  = DECAY_LV * (act(lie_lyap + lyap_tol, alpha)).mean()
     loss_lie_b = DECAY_LB * (act(lie_barr + bar_tol, alpha)).mean() 
     loss_vpos = DECAY_VPOS * (act(pos_tol  - V_value)).mean()
-    #total loss
-    return loss_lie_v + loss_vpos + loss_zero, loss_lie_b 
+    return loss_lie_v + loss_vpos + loss_zero, loss_lie_b
 
 def loss_function_init(model_b, input_init, config):
     alpha = config["hyperparameters"]["alpha"]

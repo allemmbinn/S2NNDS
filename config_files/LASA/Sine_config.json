@@ -2,6 +2,7 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 64,
+<<<<<<< HEAD
         "layers": 4,
         "epochs_warm": 100,
         "learning_rate": 0.001,
@@ -130,5 +131,105 @@
         "lie_tol": 0.005,
         "reg_bar": 0.001,
         "reg_v": 0.001
+=======
+        "layers" : 4,
+        "epochs_warm" : 250,
+        "learning_rate" : 1e-5,
+        "batch_size" : 64,
+        "lr_factor" : 0.1,
+        "lr_patience" :5,
+        "init_decay" : 0.1        
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 5e-3,
+        "learning_rate_ft": 7e-3,
+        "hidden_neurons": 64,
+        "layers" : 4,
+        "lr_factor" : 0.2,
+        "lr_patience" :10,
+        "warmup" : 10    
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 5e-3,
+        "learning_rate_ft": 7e-3,
+        "hidden_neurons": 64,
+        "layers" : 4,
+        "lr_factor" : 0.2,
+        "lr_patience" : 10,
+        "batch_size" : 256,
+        "warmup" : 10
+        },
+
+    "domain":{
+        "N" : 50,
+        "range" : [[-1,1],[-1,1]]
+        },
+    "init":{
+        "radius" : 0.03
+    },
+    "unsafe":{
+        "shape" : "Circle",
+<<<<<<< HEAD:config_files/LASA/heee_config.json
+        "center" : [-0.625, -0.1],
+=======
+        "centre" : [-0.4,0.35],
+>>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0:config_files/LASA/Sine_config.json
+        "radius" : 0.1
+    },
+   "counterex":{
+        "N_cex_domain" : 500,
+        "N" : 1,
+        "no_min" : 10,
+        "radius" : 0.001,
+        "lr_increment_factor" : 0.1,
+        "lyap_tol" : 0.0,
+        "pos_tol" : 0.0,
+        "bar_tol" : 0.0,
+        "inun_tol" : 0.0,
+        "lb" : 0,
+        "ub" : 0
+    },
+    "verification" : {
+        "N_conf" : 800,
+        "epsilon": 0.0001,
+        "beta" : 0.0001
+    },
+    "Barrier" : true,
+    "plots" : true,
+    "plotting" : {
+        "range" : [[-1.5,0.5],[-0.5, 1.0]],
+        "contour" : false,
+        "legend"  : false,
+<<<<<<< HEAD:config_files/LASA/heee_config.json
+        "name" : "heee LASA with Obstacles"
+=======
+        "name" : "Sine LASA with Obstacles"
+>>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0:config_files/LASA/Sine_config.json
+    },
+    "hyperparameters" : {
+        "max_iters" : 30,
+        "max_iters_ft" : 30,
+        "decay_mse" : 100,
+        "decay_lf" : 0.0,
+        "decay_vpos" : 1,
+        "decay_lv" : 1,
+        "decay_v0" : 1,
+        "decay_init" : 1,
+        "decay_unsafe" : 1,
+        "decay_cut" : 1,
+        "decay_lb" : 1,
+        "alpha" : 1,
+        "epi_bound" : 0.05,
+        "eta" : 1e-4,
+        "lyap_tol" : 0.001,
+        "pos_tol" : 0.001,
+        "bar_tol" : 0.001,
+        "inun_tol" : 0.01, 
+        "lie_tol": 0.05,
+        "reg_bar" : 0.01,
+        "reg_v" : 0.01 
+>>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0
     }
 }

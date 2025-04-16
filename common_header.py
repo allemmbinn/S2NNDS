@@ -6,11 +6,14 @@ import torch.optim as optim
 import torch.nn.utils.prune as prune
 import torch.nn.utils as utils
 
+import onnx
+
 # Plotting Requirements
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.patches as patches
+from mpl_toolkits import mplot3d
 
 # Data Processing Requirements
 import numpy as np
@@ -28,7 +31,9 @@ import sys
 import argparse
 from dataclasses import dataclass
 import pyrallis
+import scipy
 import itertools
+from tqdm import tqdm
 
 # Import Model Requirement
 import onnx

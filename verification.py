@@ -8,6 +8,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     model_f = model_f.to(device)
     input_domain = input_domain.float().to(device)
     input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
+    
     #remove points close to equilibrium
     # Define the bounds
     lower_bound = config["counterex"]["lb"]
@@ -36,11 +37,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     lyap_mask = lie_lyap > - lyap_tol
     filtered_lie_lyap = lie_lyap[lyap_mask]
     filtered_input_domain = input_domain_clone[lyap_mask]
-
-    #get the last minimum values of lie_lyap
-
-
-
+    # get the maximum values of lie_lyap
     if filtered_lie_lyap.numel() > 0:  # Ensure there are valid values
         # Sample indices according to probabilities
         num_elements = filtered_lie_lyap.numel()
@@ -49,14 +46,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         lie_lyap_cex = filtered_input_domain[min_indices]
     else:
         lie_lyap_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
-
-
-    # if filtered_lie_lyap.numel() > 0:  # Ensure there are valid values
-    #     _, min_indices = torch.topk(filtered_lie_lyap, k=min(N, filtered_lie_lyap.numel()), largest=True)
-    #     lie_lyap_cex = filtered_input_domain[min_indices]
-    # else:
-    #     lie_lyap_cex = torch.empty((0, input_domain.shape[1]), device=device)
-
     
     #lyapunov negative value counterexamples
     pos_tol = config["counterex"]["pos_tol"]
@@ -75,12 +64,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     else:
         V_pos_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 
-    # if filtered_V_Value.numel() > 0:  # Ensure there are valid values
-    #     _, min_indices = torch.topk(filtered_V_Value, k=min(N, filtered_V_Value.numel()), largest=False)
-    #     V_pos_cex = filtered_input_domain[min_indices]
-    # else:
-    #     V_pos_cex = torch.empty((0, input_domain.shape[1]), device=device)
-
     #barrier lie derivative counterexamples
     bar_tol =  config["counterex"]["bar_tol"]
     lie_tol = config["hyperparameters"]["lie_tol"]
@@ -98,10 +81,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     filtered_lie_bar = lie_bar[bar_mask]
     filtered_input_domain = input_domain_clone[bar_mask]
 
-    #get the maximum values of lie_bar
-
-
-
     if filtered_lie_bar.numel() > 0:  # Ensure there are valid values
         num_elements = filtered_lie_bar.numel()
         num_samples = min(N, num_elements)
@@ -113,23 +92,17 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     else:
         lie_bar_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 
-
-
-    # if filtered_lie_bar.numel() > 0:  # Ensure there are valid values
-    #     _, min_indices = torch.topk(filtered_lie_bar, k=min(N, filtered_lie_bar.numel()), largest=True)
-    #     lie_bar_cex = filtered_input_domain[min_indices]
-    # else:
-    #     lie_bar_cex = torch.empty((0, input_domain.shape[1]), device=device)
-
-    #return counterexamples
-
     tensors = [lie_lyap_cex, V_pos_cex, lie_bar_cex]
     non_empty_tensors = [t for t in tensors if t.numel() > 0]
     if non_empty_tensors:
         concatenated_cex = torch.unique(torch.cat(non_empty_tensors, dim=0), dim = 0)   
     else:
         concatenated_cex = torch.empty((0, input_domain_clone.shape[1]))  # Empty tensor with correct shape
-
+    # Print Counterexamples
+    # TODO : Need to remove this
+    print("Lie Lyapunov CE: \n", lie_lyap_cex)
+    print("Positive Lyapunov CE: \n", V_pos_cex)
+    print("Lie Barrier CE: \n", lie_bar_cex)
     return concatenated_cex.cpu()
 
 def verify_init(model_b,init_domain, config):
@@ -146,17 +119,11 @@ def verify_init(model_b,init_domain, config):
     if filtered_B_value.numel() > 0:    
         num_elements = filtered_B_value.numel()
         num_samples = min(N, num_elements)
-        min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
+        min_indices = torch.randperm(num_elements)[:num_samples]  
         # Select the corresponding counterexample points
         cex = filtered_init_domain[min_indices]
     else:
         cex = torch.empty((0, filtered_init_domain.shape[1]), device=device)
-    #   # Ensure there are valid values
-    #     _, min_indices = torch.topk(filtered_B_value, k=min(N, filtered_B_value.numel()), largest=True)
-    #     cex = filtered_init_domain[min_indices]
-    # else:
-    #     cex = torch.empty((0, init_domain.shape[1]), device=device)
-
     return cex.cpu()
 
 def verify_unsafe(model_b, unsafe_domain, config):
@@ -185,14 +152,14 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
     alpha = 0.1*epsilon
     l = math.floor((N+1)*(alpha))
     beta = sp.betainc(N - l + 1, l, 1-epsilon)
-    #Defining the conformal score functions
+    
     device = next(model_v.parameters()).device
     model_v = model_v.to(device)
     model_b = model_b.to(device)
     model_f = model_f.to(device)
     input_domain = input_domain.float().to(device)
     input_domain_clone = torch.clone(input_domain).requires_grad_().to(device)
-    #remove points close to equilibrium
+
     # Define the bounds
     lower_bound = config["counterex"]["lb"]
     upper_bound = config["counterex"]["ub"]
@@ -245,7 +212,3 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
     score_B_uns = torch.quantile(B_uns, quantile_n, interpolation='lower')
     q = max(score_lie_lyap, score_V_pos, score_lie_bar, score_B_init, score_B_uns)
     return beta, q
-
-
-
-        

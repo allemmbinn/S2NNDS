@@ -2,6 +2,7 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 16,
+<<<<<<< HEAD
         "layers": 2,
         "epochs_warm": 150,
         "learning_rate": 0.001,
@@ -134,5 +135,92 @@
         "lie_tol": 0.01,
         "reg_bar": 0.001,
         "reg_v": 0.001
+=======
+        "layers" : 2,
+        "epochs_warm" : 100,
+        "learning_rate" : 1e-3,
+        "batch_size" : 64,
+        "lr_factor" : 0.1,
+        "lr_patience" :5,
+        "init_decay" : 0.1        
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 1e-2,
+        "learning_rate_ft": 7e-3,
+        "hidden_neurons": 64,
+        "layers" : 2,
+        "lr_factor" : 0.2,
+        "lr_patience" :10,
+        "warmup" : 10    
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 1e-2,
+        "learning_rate_ft": 7e-3,
+        "hidden_neurons": 64,
+        "layers" : 2,
+        "lr_factor" : 0.2,
+        "lr_patience" : 10,
+        "batch_size" : 256,
+        "warmup" : 10
+        },
+
+    "domain":{
+        "N" : 50,
+        "range" : [[-1,1],[-1,1]],
+        "additional_N_domain" : 10
+    },
+    "init":{
+        "radius" : 0.05
+    },
+    "unsafe":{
+        "shape" : "Rectangle",
+        "range" : [[-0.6, -0.4], [-0.2,-0.1]]
+    },
+    "counterex":{
+        "N_cex_domain" : 800,
+        "N" : 1,
+        "no_min" : 10,
+        "radius" : 0.001,
+        "lr_increment_factor" : 1.0,
+        "lyap_tol" : 0.0,
+        "pos_tol" : 0.0,
+        "bar_tol" : 0.0,
+        "inun_tol" : 0.0,
+        "lb" : 0.0,
+        "ub" : 0.0
+    },
+    "Barrier" : true,
+    "plots" : true,
+    "plotting" : {
+        "range" : [[-1.5,0.5],[-0.5, 0.5]],
+        "contour" : false,
+        "legend"  : false,
+        "name" : "Worm LASA with Obstacles"
+    },
+    "hyperparameters" : {
+        "max_iters" : 30,
+        "max_iters_ft" : 30,
+        "decay_mse" : 5,
+        "decay_lf" : 0.0,
+        "decay_vpos" : 1,
+        "decay_lv" : 1,
+        "decay_v0" : 1,
+        "decay_init" : 1,
+        "decay_unsafe" : 1,
+        "decay_cut" : 1,
+        "decay_lb" : 1,
+        "alpha" : 1,
+        "epi_bound" : 0.05,
+        "eta" : 1e-4,
+        "lyap_tol" : 0.1,
+        "pos_tol" : 0.1,
+        "bar_tol" : 0.1,
+        "inun_tol" : 0.1, 
+        "lie_tol": 0.01,
+        "reg_bar" : 0.001,
+        "reg_v" : 0.001   
+>>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0
     }
 }
