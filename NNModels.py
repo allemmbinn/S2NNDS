@@ -20,16 +20,6 @@ def assignActivationFunction(activation_function):
         return nn.Softplus()
     elif activation_function == 'Sine':
         return SineActivation()
-    
-# def spec_norm(layer, norm_value):
-#     layer = spectral_norm(layer)
-#     with torch.no_grad():
-#         weight = layer.weight
-#         u, s, v = torch.svd(weight)
-#         max_singular_value = s[0]
-#         scale_factor = 1 #norm_value / max_singular_value
-#         layer.weight.data = weight * scale_factor
-#     return layer
 
 #Class of Neural Network for Dynamics Function
 class DyanmicsNet(nn.Module):
