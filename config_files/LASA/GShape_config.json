@@ -6,9 +6,9 @@
         "epochs_warm": 200,
         "learning_rate": 0.001,
         "learning_rate_cert": 1e-07,
-        "cert_train_factor": 0.35,
+        "cert_train_factor": 0.2,
         "train_f_cert": false,
-        "batch_size": 64,
+        "batch_size": 256,
         "lr_factor": 0.1,
         "lr_patience": 5,
         "init_decay": 0.1
@@ -17,7 +17,7 @@
         "activation_function": "eLU",
         "learning_rate": 0.01,
         "hidden_neurons": 128,
-        "layers": 4,
+        "layers": 3,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
@@ -26,7 +26,7 @@
         "activation_function": "eLU",
         "learning_rate": 0.01,
         "hidden_neurons": 128,
-        "layers": 3,
+        "layers": 5,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "batch_size": 512,
@@ -45,13 +45,8 @@
             ]
         ]
     },
-<<<<<<< HEAD
-    "init":{
-        "radius" : 0.03
-=======
     "init": {
         "radius": 0.01
->>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0
     },
     "unsafe": {
         "shape": "Circle",
@@ -73,17 +68,10 @@
         "lb": 0.0,
         "ub": 0.0
     },
-<<<<<<< HEAD
-    "verification" : {
-        "N_conf" : 800,
-        "epsilon": 0.0001,
-        "beta" : 0.0001
-=======
     "verification": {
         "N_conf": 640000,
         "epsilon": 0.0001,
         "beta": 0.0001
->>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0
     },
     "Barrier": true,
     "plots": true,
@@ -117,8 +105,8 @@
                 0.6437256612352563
             ],
             [
-                0.31032609939575195,
-                0.6241980791091919
+                0.2826962471008301,
+                0.6466448307037354
             ]
         ],
         "dt": 0.00591251759479233
@@ -126,13 +114,11 @@
     "hyperparameters": {
         "max_iters": 50,
         "decay_mse": 10,
-        "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
-        "decay_cut": 1,
         "decay_lb": 1,
         "alpha": 1,
         "lyap_tol": 0.05,
@@ -140,12 +126,7 @@
         "bar_tol": 0.05,
         "inun_tol": 0.0001,
         "lie_tol": 0.01,
-<<<<<<< HEAD
-        "reg_bar" : 0.001,
-        "reg_v" : 0.001   
-=======
         "reg_bar": 0.001,
         "reg_v": 0.001
->>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0
     }
 }

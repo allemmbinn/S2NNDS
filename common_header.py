@@ -6,8 +6,6 @@ import torch.optim as optim
 import torch.nn.utils.prune as prune
 import torch.nn.utils as utils
 
-import onnx
-
 # Plotting Requirements
 import matplotlib.pyplot as plt
 import matplotlib as mpl

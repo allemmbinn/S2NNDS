@@ -2,15 +2,34 @@ from common_header import *
 import json
 import os
 import Plotter
+from main import MotionPlanner
 
-def load_config_models(model_name):
+@dataclass
+class ConfigFile:
+    lasa_name : str = "NShape"
+    dataset_type : str = "LASA" # This can also be 3D_Shapes
+    name_3d: str = "Cshape_bottom"
+    name_2d: str = "Five_Obstacle_DS"
+
+def filter_args(args):
+    known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d']
+    return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
+
+def load_config_models(args):
+    # Get the name of the dataset
+    if args.dataset_type == "LASA":
+        model_name = args.lasa_name
+    elif args.dataset_type == "3D_Shapes":
+        model_name = args.name_3d
+    else:
+        model_name = args.name_2d
     # Construct the path to the configuration file
-    config_dir = "config_files"  # Directory where configuration files are stored
-    config_path = os.path.join(config_dir, f"{model_name}_config2.json")
+    config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files')
+    config_path = os.path.join(config_dir, args.dataset_name, f"{model_name}_config.json")
 
-    model_dir = "models"
-    model_path = os.path.join(model_dir, f"{model_name}")
-
+    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models_verified')
+    os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
+    model_path = os.path.join(model_dir, args.dataset_name, model_name)        
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -28,14 +47,17 @@ def load_config_models(model_name):
         print(f"Error: Failed to parse JSON file '{config_path}'. {e}")
         return None
 
-model_name = "NShape"  # Replace with the results of the dataset you want to plot
-config, model_v, model_b, model_f = load_config_models(model_name)
-path = os.path.join('Datasets_2D', model_name)
-X_train = torch.load(os.path.join(path, "X_train.pt"))
+# The main function starts here
+mp = MotionPlanner()
+mp.generate_demo_data()
+filtered_args = filter_args(sys.argv[1:])
+args = pyrallis.parse(ConfigFile, args=filtered_args)
+config, model_v, model_b, model_f = load_config_models(args)
+# TODO : Change this
 plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, X_train, config)
 
 #Saving the plots
-plot.savefig(os.path.join('results', model_name + '_main.png'), format="png", dpi=300)  # Save as PNG with high resolution
+plot.savefig(os.path.join(os.path.dirname(os.path.realpath(__file__)),'results', model_name + '_main.png'), format="png", dpi=300)  # Save as PNG with high resolution
 
 
 

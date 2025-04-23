@@ -49,7 +49,8 @@ class MotionPlanner:
         # File location
         self.par_dir_path = os.path.dirname(os.path.realpath(__file__))
         # Load the configuration file
-        file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
+        # file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
+        file_path = os.path.join("config_files", self.args.dataset_type, self.name + "_config.json")
         if os.path.exists(file_path):     
             with open(file_path) as file:
                 self.config = json.load(file)
@@ -212,7 +213,8 @@ class MotionPlanner:
                     print_error(f"Error: File '{file_path}' is empty!")
                     sys.exit(1)
         else:
-            print_error("Non-LASA Dataset has been choosen")            
+            print_error("Non-LASA Dataset has been choosen")   
+        self.demos = np.array(self.demos)         
         # Divide the data into training and testing
         train_size = int(5/7 * self.total_demos) # 5/7 datasets are used for training
         train_indices = random.sample(range(self.total_demos), train_size)
@@ -229,7 +231,6 @@ class MotionPlanner:
         assert self.X_train.shape[0] == self.y_train.shape[0], "Mismatch in number of samples between X_train and y_train"
         assert self.X_test.shape[0] == self.y_test.shape[0], "Mismatch in number of samples between X_test and y_test" 
         self.initial_set_center = np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)
-        
         # Normalise the Trajectories to [-1, 1] #Use the maximum value to normalize and scale the data.
         self.pos_scaling = torch.max(torch.concatenate([abs(self.X_train), abs(self.X_test)]))
         self.vel_scaling = torch.max(torch.concatenate([abs(self.y_train), abs(self.y_test)]))
@@ -244,14 +245,19 @@ class MotionPlanner:
         self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
+        # Rescaling the images
+        for i in range(len(self.demos)):
+            self.demos[i].pos = self.demos[i].pos/self.pos_scaling.cpu().detach().numpy()
+            self.demos[i].vel = self.demos[i].vel/self.vel_scaling.cpu().detach().numpy()
+            
     def generate_domain_data(self):
-        self.N_domain = self.config["domain"].get(["N"], 10000) 
-        self.RANGE = self.config["domain"].get(["range"], [[-1, 1]] * self.dim_in)
+        self.N_domain = self.config["domain"].get("N", 10000) 
+        self.RANGE = self.config["domain"].get("range", [[-1, 1]] * self.dim_in)
         self.domain, _ = data.generateRandomData(self.N_domain, self.RANGE, self.dim_in)
         #Generate data for initial set
-        self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling - self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
+        self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) - self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
         self.init_min = np.where(self.init_min < -1, -1, self.init_min)
-        self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling + self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
+        self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) + self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
         self.init_max = np.where(self.init_max > 1, 1, self.init_max)
         
         self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
@@ -471,12 +477,13 @@ class MotionPlanner:
                 self.optimizer_f.step()
                 total_loss += loss.item()
             with torch.no_grad():
-                y_pred = self.model_f(self.X_test.float().to(self.device))
-                mse = loss_fn(y_pred, self.y_test.float().to(self.device))
-                mse = float(mse)
-                history.append(mse)
-                if mse < best_mse:
-                    best_mse = mse
+                total_loss = 0
+                for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
+                    y_pred = self.model_f(X_batch.float().to(self.device))
+                    total_loss += loss_fn(y_pred, y_batch.float().to(self.device)).item()
+                history.append(total_loss)
+                if total_loss < best_mse:
+                    best_mse = total_loss
                     best_weights = copy.deepcopy(self.model_f.state_dict())
                 torch.cuda.empty_cache()
         # restore model and return best accuracy
@@ -737,7 +744,7 @@ if __name__ == "__main__":
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in)
+    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
@@ -751,13 +758,13 @@ if __name__ == "__main__":
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
-            if trial % 5 == 0:
-                 Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+            # if trial % 5 == 0:
+            #     Plotter.finalDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
             mp.trainCertificate()
             trial += 1      
         else:
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+            Plotter.finalDSPlot(mp.model_f, mp.model_b, mp.initial_set_center, mp.dim_in, mp.config)
             Plotter.plotLyapunov(mp.model_v)
             Plotter.plotBarrier(mp.model_b)
             mp.verifyCertificate()

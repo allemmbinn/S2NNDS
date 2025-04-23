@@ -41,11 +41,7 @@
     },
     "unsafe":{
         "shape" : "Circle",
-<<<<<<< HEAD:config_files/LASA/heee_config.json
         "center" : [-0.625, -0.1],
-=======
-        "centre" : [-0.4,0.35],
->>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0:config_files/LASA/Sine_config.json
         "radius" : 0.1
     },
    "counterex":{
@@ -72,11 +68,7 @@
         "range" : [[-1.5,0.5],[-0.5, 1.0]],
         "contour" : false,
         "legend"  : false,
-<<<<<<< HEAD:config_files/LASA/heee_config.json
         "name" : "heee LASA with Obstacles"
-=======
-        "name" : "Sine LASA with Obstacles"
->>>>>>> 54d706651436c6198a2863e41b0c254ba1bbada0:config_files/LASA/Sine_config.json
     },
     "hyperparameters" : {
         "max_iters" : 30,

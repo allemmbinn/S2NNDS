@@ -65,13 +65,11 @@
     "hyperparameters": {
         "max_iters": 50,
         "decay_mse": 10,
-        "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
-        "decay_cut": 1,
         "decay_lb": 1,
         "alpha": 1,
         "lyap_tol": 0.05,
