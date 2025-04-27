@@ -25,11 +25,11 @@ def load_config_models(args):
         model_name = args.name_2d
     # Construct the path to the configuration file
     config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files')
-    config_path = os.path.join(config_dir, args.dataset_name, f"{model_name}_config.json")
-
+    config_path = os.path.join(config_dir, args.dataset_type, f"{model_name}_config.json")
     model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models_verified')
     os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
-    model_path = os.path.join(model_dir, args.dataset_name, model_name)        
+    model_path = os.path.join(model_dir, args.dataset_type, model_name) 
+       
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -48,16 +48,15 @@ def load_config_models(args):
         return None
 
 # The main function starts here
-mp = MotionPlanner()
-mp.generate_demo_data()
 filtered_args = filter_args(sys.argv[1:])
 args = pyrallis.parse(ConfigFile, args=filtered_args)
+mp = MotionPlanner(args)
+mp.generate_demo_data()
 config, model_v, model_b, model_f = load_config_models(args)
 # TODO : Change this
-plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, X_train, config)
-
+plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
 #Saving the plots
-plot.savefig(os.path.join(os.path.dirname(os.path.realpath(__file__)),'results', model_name + '_main.png'), format="png", dpi=300)  # Save as PNG with high resolution
+plot.savefig(os.path.join(os.path.dirname(os.path.realpath(__file__)),'results', args.dataset_type,mp.name + '_main.png'), format="png", dpi=300)  # Save as PNG with high resolution
 
 
 

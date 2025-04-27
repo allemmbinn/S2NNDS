@@ -59,7 +59,7 @@ def loss_function_domain(model_v, model_b, model_f, input_domain, config):
     loss_zero = DECAY_V0 * (V_0).pow(2)
     loss_lie_v  = DECAY_LV * (act(lie_lyap + lyap_tol, alpha)).mean()
     loss_lie_b = DECAY_LB * (act(lie_barr + bar_tol, alpha)).mean() 
-    loss_vpos = DECAY_VPOS * (act(pos_tol  - V_value)).mean()
+    loss_vpos = DECAY_VPOS * (act(pos_tol  - V_value, alpha)).mean()
     return loss_lie_v + loss_vpos + loss_zero, loss_lie_b
 
 def loss_function_init(model_b, input_init, config):

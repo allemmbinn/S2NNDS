@@ -132,7 +132,7 @@ class MotionPlanner:
                 output_names=["velocity"], 
                 dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}  
             )
-        onnx_model = onnx.load(os.path.join(base_path, self.args.lasa_name + ".onnx"))
+        onnx_model = onnx.load(os.path.join(base_path, self.name + ".onnx"))
         onnx.checker.check_model(onnx_model)         
         
     def generate_demo_data(self): 
@@ -191,7 +191,7 @@ class MotionPlanner:
         elif self.args.dataset_type == '2D_Shapes':
             self.dt = 0.01
             self.dim_in = 2
-            folder_path = os.path.join(self.par_dir_path, os.getcwd(), "Datasets", "3D_Shapes", self.name)
+            folder_path = os.path.join(self.par_dir_path, os.getcwd(), "Datasets", "2D_Shapes", self.name)
             if not os.path.isdir(folder_path):
                 print_error(f"Error: Folder '{folder_path}' does not exist!")
                 sys.exit(1)
@@ -206,12 +206,14 @@ class MotionPlanner:
                     pos_array = np.vstack([np.array(df['x']), np.array(df['y'])]).T
                     vel_array = np.vstack([np.array(df['dx']), np.array(df['dy'])]).T
                     # After Subsampling
-                    pos_array = pos_array[::subsample]
-                    vel_array = vel_array[::subsample]
+                    pos_array = pos_array[::subsample].T
+                    pos_array = (pos_array[:,:] - pos_array[:,-1][:, np.newaxis])
+                    vel_array = vel_array[::subsample].T
                     self.demos.append(data.TrajectoryData(pos_array, vel_array))
                 except pd.errors.EmptyDataError:
                     print_error(f"Error: File '{file_path}' is empty!")
                     sys.exit(1)
+            self.total_demos = len(self.demos)
         else:
             print_error("Non-LASA Dataset has been choosen")   
         self.demos = np.array(self.demos)         
@@ -415,7 +417,14 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
-                self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )]
+                if isinstance(self.uns_center[0], (int, float)):
+                    self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad)]                
+                else:
+                    all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                    for center in self.uns_center:
+                        mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                        all_masks = all_masks | mask
+                    self.unsafe_domain = self.domain[all_masks]
         
         if add_data_init is not None:
             print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
@@ -563,6 +572,7 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -593,6 +603,7 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -618,7 +629,6 @@ class MotionPlanner:
                     cert_loss_b += loss_b
                     cert_loss_v += loss_domain_v
                     dyn_loss += loss_train
-
                     avg_loss_f = dyn_loss / len(self.train_loader)
                     # Step the scheduler with training loss
                     self.scheduler_f.step(avg_loss_f)
@@ -637,7 +647,8 @@ class MotionPlanner:
                 # Log the training loss
                 # decay=self.config["hyperparameters"]["decay_mse"]
                 # print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
-                # print(f"Epoch {epoch + 1}/{max_iter}, Certificate Loss: {cert_loss_v.item() + cert_loss_b.item()}")
+                # print(f"Epoch {epoch + 1}/{max_iter}, Lyapunov Certificate Loss: {cert_loss_v.item()}")
+                # print(f"Epoch {epoch + 1}/{max_iter}, Barrier Certificate Loss: {cert_loss_b.item()}")
 
             # Save the recent versions of model_v and model_b in memory
             self.model_v_state_dict = self.model_v.state_dict()
@@ -668,7 +679,7 @@ class MotionPlanner:
             y = input_domain[:,1]
             result = eval(self.config["unsafe"]["function"])
             unsafe_domain = input_domain[result <= 0]
-
+        import pdb; pdb.set_trace()
         beta, q = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
         if q <= 0:
             self.flag_verified = True
@@ -744,25 +755,42 @@ if __name__ == "__main__":
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
     print_info("CERTIFICATE TRAINING")
-    for param_group in mp.optimizer_f.param_groups:
-        param_group['lr'] = 1e-10
+    # for param_group in mp.optimizer_f.param_groups:
+    #     param_group['lr'] = 1e-10
     mp.trainCertificate()
+    Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+    import pdb; pdb.set_trace()
     trial = 1
-    while trial < 100:
+    while trial < 1000:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
-            # if trial % 5 == 0:
-            #     Plotter.finalDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+            if trial % 10 == 0:
+                # Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+                # Plotter.plotLyapunov(mp.model_v)
+                # Plotter.plotBarrier(mp.model_b)
+                # Plotter.finalDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+                mp.verifyCertificate()
+                if mp.flag_verified:
+                    import pdb; pdb.set_trace()
+                    mp.save_all_models()
+                    mp.final_model_eval()
+                    print_info(f"MSE for test data after certificate training: {mp.mse}")
+                    save_seed(seed,seed_filepath)
+                    mp.export_onnx()
+                    mp.update_config()
+                    mp.save_datasets()
+                    break
             mp.trainCertificate()
             trial += 1      
         else:
+            import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             Plotter.finalDSPlot(mp.model_f, mp.model_b, mp.initial_set_center, mp.dim_in, mp.config)
             Plotter.plotLyapunov(mp.model_v)
@@ -777,6 +805,6 @@ if __name__ == "__main__":
                 mp.update_config()
                 mp.save_datasets()
                 break
-    if trial == 100:
+    if trial == 1000:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
      

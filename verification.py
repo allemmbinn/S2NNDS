@@ -183,7 +183,7 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
                     only_inputs=True,
                     allow_unused=True)[0]
     lie_lyap = torch.sum(grad_lyap * f_value, dim=1)
-    V_pos = -V_value
+    V_pos = -V_value.view(-1)
 
     lie_tol = config["hyperparameters"]["lie_tol"]
     B_value = model_b(input_domain_clone)
@@ -198,10 +198,30 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
     bar_mask = (torch.abs(B_value[:,0]) <= lie_tol)
     lie_bar = lie_bar[bar_mask]
     init_domain_clone = init_domain.float().to(device)
-    B_init = model_b(init_domain_clone)
+    B_init = model_b(init_domain_clone).view(-1)
     
     unsafe_domain_clone = unsafe_domain.float().to(device)
-    B_uns = -model_b(unsafe_domain_clone)
+    B_uns = -model_b(unsafe_domain_clone).view(-1)
+    
+    #Make sure all tensors are the same size (indicator function-append 0s when not in set)
+    if lie_bar.numel() < lie_lyap.numel():
+        padding = lie_lyap.numel() - lie_bar.numel()
+        lie_bar = torch.cat([lie_bar, torch.zeros(padding, device=lie_bar.device)])
+
+    if B_init.numel() < lie_lyap.numel():
+        padding = lie_lyap.numel() - B_init.numel()
+        B_init = torch.cat([B_init, torch.zeros(padding, device=B_init.device)])
+
+    if B_uns.numel() < lie_lyap.numel():
+        padding = lie_lyap.numel() - B_uns.numel()
+        B_uns = torch.cat([B_uns, torch.zeros(padding, device=B_uns.device)])
+        
+    #Sort the data in ascending order
+    lie_lyap = torch.sort(lie_lyap, descending=False).values
+    V_pos = torch.sort(V_pos, descending=False).values
+    lie_bar = torch.sort(lie_bar, descending=False).values
+    B_init = torch.sort(B_init, descending=False).values
+    B_uns = torch.sort(B_uns, descending=False).values
 
     #Compute the non conformity prediction scores
     quantile_n = math.ceil((N+1)*(1-epsilon))/N
