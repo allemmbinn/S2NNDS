@@ -153,7 +153,7 @@ def plotBarrier(model_b, dim_in=2):
     plt.title("Barrier Heatmap")
     plt.show()
 
-def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config):
+def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None):
     device = next(model_v.parameters()).device
     fig, ax = plt.subplots()
     # Define grid for plotting
@@ -187,9 +187,9 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config):
         if flag_barrier and model_b is not None:
             B_out = model_b(input_data)
             bout = unflatten(B_out).cpu().detach().numpy()
-    stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#bbbbbb')
+    stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#a5a1a1')
     # Create proxy artist for streamplot
-    arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='#bbbbbb', marker='>', markeredgewidth=2, markersize=5, label='Vector Field')
+    arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='#a5a1a1', marker='>', markeredgewidth=2, markersize=5, label='Vector Field')
 
     # Contour for Lyapunov Function
     if flag_contour:
@@ -216,8 +216,9 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config):
         x = x.cpu().detach().numpy()
         ax.plot(x[:, 0], x[:, 1],'#ff00ff', label="Learned Trajectory")
 
-    # # Plotting the robot trajectory
-    # ax.plot(x_data, y_data, "#49332b", label="Robot Trajectory")   
+    # Plotting the robot trajectory
+    if x_data is not None and y_data is not None:
+        ax.plot(x_data, y_data, "#49332b", label="Robot Trajectory")   
     
     if flag_barrier:
         plt.contour(X, Y, bout[:,:,0], levels=[0], colors='#cdebc5')
@@ -282,11 +283,11 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config):
             unsafe_set_center = config["unsafe"]["center"]
             unsafe_set_radius = config["unsafe"]["radius"]
             if isinstance(unsafe_set_center[0], (int, float)):
-                unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, label="Unsafe Set")
+                unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label="Unsafe Set")
                 ax.add_patch(unsafe_shape)
             else:
                 for ind, center in enumerate(unsafe_set_center):
-                    unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, label=f"Unsafe Set {ind+1}")
+                    unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label=f"Unsafe Set {ind+1}")
                     ax.add_patch(unsafe_shape)
             # unsafe = plt.Circle(center, radius, facecolor='r', edgecolor='r', linewidth=2, label="Unsafe Set", alpha = 0.5)
             # ax.add_patch(unsafe)
