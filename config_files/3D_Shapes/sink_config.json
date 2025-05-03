@@ -1,91 +1,153 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 32,
-        "layers" : 2,
-        "epochs_warm" : 100,
-        "learning_rate" : 1e-3,
-        "batch_size" : 64,
-        "lr_factor" : 0.1,
-        "lr_patience" :5,
-        "init_decay" : 0.1        
+        "hidden_neurons": 64,
+        "layers": 3,
+        "epochs_warm": 500,
+        "learning_rate": 0.01,
+        "learning_rate_cert": 0.0001,
+        "train_f_cert": true,
+        "cert_train_factor": 0.65,
+        "batch_size": 512,
+        "lr_factor": 0.1,
+        "lr_patience": 5,
+        "init_decay": 0.1
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 1e-2,
-        "learning_rate_ft": 7e-3,
-        "hidden_neurons": 64,
-        "layers" : 2,
-        "lr_factor" : 0.2,
-        "lr_patience" :10,
-        "warmup" : 10    
+        "learning_rate": 0.001,
+        "hidden_neurons": 256,
+        "layers": 4,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "warmup": 30
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 1e-2,
-        "learning_rate_ft": 7e-3,
-        "hidden_neurons": 64,
-        "layers" : 2,
-        "lr_factor" : 0.2,
-        "lr_patience" : 10,
-        "batch_size" : 256,
-        "warmup" : 10
-        },
-
-    "domain":{
-        "N" : 50,
-        "range" : [[-1,1],[-1,1],[-1, 1]],
-        "additional_N_domain" : 10
+        "learning_rate": 0.001,
+        "hidden_neurons": 256,
+        "layers": 4,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "batch_size": 1024,
+        "warmup": 30
     },
-    "init":{
-        "radius" : 0.05
+    "domain": {
+        "N": 10000,
+        "range": [
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ]
+        ]
     },
-    "unsafe":{
-        "shape" : "Rectangle",
-        "range" : [[-0.6, -0.4], [-0.2,-0.1], [-0.5, 0.5]]
+    "init": {
+        "radius": 0.05
     },
-    "counterex":{
-        "N_cex_domain" : 100,
-        "N" : 1,
-        "no_min" : 10,
-        "radius" : 0.001,
-        "lr_increment_factor" : 1.0,
-        "lyap_tol" : 0.0,
-        "pos_tol" : 0.0,
-        "bar_tol" : 0.0,
-        "inun_tol" : 0.0,
-        "lb" : 0.0,
-        "ub" : 0.0
+    "unsafe": {
+        "shape": "Circle",
+        "center": [
+            [
+                0.03,
+                0.12,
+                0.0
+            ],
+            [
+                0.05,
+                0.52,
+                -0.05
+            ]
+        ],
+        "radius": 0.06
     },
-    "Barrier" : true,
-    "plots" : true,
-    "plotting" : {
-        "range" : [[-1.5,0.5],[-0.5, 0.5]],
-        "contour" : false,
-        "legend"  : false,
-        "name" : "Worm LASA with Obstacles"
+    "counterex": {
+        "N_cex_domain": 70000,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lr_increment_factor": 1.0,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.0,
+        "lb": 0.0,
+        "ub": 0.0
     },
-    "hyperparameters" : {
-        "max_iters" : 30,
-        "max_iters_ft" : 30,
-        "decay_mse" : 5,
-        "decay_lf" : 0.0,
-        "decay_vpos" : 1,
-        "decay_lv" : 1,
-        "decay_v0" : 1,
-        "decay_init" : 1,
-        "decay_unsafe" : 1,
-        "decay_cut" : 1,
-        "decay_lb" : 1,
-        "alpha" : 1,
-        "epi_bound" : 0.05,
-        "eta" : 1e-4,
-        "lyap_tol" : 0.1,
-        "pos_tol" : 0.1,
-        "bar_tol" : 0.1,
-        "inun_tol" : 0.1, 
+    "verification": {
+        "N_conf": 250000,
+        "epsilon": 0.0001
+    },
+    "Barrier": true,
+    "hyperparameters": {
+        "max_iters": 70,
+        "decay_mse": 30,
+        "decay_lf": 0.0,
+        "decay_vpos": 1,
+        "decay_lv": 5.0,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_cut": 1,
+        "decay_lb": 1,
+        "alpha": 1e-10,
+        "lyap_tol": 0.05,
+        "pos_tol": 0.05,
+        "bar_tol": 0.05,
+        "inun_tol": 0.0001,
         "lie_tol": 0.01,
-        "reg_bar" : 0.001,
-        "reg_v" : 0.001   
+        "reg_bar": 0.001,
+        "reg_v": 0.001
+    },
+    "plotting": {
+        "range": [
+            [
+                -0.25,
+                0.25
+            ],
+            [
+                -0.1,
+                1
+            ],
+            [
+                -0.3,
+                0.3
+            ]
+        ],
+        "init_range": [
+            [
+                -0.1370273584313465,
+                0.2462190767353944
+            ],
+            [
+                0.784003270533608,
+                1.0
+            ],
+            [
+                -0.15646253839165536,
+                -0.014940049446538928
+            ]
+        ],
+        "initial_conditions": [
+            [
+                0.062398161940603825,
+                0.903212382844503,
+                -0.08754174553075451
+            ],
+            [
+                0.23887217044830322,
+                0.862868070602417,
+                -0.05088543891906738
+            ]
+        ],
+        "dt": 0.01,
+        "name": "3D_Sink"
     }
 }

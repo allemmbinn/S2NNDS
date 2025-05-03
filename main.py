@@ -120,7 +120,7 @@ class MotionPlanner:
         file_path = os.path.join(base_path, self.name + ".onnx")
         self.model_f = self.model_f.to(self.device)
         self.model_f.eval()
-        self.initial_point = self.initial_set_center[0].reshape(1,2).to(dtype=torch.float32) 
+        self.initial_point = self.initial_set_center[0].reshape(1,self.dim_in).to(device=self.device, dtype=torch.float32) 
         torch.onnx.export(
                 self.model_f,
                 self.initial_point,
@@ -155,6 +155,8 @@ class MotionPlanner:
                 dataset = lasa.DataSet.Leaf_2
             elif self.args.lasa_name == "Sine":
                 dataset = lasa.DataSet.Sine
+            elif self.args.lasa_name == "Snake":
+                dataset = lasa.DataSet.Snake
             elif self.args.lasa_name == "heee":
                 dataset = lasa.DataSet.heee
             elif self.args.lasa_name == "PShape":
@@ -183,14 +185,15 @@ class MotionPlanner:
             data_value = np.squeeze(mat["data"])
             self.total_demos = len(data_value)
             self.demos = []
-            for i in range(data.shape[0]):
-                traj = data_value[i, 0]
+            for i in range(data_value.shape[0]):
+                traj = data_value[i]
                 pos = traj[:3, :]
                 vel = traj[3:, :]
+                # Move Trajectory to zero at origin
+                pos = pos[:, :] - pos[:,-1][:,np.newaxis]
                 self.demos.append(data.TrajectoryData(pos, vel))
         elif self.args.dataset_type == '2D_Shapes':
             self.dt = 0.01
-            self.dim_in = 2
             folder_path = os.path.join(self.par_dir_path, os.getcwd(), "Datasets", "2D_Shapes", self.name)
             if not os.path.isdir(folder_path):
                 print_error(f"Error: Folder '{folder_path}' does not exist!")
@@ -243,8 +246,8 @@ class MotionPlanner:
         train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
         test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
         batch_size = self.config["model_f"].get("batch_size", 128)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
-        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
         # Rescaling the images
@@ -266,7 +269,7 @@ class MotionPlanner:
         #Dataset Generation and Shuffling
         num_rows = self.init_domain.size(0)
         random_index = torch.randint(0, num_rows, (1,)).item()
-        self.initial_set_random = self.init_domain[random_index].reshape(1,2)
+        self.initial_set_random = self.init_domain[random_index].reshape(1,self.dim_in)
         self.initial_set_center = torch.cat([self.initial_set_center, self.initial_set_random])
 
         #Generate data for unsafe set
@@ -333,10 +336,10 @@ class MotionPlanner:
         init_batch_size = max(2, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(2, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"].get("batch_size", 128), shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"].get("batch_size", 128), shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
         self.N_cex_domain = self.config["counterex"].get("N_cex_domain", 10000) #The number of counterexample samples we want in the domain region
 
@@ -451,9 +454,9 @@ class MotionPlanner:
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
     def trainInitialDynamics(self):
         model_f_config = self.config["model_f"]
@@ -679,7 +682,6 @@ class MotionPlanner:
             y = input_domain[:,1]
             result = eval(self.config["unsafe"]["function"])
             unsafe_domain = input_domain[result <= 0]
-        import pdb; pdb.set_trace()
         beta, q = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
         if q <= 0:
             self.flag_verified = True
@@ -706,7 +708,7 @@ class MotionPlanner:
     def update_config(self):
         # Construct the init_range value
         file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
-        init_range = [[self.init_min[0][0], self.init_max[0][0]], [self.init_min[0][1], self.init_max[0][1]]]
+        init_range = [[self.init_min[0][i], self.init_max[0][i]] for i in range(self.dim_in)]
         initial_conditions = self.initial_set_center.tolist()
 
         # Load the existing configuration file
@@ -755,16 +757,12 @@ if __name__ == "__main__":
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
     print_info("CERTIFICATE TRAINING")
-    # for param_group in mp.optimizer_f.param_groups:
-    #     param_group['lr'] = 1e-10
     mp.trainCertificate()
-    Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-    import pdb; pdb.set_trace()
     trial = 1
     while trial < 1000:
         print_info("ADDING COUNTEREXAMPLES")
@@ -772,13 +770,16 @@ if __name__ == "__main__":
         print(f"Trial: {trial}")
         if mp.counterexamples_added:
             if trial % 10 == 0:
-                # Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
-                # Plotter.plotLyapunov(mp.model_v)
-                # Plotter.plotBarrier(mp.model_b)
-                # Plotter.finalDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+                if mp.dim_in == 2:
+                    fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    plt.show()
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
                 mp.verifyCertificate()
                 if mp.flag_verified:
-                    import pdb; pdb.set_trace()
                     mp.save_all_models()
                     mp.final_model_eval()
                     print_info(f"MSE for test data after certificate training: {mp.mse}")
@@ -786,15 +787,20 @@ if __name__ == "__main__":
                     mp.export_onnx()
                     mp.update_config()
                     mp.save_datasets()
-                    break
+                    break    
             mp.trainCertificate()
             trial += 1      
         else:
             import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            Plotter.finalDSPlot(mp.model_f, mp.model_b, mp.initial_set_center, mp.dim_in, mp.config)
-            Plotter.plotLyapunov(mp.model_v)
-            Plotter.plotBarrier(mp.model_b)
+            if mp.dim_in == 2:
+                fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                plt.show()
+                Plotter.plotLyapunov(mp.model_v)
+                Plotter.plotBarrier(mp.model_b)
+            elif mp.dim_in == 3:
+                fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                plt.show()
             mp.verifyCertificate()
             if mp.flag_verified:
                 mp.save_all_models()

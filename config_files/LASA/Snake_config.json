@@ -1,0 +1,130 @@
+{
+    "model_f": {
+        "activation_function": "eLU",
+        "hidden_neurons": 64,
+        "layers": 4,
+        "epochs_warm": 400,
+        "learning_rate": 0.001,
+        "learning_rate_cert": 1e-07,
+        "train_f_cert": false,
+        "cert_train_factor": 0.5,
+        "batch_size": 1024,
+        "lr_factor": 0.1,
+        "lr_patience": 5,
+        "init_decay": 0.1
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 0.005,
+        "hidden_neurons": 128,
+        "layers": 4,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "warmup": 30
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 0.005,
+        "hidden_neurons": 256,
+        "layers": 4,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "batch_size": 512,
+        "warmup": 30
+    },
+    "domain": {
+        "N": 20000,
+        "range": [
+            [
+                -1.5,
+                1.5
+            ],
+            [
+                -1.5,
+                1.5
+            ]
+        ]
+    },
+    "init": {
+        "radius": 0.005
+    },
+    "unsafe": {
+        "shape": "Circle",
+        "center": [
+            [
+                0.7,
+                0.0
+            ],
+            [
+                0.6,
+                0.33
+            ]
+        ],
+        "radius": 0.09
+    },
+    "counterex": {
+        "N_cex_domain": 100000,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.0,
+        "lb": 0.0,
+        "ub": 0.0
+    },
+    "verification": {
+        "N_conf": 640000,
+        "epsilon": 0.0001,
+        "beta": 0.0001
+    },
+    "Barrier": true,
+    "plots": true,
+    "plotting": {
+        "contour": false,
+        "legend": false,
+        "name": "Snake LASA with Obstacles",
+        "init_range": [
+            [
+                0.6998111728039021,
+                0.7561803289094219
+            ],
+            [
+                0.4865130547185105,
+                0.5938882825401023
+            ]
+        ],
+        "initial_conditions": [
+            [
+                0.7326326450344994,
+                0.535894945599376
+            ],
+            [
+                0.7455329895019531,
+                0.5296854972839355
+            ]
+        ],
+        "dt": 0.0081156507923813
+    },
+    "hyperparameters": {
+        "max_iters": 50,
+        "decay_mse": 20,
+        "decay_lf": 0.0,
+        "decay_vpos": 1,
+        "decay_lv": 5,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_cut": 1,
+        "decay_lb": 2,
+        "alpha": 1,
+        "lyap_tol": 0.05,
+        "pos_tol": 0.05,
+        "bar_tol": 0.05,
+        "inun_tol": 0.0001,
+        "lie_tol": 0.01,
+        "reg_bar": 0.001,
+        "reg_v": 0.001
+    }
+}
