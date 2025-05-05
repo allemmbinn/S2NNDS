@@ -411,7 +411,7 @@ class MotionPlanner:
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
-                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+                self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
                 if isinstance(self.uns_center[0], (int, float)):
                     self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad)]                
@@ -649,7 +649,7 @@ class MotionPlanner:
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
         
         if self.config["unsafe"]["shape"] == 'Rectangle':
-            unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
+            unsafe_domain =  input_domain[((input_domain >= self.unsafe_min.clone().detach()) & (input_domain <= self.unsafe_max.clone().detach())).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
             if isinstance(self.uns_center[0], (int, float)):
                 mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )

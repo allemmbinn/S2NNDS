@@ -374,7 +374,7 @@ def final3DDSPlot(model_f, demos, initial_set_center, config, data_1=None, model
     dt = 0.01
     for i in range(initial_set_center.shape[0]):
         x = torch.zeros((n, 3)).to(device)
-        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        x[0,:] = initial_set_center[i].clone().detach()
         for j in range(1, n):
             Fout = model_f(x[j-1])
             x[j] = x[j-1] + Fout * dt
