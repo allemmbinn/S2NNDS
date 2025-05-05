@@ -41,7 +41,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     if filtered_lie_lyap.numel() > 0:  # Ensure there are valid values
         # Sample indices according to probabilities
         num_elements = filtered_lie_lyap.numel()
-        print_error(f"No of Lyapunov Derivative CEs: {num_elements}")
         num_samples = min(N, num_elements)
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         lie_lyap_cex = filtered_input_domain[min_indices]
@@ -97,11 +96,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         concatenated_cex = torch.unique(torch.cat(non_empty_tensors, dim=0), dim = 0)   
     else:
         concatenated_cex = torch.empty((0, input_domain_clone.shape[1]))  # Empty tensor with correct shape
-    # Print Counterexamples
-    # TODO : Need to remove this
-    print("Lie Lyapunov CE: \n", lie_lyap_cex)
-    print("Positive Lyapunov CE: \n", V_pos_cex)
-    print("Lie Barrier CE: \n", lie_bar_cex)
     return concatenated_cex.cpu()
 
 def verify_init(model_b,init_domain, config):

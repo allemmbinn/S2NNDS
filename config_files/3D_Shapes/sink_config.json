@@ -90,7 +90,7 @@
     "Barrier": true,
     "hyperparameters": {
         "max_iters": 70,
-        "decay_mse": 35,
+        "decay_mse": 55,
         "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 7.5,

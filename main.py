@@ -297,7 +297,7 @@ class MotionPlanner:
                 if unsafe_config.get("unbounded") == 'y' and unsafe_config.get("max_min") == 'max':
                     self.unsafe_min = torch.tensor([self.unsafe[0][0], -100]) 
                     self.unsafe_max = torch.tensor([self.unsafe[0][1], self.unsafe[1][0]])       
-            self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+            self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
         
         elif shape == 'Circle':
             self.uns_center = torch.tensor(unsafe_config.get("center", [[0.0, 0.0]]*self.dim_in))
@@ -385,8 +385,6 @@ class MotionPlanner:
         
         for counterexample in counterexamples_domain:
             add_data_domain.append(counterexample)
-            # TODO: Remove in final code
-            print_warning(f"DOMAIN COUNTEREXAMPLE: {counterexample}") 
         
         if len(add_data_domain) > 0:
             add_data_domain = torch.stack(add_data_domain).detach()
@@ -395,8 +393,6 @@ class MotionPlanner:
  
         for counterexample in counterexamples_init:
             add_data_init.append(counterexample)
-            # TODO: Remove in final code
-            print_warning(f"INIT COUNTEREXAMPLE: {counterexample}") 
             
         if len(add_data_init) > 0:
             add_data_init = torch.stack(add_data_init).detach()
@@ -405,8 +401,6 @@ class MotionPlanner:
 
         for counterexample in counterexamples_unsafe:
             add_data_unsafe.append(counterexample)
-            # TODO: Remove in final code
-            print_warning(f"UNSAFE COUNTEREXAMPLE: {counterexample}") 
             
         if len(add_data_unsafe) > 0:
              add_data_unsafe = torch.stack(add_data_unsafe).detach()
@@ -414,7 +408,6 @@ class MotionPlanner:
             add_data_unsafe = None
 
         if add_data_domain is not None:
-            print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -430,17 +423,14 @@ class MotionPlanner:
                     self.unsafe_domain = self.domain[all_masks]
         
         if add_data_init is not None:
-            print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
         
         if add_data_unsafe is not None:
-            print_info(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim =0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
                 
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
-            print_info("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
 
         #Dataset Generation and Shuffling
@@ -472,7 +462,7 @@ class MotionPlanner:
         history = []
         loss_fn = nn.MSELoss()  
         self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=model_f_config.get("learning_rate", 1e-2), betas=(0.9, 0.999))
-        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=model_f_config.get("lr_factor", 1.0), patience=model_f_config.get("lr_patience", 30), verbose=True)
+        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=model_f_config.get("lr_factor", 1.0), patience=model_f_config.get("lr_patience", 30))
 
         for epoch in tqdm(range(model_f_config.get("epochs_warm", 1000))):
             total_loss = 0
@@ -532,8 +522,7 @@ class MotionPlanner:
                 self.optimizer_v,
                 mode='min',
                 factor=model_v_config.get("lr_factor", 0.2),
-                patience=model_v_config.get("lr_patience", 10),
-                verbose=True)
+                patience=model_v_config.get("lr_patience", 10))
 
             hidden_neurons_b = model_b_config.get("hidden_neurons", 64)
             hidden_layers_b = model_b_config.get("layers", 2)
@@ -555,8 +544,7 @@ class MotionPlanner:
                 self.optimizer_b,
                 mode='min',
                 factor=model_b_config.get("lr_factor", 0.2),
-                patience=model_b_config.get("lr_patience", 10),
-                verbose=True)
+                patience=model_b_config.get("lr_patience", 10))
 
             # Load the stored model state dictionary if available
             self.load_model_states()        
@@ -647,12 +635,7 @@ class MotionPlanner:
                     else:
                         avg_loss_cert_b = cert_loss_b/len(self.domain_loader)
                         self.scheduler_b.step(avg_loss_cert_v)
-                # Log the training loss
-                # decay=self.config["hyperparameters"]["decay_mse"]
-                # print(f"Epoch {epoch + 1}/{max_iter}, MSE Loss: {dyn_loss.item()/decay}")
-                # print(f"Epoch {epoch + 1}/{max_iter}, Lyapunov Certificate Loss: {cert_loss_v.item()}")
-                # print(f"Epoch {epoch + 1}/{max_iter}, Barrier Certificate Loss: {cert_loss_b.item()}")
-
+                        
             # Save the recent versions of model_v and model_b in memory
             self.model_v_state_dict = self.model_v.state_dict()
             self.model_b_state_dict = self.model_b.state_dict()
@@ -686,10 +669,10 @@ class MotionPlanner:
         if q <= 0:
             self.flag_verified = True
             conf = 1-self.config["verification"].get("epsilon", 0.0001)
-            print(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
+            print_info(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
         else:
             self.flag_verified = False
-            print(f"Verification failed with marginal safety error: {q}")
+            print_warning(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
         self.model_f = self.model_f.to(self.device)
@@ -701,7 +684,7 @@ class MotionPlanner:
             y_pred = self.model_f(X_batch.float().to(self.device))
             loss_fn = nn.MSELoss(reduction = 'mean')
             batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
-            self.mse += batch_mse.item()
+            self.mse += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
             total_samples += X_batch.size(0)  
         self.mse = self.mse / total_samples
 
@@ -767,7 +750,7 @@ if __name__ == "__main__":
     while trial < 1000:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
-        print(f"Trial: {trial}")
+        print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             if trial % 10 == 0:
                 if mp.dim_in == 2:
