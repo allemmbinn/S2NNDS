@@ -345,11 +345,11 @@ class MotionPlanner:
 
         if "reg_f" in self.config["hyperparameters"]:
             self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-10), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
-            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30), verbose=True)
+            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
             self.optimizer_f_state_dict = self.optimizer_f.state_dict()
         else:
             self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-10), betas=(0.9, 0.999))
-            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30), verbose=True)
+            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
             self.optimizer_f_state_dict = self.optimizer_f.state_dict()
         
     def generate_counterexample_data(self):
