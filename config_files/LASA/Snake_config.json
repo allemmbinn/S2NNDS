@@ -5,9 +5,9 @@
         "layers": 4,
         "epochs_warm": 400,
         "learning_rate": 0.001,
-        "learning_rate_cert": 1e-07,
+        "learning_rate_cert": 1e-06,
         "train_f_cert": false,
-        "cert_train_factor": 0.5,
+        "cert_train_factor": 0.7,
         "batch_size": 1024,
         "lr_factor": 0.1,
         "lr_patience": 5,
@@ -16,8 +16,8 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.005,
-        "hidden_neurons": 128,
-        "layers": 4,
+        "hidden_neurons": 64,
+        "layers": 5,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
@@ -63,9 +63,9 @@
         "radius": 0.09
     },
     "counterex": {
-        "N_cex_domain": 100000,
+        "N_cex_domain": 150000,
         "N": 1,
-        "no_min": 10,
+        "no_min": 15,
         "radius": 0.001,
         "lyap_tol": 0.0,
         "pos_tol": 0.0,
@@ -101,8 +101,8 @@
                 0.535894945599376
             ],
             [
-                0.7455329895019531,
-                0.5296854972839355
+                0.7188558578491211,
+                0.5785069465637207
             ]
         ],
         "dt": 0.0081156507923813
@@ -112,7 +112,7 @@
         "decay_mse": 20,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 5,
+        "decay_lv": 5.0,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
