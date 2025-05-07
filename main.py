@@ -385,7 +385,6 @@ class MotionPlanner:
         
         for counterexample in counterexamples_domain:
             add_data_domain.append(counterexample)
-        
         if len(add_data_domain) > 0:
             add_data_domain = torch.stack(add_data_domain).detach()
         else:
@@ -408,6 +407,7 @@ class MotionPlanner:
             add_data_unsafe = None
 
         if add_data_domain is not None:
+            print_warning(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -423,14 +423,17 @@ class MotionPlanner:
                     self.unsafe_domain = self.domain[all_masks]
         
         if add_data_init is not None:
+            print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
         
         if add_data_unsafe is not None:
+            print_warning(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim =0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
                 
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
+            print_success("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
 
         #Dataset Generation and Shuffling
@@ -672,7 +675,7 @@ class MotionPlanner:
             print_info(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
         else:
             self.flag_verified = False
-            print_warning(f"Verification failed with marginal safety error: {q}")
+            print_error(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
         self.model_f = self.model_f.to(self.device)
@@ -745,6 +748,7 @@ if __name__ == "__main__":
     mp.generate_domain_data()
     iters = 1
     print_info("CERTIFICATE TRAINING")
+    mp.update_config()
     mp.trainCertificate()
     trial = 1
     while trial < 1000:
@@ -752,29 +756,9 @@ if __name__ == "__main__":
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
-            if trial % 10 == 0:
-                if mp.dim_in == 2:
-                    fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                    plt.show()
-                    Plotter.plotLyapunov(mp.model_v)
-                    Plotter.plotBarrier(mp.model_b)
-                elif mp.dim_in == 3:
-                    fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                    plt.show()
-                mp.verifyCertificate()
-                if mp.flag_verified:
-                    mp.save_all_models()
-                    mp.final_model_eval()
-                    print_info(f"MSE for test data after certificate training: {mp.mse}")
-                    save_seed(seed,seed_filepath)
-                    mp.export_onnx()
-                    mp.update_config()
-                    mp.save_datasets()
-                    break    
             mp.trainCertificate()
             trial += 1      
         else:
-            import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             if mp.dim_in == 2:
                 fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)

@@ -56,15 +56,15 @@ config, model_v, model_b, model_f = load_config_models(args)
 # name_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),"robot_demonstrations",mp.dataset_type,"Recording_"+mp.name+".csv")
 # data_1 = pd.read_csv(name_file, header=1)
 # plot = Plotter.finalDSPlot(model_f, model_v, model_b, mp.demos, mp.initial_set_center, mp.dim_in, config, data_1)
+initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[5].pos[:, 0])])
 if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
     plt.show()
     Plotter.plotLyapunov(mp.model_v)
     Plotter.plotBarrier(mp.model_b)
 elif mp.dim_in == 3:
-    plot = Plotter.final3DDSPlot(model_f, mp.demos, mp.initial_set_center, config)
+    plot = Plotter.final3DDSPlot(model_f, mp.demos, initial_set_center, config)
     plt.show()
-import pdb; pdb.set_trace()
 #Saving the plots
 fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'results', args.dataset_type)
 os.makedirs(fig_dir, exist_ok=True)

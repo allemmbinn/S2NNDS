@@ -6,7 +6,7 @@
         "epochs_warm": 500,
         "learning_rate": 0.01,
         "learning_rate_cert": 1e-05,
-        "train_f_cert": true,
+        "train_f_cert": false,
         "cert_train_factor": 0.5,
         "batch_size": 4196,
         "lr_factor": 0.1,
@@ -29,7 +29,7 @@
         "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
-        "batch_size": 1024,
+        "batch_size": 512,
         "warmup": 30
     },
     "domain": {
@@ -50,7 +50,7 @@
         ]
     },
     "init": {
-        "radius": 0.05
+        "radius": 0.001
     },
     "unsafe": {
         "shape": "Rectangle",
@@ -64,8 +64,8 @@
                 0.55
             ],
             [
-                -0.15,
-                0.0
+                -0.13,
+                0.02
             ]
         ]
     },
@@ -90,10 +90,10 @@
     "Barrier": true,
     "hyperparameters": {
         "max_iters": 70,
-        "decay_mse": 55,
+        "decay_mse": 50,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 7.5,
+        "decay_lv": 10.0,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
@@ -113,16 +113,16 @@
         "name": "Sink 3D Shape",
         "init_range": [
             [
-                -0.1370273584313465,
-                0.2462190767353944
+                -0.08802735843134651,
+                0.19721907673539438
             ],
             [
-                0.784003270533608,
+                0.833003270533608,
                 1.0
             ],
             [
-                -0.15646253839165536,
-                -0.014940049446538928
+                -0.10746253839165537,
+                -0.06394004944653893
             ]
         ],
         "initial_conditions": [
@@ -132,9 +132,9 @@
                 -0.08754174553075451
             ],
             [
-                0.17193186283111572,
-                0.9714539051055908,
-                -0.13327240943908691
+                -0.026763439178466797,
+                0.9587208032608032,
+                -0.07564353942871094
             ]
         ]
     }

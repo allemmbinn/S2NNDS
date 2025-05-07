@@ -1,19 +1,16 @@
-# Neural Network Dynamical System (NNDS)
+# Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning
 
 ![Python 3.7](https://img.shields.io/badge/python-3.7-green.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
 
-Official implementation of neural network dynamical systems with stability certificates, developed at MIRMI, Technical University of Munich. This repository contains code for learning stable dynamical systems from demonstrations using Lyapunov and barrier certificates.
+Official implementation of Safe and Stable Neural Network Dynamical Systems for Robot Motion
+Planning with stability and safety certificates, developed at MIRMI, Technical University of Munich. This repository contains code for learning stable dynamical systems from demonstrations using Lyapunov and Barrier certificates.
 
 ## Installation
 
 ### System Requirements
-- Ubuntu 20.04/22.04 or Windows 10/11 (WSL2 recommended)
+- Ubuntu 20.04/22.04 or Windows 10/11
 - NVIDIA GPU with CUDA 11.8+ (optional but recommended)
-
-### Conda Environment Setup
-
-
 
 
 ## Install
@@ -34,7 +31,7 @@ pip install termcolor scipy matplotlib onnx numpy pandas pyrallis pyLasaDataset 
 
 ### Install this repo
 ```sh
-git clone
+git clone https://github.com/allemmbinn/Neural-Network-Dynamical-System.git
 ```
 ## Datasets
 
@@ -107,6 +104,10 @@ For training the models for the dynamical system and the certificates we can run
 
 The hyperparameters for the config files can be changed by changing the parameters in the `config_files/`<dataset_type>`/`<dataset_name>`_config.json`
 
+The verified models are stored in the `models` folder. We also have the `models_onnx` folder to store the onnx models for the dynamical system to be implemented on a Franka-Emika Manipulator.
+
+The plots of the dynamical systems are stored in the `results` folder.
+
 ### Validating the Results
 
 Use the arguments for `--dataset_type` and the name of the dataset as per shown above. Run the following command
@@ -115,9 +116,5 @@ Use the arguments for `--dataset_type` and the name of the dataset as per shown 
 python results_visualisation.py 
 ```
 
----
+The models for these visulisation is found in the `models_verified` folder. Plese edit these models carefully. 
 
-**CoRL Submission Notes**  
-- Double-blind compliant: No author-identifying information in code  
-- Video supplement: [Project Page](https://yourprojectpage.com)  
-- Reviewers: See `config_files/` for hyperparameter details and `results_visualisation.py` for reproduction instructions

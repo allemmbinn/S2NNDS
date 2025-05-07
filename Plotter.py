@@ -148,6 +148,34 @@ def initialDSPlot(model_f, demos, initial_set_center, dim_in, config, model_b=No
                     y = center[1] + unsafe_set_radius * np.sin(phi) * np.sin(theta)
                     z = center[2] + unsafe_set_radius * np.cos(phi)
                     ax.plot_surface(x, y, z, facecolor=(1, 0, 0, 0.2), edgecolor=(1, 0, 0, 0.05), linewidth=2, label="Unsafe Set", alpha = 0.1)
+        elif config["unsafe"]["shape"] == "Rectangle":
+                x_min, x_max = config["unsafe"]["range"][0]
+                y_min, y_max = config["unsafe"]["range"][1]
+                z_min, z_max = config["unsafe"]["range"][2]
+
+                # Define the 8 corners of the cuboid
+                corners = np.array([
+                    [x_min, y_min, z_min],
+                    [x_max, y_min, z_min],
+                    [x_max, y_max, z_min],
+                    [x_min, y_max, z_min],
+                    [x_min, y_min, z_max],
+                    [x_max, y_min, z_max],
+                    [x_max, y_max, z_max],
+                    [x_min, y_max, z_max]
+                ])
+
+                # Define the 6 faces using the corners
+                faces = [
+                    [corners[0], corners[1], corners[2], corners[3]],  # bottom
+                    [corners[4], corners[5], corners[6], corners[7]],  # top
+                    [corners[0], corners[1], corners[5], corners[4]],  # front
+                    [corners[2], corners[3], corners[7], corners[6]],  # back
+                    [corners[1], corners[2], corners[6], corners[5]],  # right
+                    [corners[3], corners[0], corners[4], corners[7]],  # left
+                ]
+                
+                ax.add_collection3d(Poly3DCollection(faces, facecolors='red', linewidths=1, edgecolors='red', alpha=0.2))
     # For the Init Cube
         ax.set_xlabel('X Label')
         ax.set_ylabel('Y Label')
@@ -402,7 +430,7 @@ def final3DDSPlot(model_f, demos, initial_set_center, config, data_1=None, model
         U = vect_out[:,:,:,0]
         V = vect_out[:,:,:,1]
         W = vect_out[:,:,:,2]
-        ax.quiver(X, Y, Z, U, V, W, length=0.1, normalize=True, color='#a5a1a1')        
+        # ax.quiver(X, Y, Z, U, V, W, length=0.1, normalize=True, color='#a5a1a1')        
     # For the sphere
     if config["unsafe"]["shape"] == "Circle":
         theta = np.linspace(0, 2 * np.pi, 100)
@@ -421,6 +449,35 @@ def final3DDSPlot(model_f, demos, initial_set_center, config, data_1=None, model
                 y = center[1] + unsafe_set_radius * np.sin(phi) * np.sin(theta)
                 z = center[2] + unsafe_set_radius * np.cos(phi)
                 ax.plot_surface(x, y, z, facecolor=(1, 0, 0, 0.2), edgecolor=(1, 0, 0, 0.05), linewidth=2, label="Unsafe Set", alpha = 0.5)
+    elif config["unsafe"]["shape"] == "Rectangle":
+            x_min, x_max = config["unsafe"]["range"][0]
+            y_min, y_max = config["unsafe"]["range"][1]
+            z_min, z_max = config["unsafe"]["range"][2]
+
+            # Define the 8 corners of the cuboid
+            corners = np.array([
+                [x_min, y_min, z_min],
+                [x_max, y_min, z_min],
+                [x_max, y_max, z_min],
+                [x_min, y_max, z_min],
+                [x_min, y_min, z_max],
+                [x_max, y_min, z_max],
+                [x_max, y_max, z_max],
+                [x_min, y_max, z_max]
+            ])
+
+            # Define the 6 faces using the corners
+            faces = [
+                [corners[0], corners[1], corners[2], corners[3]],  # bottom
+                [corners[4], corners[5], corners[6], corners[7]],  # top
+                [corners[0], corners[1], corners[5], corners[4]],  # front
+                [corners[2], corners[3], corners[7], corners[6]],  # back
+                [corners[1], corners[2], corners[6], corners[5]],  # right
+                [corners[3], corners[0], corners[4], corners[7]],  # left
+            ]
+            
+            ax.add_collection3d(Poly3DCollection(faces, facecolors='red', linewidths=1, edgecolors='red', alpha=0.2))
+
     # For the Init Cube
     x_min, x_max = config["plotting"]["init_range"][0]
     y_min, y_max = config["plotting"]["init_range"][1]
