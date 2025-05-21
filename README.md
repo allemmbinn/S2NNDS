@@ -41,22 +41,18 @@ git clone https://github.com/allemmbinn/Neural-Network-Dynamical-System.git
     
     - Angle
     - CShape
-    - DoubleBendedLine
     - GShape
-    - heee
-    - Leaf_2
     - NShape
     - Sine
     - Sshape
     - Worm
-    - WShape
+    - PShape
 
 2. **2D Dataset**: This 2D-dataset is robot trajectory directly obtained from robot demonstration of a Franka Emika Panda. This dataset has the following type which has been tested:
     - Five_Obstacle_DS
 3. **3D Dataset**: This 3D-dataset is obtained directly from [ds-opt](https://github.com/nbfigueroa/ds-opt) 
 
     We have tested for the following datasets: 
-    
     - 3D_CShape_bottom
     - 3D_CShape_top
     - 3D_sink
@@ -104,7 +100,7 @@ For training the models for the dynamical system and the certificates we can run
 
 The hyperparameters for the config files can be changed by changing the parameters in the `config_files/`<dataset_type>`/`<dataset_name>`_config.json`
 
-The verified models are stored in the `models` folder. We also have the `models_onnx` folder to store the onnx models for the dynamical system to be implemented on a Franka-Emika Manipulator.
+The verified models are stored in the `models` folder. We also have the `models_onnx` folder to store the onnx models for the dynamical system to be implemented on a Franka Panda robot arm.
 
 The plots of the dynamical systems are stored in the `results` folder.
 
