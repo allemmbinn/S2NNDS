@@ -757,8 +757,18 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
+            # if trial % 10 == 0:
+            #     if mp.dim_in == 2:
+            #         fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+            #         plt.show()
+            #         Plotter.plotLyapunov(mp.model_v)
+            #         Plotter.plotBarrier(mp.model_b)
+            #     elif mp.dim_in == 3:
+            #         fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+            #         plt.show()
             trial += 1      
         else:
+            import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             if mp.dim_in == 2:
                 fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)

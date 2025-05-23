@@ -36,9 +36,9 @@ def load_config_models(args):
             model_v_path = os.path.join(model_path,'model_v.pth')
             model_b_path = os.path.join(model_path,'model_b.pth')
             model_f_path = os.path.join(model_path,'model_f.pth')
-            model_v = torch.load(model_v_path)
-            model_b = torch.load(model_b_path)
-            model_f = torch.load(model_f_path)
+            model_v = torch.load(model_v_path, map_location=torch.device('cpu'))
+            model_b = torch.load(model_b_path, map_location=torch.device('cpu'))
+            model_f = torch.load(model_f_path, map_location=torch.device('cpu'))
         return config, model_v, model_b, model_f
     except FileNotFoundError:
         print(f"Error: Configuration file '{config_path}' or Models not found.")
@@ -56,7 +56,7 @@ config, model_v, model_b, model_f = load_config_models(args)
 # name_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),"robot_demonstrations",mp.dataset_type,"Recording_"+mp.name+".csv")
 # data_1 = pd.read_csv(name_file, header=1)
 # plot = Plotter.finalDSPlot(model_f, model_v, model_b, mp.demos, mp.initial_set_center, mp.dim_in, config, data_1)
-initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[5].pos[:, 0])])
+initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[4].pos[:, 0])])
 if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
     plt.show()

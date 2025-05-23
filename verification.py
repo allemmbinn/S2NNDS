@@ -41,6 +41,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     if filtered_lie_lyap.numel() > 0:  # Ensure there are valid values
         # Sample indices according to probabilities
         num_elements = filtered_lie_lyap.numel()
+        print_error(f"Lie_lyap num_elements: {num_elements}")
         num_samples = min(N, num_elements)
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         lie_lyap_cex = filtered_input_domain[min_indices]
