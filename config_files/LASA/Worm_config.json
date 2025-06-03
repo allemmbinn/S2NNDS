@@ -74,20 +74,19 @@
     },
     "verification": {
         "N_conf": 640000,
-        "epsilon": 0.0001,
-        "beta": 0.0001
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "plots": true,
     "plotting": {
         "range": [
             [
-                -1.5,
-                0.5
+                -1.2,
+                0.2
             ],
             [
-                -0.5,
-                0.5
+                -0.4,
+                0.4
             ]
         ],
         "contour": false,

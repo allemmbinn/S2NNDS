@@ -49,8 +49,8 @@ class MotionPlanner:
         # File location
         self.par_dir_path = os.path.dirname(os.path.realpath(__file__))
         # Load the configuration file
-        # file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
-        file_path = os.path.join("config_files", self.args.dataset_type, self.name + "_config.json")
+        file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
+        # file_path = os.path.join("config_files", self.args.dataset_type, self.name + "_config.json")
         if os.path.exists(file_path):     
             with open(file_path) as file:
                 self.config = json.load(file)
