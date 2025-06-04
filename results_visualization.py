@@ -56,7 +56,7 @@ config, model_v, model_b, model_f = load_config_models(args)
 # name_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),"robot_demonstrations",mp.dataset_type,"Recording_"+mp.name+".csv")
 # data_1 = pd.read_csv(name_file, header=1)
 # plot = Plotter.finalDSPlot(model_f, model_v, model_b, mp.demos, mp.initial_set_center, mp.dim_in, config, data_1)
-initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[4].pos[:, 0])])
+initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[3].pos[:, 0])])
 if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
     plt.show()

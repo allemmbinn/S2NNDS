@@ -12,7 +12,7 @@ class ConfigFile:
     dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
-    
+
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
@@ -100,12 +100,12 @@ class MotionPlanner:
             self.scheduler_b.load_state_dict(self.scheduler_b_state_dict)
         if self.scheduler_f_state_dict is not None:
             self.scheduler_f.load_state_dict(self.scheduler_f_state_dict)
-
+    
     def save_model(self, model, model_path):
         full_path = os.path.join(self.par_dir_path, model_path)
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
         torch.save(model, full_path)
-
+   
     def save_all_models(self):
         base_path = os.path.join(self.par_dir_path,'models', self.args.dataset_type, self.name)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
@@ -134,7 +134,7 @@ class MotionPlanner:
             )
         onnx_model = onnx.load(os.path.join(base_path, self.name + ".onnx"))
         onnx.checker.check_model(onnx_model)         
-        
+    
     def generate_demo_data(self): 
         if self.args.dataset_type == 'LASA':
             if self.args.lasa_name == "Angle":
@@ -451,24 +451,23 @@ class MotionPlanner:
         self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
     def trainInitialDynamics(self):
-        model_f_config = self.config["model_f"]
-        self.hidden_neurons_f = model_f_config.get("hidden_neurons", 64)
-        self.hidden_layers_f = model_f_config.get("layers", 2)
-        sigmoid_f = NNModels.assignActivationFunction(model_f_config.get('activation_function', "Tanh"))
+        self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
+        self.hidden_layers_f = self.config["model_f"]["layers"]
+        sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
         self.model_f = NNModels.DyanmicsNet(self.dim_in, 
                                             self.hidden_f, 
                                             sigmoid_f).to(self.device)
-        best_mse = np.inf  
+        best_mse = np.inf
         best_weights = None
         history = []
         loss_fn = nn.MSELoss()  
-        self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=model_f_config.get("learning_rate", 1e-2), betas=(0.9, 0.999))
-        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=model_f_config.get("lr_factor", 1.0), patience=model_f_config.get("lr_patience", 30))
-
-        for epoch in tqdm(range(model_f_config.get("epochs_warm", 1000))):
+        self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
+        self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
+                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
+        for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
             total_loss = 0
-            for _, (X_batch, y_batch) in enumerate(self.train_loader):
+            for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
                 # Calculate the loss
                 x_val = X_batch.float().to(self.device)
@@ -480,14 +479,14 @@ class MotionPlanner:
                 loss.backward()
                 self.optimizer_f.step()
                 total_loss += loss.item()
-            # For Evaluation
+            # Evaluation Losss
             self.model_f.eval()
             total_loss = 0
             for _, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
                 total_loss = loss_fn(y_pred, y_batch.float().to(self.device)).item()
                 history.append(total_loss)
-                if total_loss < best_mse:
+                if loss < best_mse:
                     best_mse = total_loss
                     best_weights = copy.deepcopy(self.model_f.state_dict())
             with torch.no_grad():
@@ -497,8 +496,9 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
-    
+
     def trainCertificate(self):
         if self.config["Barrier"]:
             model_v_config = self.config["model_v"]
@@ -684,9 +684,9 @@ class MotionPlanner:
         self.model_f.eval()
         self.mse = 0
         total_samples = 0
+        loss_fn = nn.MSELoss(reduction = 'sum')
         for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
             y_pred = self.model_f(X_batch.float().to(self.device))
-            loss_fn = nn.MSELoss(reduction = 'mean')
             batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
             self.mse += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
             total_samples += X_batch.size(0)  
@@ -712,7 +712,7 @@ class MotionPlanner:
         # Save the updated configuration back to the file
         with open(file_path, 'w') as config_file:
             json.dump(config, config_file, indent=4)
-
+            
     def save_datasets(self):
         if self.args.dataset_type == 'LASA':
             base_path = os.path.join(self.par_dir_path, 'Datasets', "LASA", self.args.lasa_name)
@@ -752,24 +752,14 @@ if __name__ == "__main__":
     mp.update_config()
     mp.trainCertificate()
     trial = 1
-    while trial < 1000:
+    while trial < 100:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
-        print_info(f"Trial: {trial}")
+        print(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            # if trial % 10 == 0:
-            #     if mp.dim_in == 2:
-            #         fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-            #         plt.show()
-            #         Plotter.plotLyapunov(mp.model_v)
-            #         Plotter.plotBarrier(mp.model_b)
-            #     elif mp.dim_in == 3:
-            #         fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-            #         plt.show()
             trial += 1      
         else:
-            import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             if mp.dim_in == 2:
                 fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
@@ -779,6 +769,7 @@ if __name__ == "__main__":
             elif mp.dim_in == 3:
                 fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
                 plt.show()
+            import pdb; pdb.set_trace()
             mp.verifyCertificate()
             if mp.flag_verified:
                 mp.save_all_models()
@@ -789,6 +780,6 @@ if __name__ == "__main__":
                 mp.update_config()
                 mp.save_datasets()
                 break
-    if trial == 1000:
+    if trial == 100:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
      

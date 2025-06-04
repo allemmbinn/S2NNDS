@@ -263,7 +263,7 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
         plt.contourf(X, Y, vout[:,:,0], cmap=cm.lajolla)
     # Plotting the Training Data
     initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
-    for i in range(4):
+    for i in range(len(demos)):
         ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
     # Plotting the final trajectory
     n = 10000
@@ -382,12 +382,12 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
     plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-    plotting_config = config["plotting"]
+    plotting_config = config["scaled"]
     plot_name = plotting_config.get("name", "Final Plot with Obstacles")
     plt.title(plot_name)
     plt.grid(True)
     # plt.axis('auto')
-    plt.axis('scaled') 
+    plt.axis('equal') 
     plt.margins(x=0,y=0)
     plt.tight_layout()
     return fig
