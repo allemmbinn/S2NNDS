@@ -57,7 +57,7 @@
         "radius": 0.2
     },
     "counterex": {
-        "N_cex_domain": 100000,
+        "N_cex_domain": 200000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,

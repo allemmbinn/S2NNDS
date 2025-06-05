@@ -270,7 +270,7 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
     dt= config["plotting"]["dt"]
     for i in range(initial_set_center.shape[0]):
         x = torch.zeros((n, 2)).to(device)
-        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        x[0,:] = initial_set_center[i].clone().detach()
         for j in range(1, n):
             Fout = model_f(x[j-1])
             x[j] = x[j-1] + Fout * dt
@@ -382,12 +382,12 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
     plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-    plotting_config = config["scaled"]
+    plotting_config = config["plotting"]
     plot_name = plotting_config.get("name", "Final Plot with Obstacles")
     plt.title(plot_name)
     plt.grid(True)
     # plt.axis('auto')
-    plt.axis('equal') 
+    plt.axis('scaled') 
     plt.margins(x=0,y=0)
     plt.tight_layout()
     return fig

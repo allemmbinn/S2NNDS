@@ -116,6 +116,7 @@ class MotionPlanner:
         base_path = os.path.join(self.par_dir_path, 'models_onnx', self.args.dataset_type)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         file_path = os.path.join(base_path, self.name + ".onnx")
+        import pdb; pdb.set_trace()
         self.model_f = self.model_f.to(self.device)
         self.model_f.eval()
         self.initial_point = self.initial_set_center[0].reshape(1,self.dim_in).to(device=self.device, dtype=torch.float32) 
@@ -244,8 +245,8 @@ class MotionPlanner:
         train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
         test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
         batch_size = self.config["model_f"].get("batch_size", 128)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
-        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
         # Rescaling the images
@@ -319,10 +320,10 @@ class MotionPlanner:
         init_batch_size = max(2, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(2, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"].get("batch_size", 128), shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"].get("batch_size", 128), shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
         self.N_cex_domain = self.config["counterex"].get("N_cex_domain", 10000)
         
@@ -434,9 +435,9 @@ class MotionPlanner:
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
     def trainInitialDynamics(self):
         model_f_config = self.config["model_f"]
@@ -762,7 +763,6 @@ if __name__ == "__main__":
                 mp.final_model_eval()
                 print_info(f"MSE for test data after certificate training: {mp.mse}")
                 save_seed(seed,seed_filepath)
-                import pdb; pdb.set_trace()
                 mp.export_onnx()
                 mp.update_config()
                 mp.save_datasets()

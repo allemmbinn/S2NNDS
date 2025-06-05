@@ -26,7 +26,7 @@ def load_config_models(args):
     # Construct the path to the configuration file
     config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files')
     config_path = os.path.join(config_dir, args.dataset_type, f"{model_name}_config.json")
-    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models_verified')
+    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models')
     os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
     model_path = os.path.join(model_dir, args.dataset_type, model_name) 
        
@@ -60,8 +60,8 @@ initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[
 if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
     plt.show()
-    Plotter.plotLyapunov(mp.model_v)
-    Plotter.plotBarrier(mp.model_b)
+    # Plotter.plotLyapunov(mp.model_v)
+    # Plotter.plotBarrier(mp.model_b)
 elif mp.dim_in == 3:
     plot = Plotter.final3DDSPlot(model_f, mp.demos, initial_set_center, config)
     plt.show()

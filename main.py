@@ -258,78 +258,63 @@ class MotionPlanner:
     def generate_domain_data(self):
         self.N_domain = self.config["domain"].get("N", 10000) 
         self.RANGE = self.config["domain"].get("range", [[-1, 1]] * self.dim_in)
-        self.domain, _ = data.generateRandomData(self.N_domain, self.RANGE, self.dim_in)
-        #Generate data for initial set
-        self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) - self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
-        self.init_min = np.where(self.init_min < -1, -1, self.init_min)
-        self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) + self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
-        self.init_max = np.where(self.init_max > 1, 1, self.init_max)
-        
-        self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
+        self.unsafe_domain = torch.empty(0,)
+        self.init_domain = torch.empty(0,)
+        while len(self.unsafe_domain) < 2 or len(self.init_domain) < 2:
+            self.domain, _ = data.generateRandomData(self.N_domain, self.RANGE, self.dim_in)
+            #Generate data for initial set
+            self.init_min = (np.min([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) - self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
+            self.init_min = np.where(self.init_min < -1, -1, self.init_min)
+            self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) + self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
+            self.init_max = np.where(self.init_max > 1, 1, self.init_max)
+
+            self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
+
+            if self.config["unsafe"]["shape"] == 'Rectangle':
+                self.unsafe = self.config["unsafe"]["range"]
+                if not "unbounded" in self.config["unsafe"]:
+                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                else:
+                    if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
+                        self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
+                        self.unsafe_max = torch.tensor([100, self.unsafe[1][1]])       
+                    if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'max':
+                        self.unsafe_min = torch.tensor([-100, self.unsafe[1][0]]) 
+                        self.unsafe_max = torch.tensor([self.unsafe[0][0], self.unsafe[1][1]])       
+                    if self.config["unsafe"]["unbounded"] == 'y' and self.config["unsafe"]["max_min"] == 'min':
+                        self.unsafe_min = torch.tensor([self.unsafe[0][0], self.unsafe[1][0]]) 
+                        self.unsafe_max = torch.tensor([self.unsafe[0][1], 100])       
+                    if self.config["unsafe"]["unbounded"] == 'y' and self.config["unsafe"]["max_min"] == 'max':
+                        self.unsafe_min = torch.tensor([self.unsafe[0][0], -100]) 
+                        self.unsafe_max = torch.tensor([self.unsafe[0][1], self.unsafe[1][0]])       
+
+                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+
+            elif self.config["unsafe"]["shape"] == 'Circle':
+                self.uns_center = torch.tensor(self.config["unsafe"]["center"])
+                self.uns_rad = self.config["unsafe"]["radius"]
+                mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
+                self.unsafe_domain = self.domain[mask]
+
+            elif self.config["unsafe"]["shape"] == 'Custom':
+                x = self.domain[:,0]
+                y = self.domain[:,1]
+                result = eval(self.config["unsafe"]["function"])
+                mask = (result <= 0)
+                self.unsafe_domain = self.domain[mask]
+
         #Dataset Generation and Shuffling
         num_rows = self.init_domain.size(0)
         random_index = torch.randint(0, num_rows, (1,)).item()
-        self.initial_set_random = self.init_domain[random_index].reshape(1,self.dim_in)
+        self.initial_set_random = self.init_domain[random_index].reshape(1, self.dim_in)
         self.initial_set_center = torch.cat([self.initial_set_center, self.initial_set_random])
-
-        #Generate data for unsafe set
-        unsafe_config = self.config["unsafe"]
-        shape = unsafe_config.get("shape", None)
-        if shape == 'Rectangle':
-            self.unsafe = self.config["unsafe"]["range"]
-            if not "unbounded" in unsafe_config:
-                if self.dim_in == 2:
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
-                elif self.dim_in == 3:
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0], self.unsafe[2][0]])        
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1], self.unsafe[2][1]])
-            else:
-                if unsafe_config.get("unbounded") == 'x' and unsafe_config.get("max_min") == 'min':
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
-                    self.unsafe_max = torch.tensor([100, self.unsafe[1][1]])       
-                if unsafe_config.get("unbounded") == 'x' and unsafe_config.get("max_min") == 'max':
-                    self.unsafe_min = torch.tensor([-100, self.unsafe[1][0]]) 
-                    self.unsafe_max = torch.tensor([self.unsafe[0][0], self.unsafe[1][1]])       
-                if unsafe_config.get("unbounded") == 'y' and unsafe_config.get("max_min") == 'min':
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0], self.unsafe[1][0]]) 
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1], 100])       
-                if unsafe_config.get("unbounded") == 'y' and unsafe_config.get("max_min") == 'max':
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0], -100]) 
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1], self.unsafe[1][0]])       
-            self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
-        
-        elif shape == 'Circle':
-            self.uns_center = torch.tensor(unsafe_config.get("center", [[0.0, 0.0]]*self.dim_in))
-            self.uns_rad = unsafe_config.get("radius", 0.0)
-            if isinstance(self.uns_center[0], (int, float)):
-                mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
-                self.unsafe_domain = self.domain[mask]
-            else:
-                all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
-                for center in self.uns_center:
-                    mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
-                    all_masks = all_masks | mask
-                self.unsafe_domain = self.domain[all_masks]
-
-        elif shape == 'Custom':
-            x = self.domain[:,0]
-            y = self.domain[:,1]
-            result = eval(unsafe_config.get("function"))
-            mask = (result <= 0)
-            self.unsafe_domain = self.domain[mask]                        
-        
-        #Dataset Generation and Shuffling
-        if self.unsafe_domain is None:
-            self.unsafe_domain = torch.empty((0, self.dim_in))
-
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
         init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
         unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
         train_dataset  = torch.utils.data.TensorDataset(self.X_train, self.y_train)
 
         total_size = len(self.domain) + len(self.init_domain) + len(self.unsafe_domain)
-
         self.batch_size = self.config["model_b"].get("batch_size", 128)
 
         domain_batch_size = int(len(self.domain) / total_size * self.batch_size)	
@@ -341,16 +326,14 @@ class MotionPlanner:
         self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
         self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"].get("batch_size", 128), shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
-        self.N_cex_domain = self.config["counterex"].get("N_cex_domain", 10000) #The number of counterexample samples we want in the domain region
-
-        if "reg_f" in self.config["hyperparameters"]:
-            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-10), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
-            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
-            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-        else:
-            self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-10), betas=(0.9, 0.999))
-            self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
-            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+        self.N_cex_domain = self.config["counterex"].get("N_cex_domain", 10000)
+        
+        #Reset learning rate, will be called after training the initial dynamics
+        if "learning_rate_cert" in self.config["model_f"]:
+            if "reg_f" in self.config["hyperparameters"]:
+                self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
+            else:
+                self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), betas=(0.9, 0.999))    
         
     def generate_counterexample_data(self):
         self.load_model_states()     
@@ -374,7 +357,7 @@ class MotionPlanner:
             y = input_domain[:,1]
             result = eval(self.config["unsafe"]["function"])
             unsafe_domain = input_domain[result <= 0]
-            
+
         counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
         counterexamples_init = verification.verify_init(self.model_b, init_domain, self.config)
         counterexamples_unsafe = verification.verify_unsafe(self.model_b, unsafe_domain, self.config)
@@ -384,6 +367,7 @@ class MotionPlanner:
         
         for counterexample in counterexamples_domain:
             add_data_domain.append(counterexample)
+            
         if len(add_data_domain) > 0:
             add_data_domain = torch.stack(add_data_domain).detach()
         else:
@@ -391,7 +375,7 @@ class MotionPlanner:
  
         for counterexample in counterexamples_init:
             add_data_init.append(counterexample)
-            
+        
         if len(add_data_init) > 0:
             add_data_init = torch.stack(add_data_init).detach()
         else:
@@ -399,7 +383,7 @@ class MotionPlanner:
 
         for counterexample in counterexamples_unsafe:
             add_data_unsafe.append(counterexample)
-            
+
         if len(add_data_unsafe) > 0:
              add_data_unsafe = torch.stack(add_data_unsafe).detach()
         else:
@@ -410,7 +394,7 @@ class MotionPlanner:
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
-                self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
+               self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
                 if isinstance(self.uns_center[0], (int, float)):
                     self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad)]                
@@ -420,7 +404,12 @@ class MotionPlanner:
                         mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
                         all_masks = all_masks | mask
                     self.unsafe_domain = self.domain[all_masks]
-        
+            elif self.config["unsafe"]["shape"] == 'Custom':
+                x = self.domain[:,0]
+                y = self.domain[:,1]
+                result = eval(self.config["unsafe"]["function"])
+                self.unsafe_domain = self.domain[result <= 0]
+                
         if add_data_init is not None:
             print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
@@ -436,6 +425,7 @@ class MotionPlanner:
             self.counterexamples_added = False
 
         #Dataset Generation and Shuffling
+
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
         init_dataset  = torch.utils.data.TensorDataset(self.init_domain)
         unsafe_dataset  = torch.utils.data.TensorDataset(self.unsafe_domain)
@@ -446,9 +436,9 @@ class MotionPlanner:
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
     def trainInitialDynamics(self):
         model_f_config = self.config["model_f"]
@@ -758,15 +748,6 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            # if trial % 10 == 0:
-            #     if mp.dim_in == 2:
-            #         fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-            #         plt.show()
-            #         Plotter.plotLyapunov(mp.model_v)
-            #         Plotter.plotBarrier(mp.model_b)
-            #     elif mp.dim_in == 3:
-            #         fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-            #         plt.show()
             trial += 1      
         else:
             import pdb; pdb.set_trace()
