@@ -50,6 +50,7 @@ class MotionPlanner:
         self.par_dir_path = os.path.dirname(os.path.realpath(__file__))
         # Load the configuration file
         file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
+        # file_path = os.path.join("config_files", self.args.dataset_type, self.name + "_config.json")
         if os.path.exists(file_path):     
             with open(file_path) as file:
                 self.config = json.load(file)
@@ -57,6 +58,7 @@ class MotionPlanner:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -103,7 +105,7 @@ class MotionPlanner:
         full_path = os.path.join(self.par_dir_path, model_path)
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
         torch.save(model, full_path)
-   
+
     def save_all_models(self):
         base_path = os.path.join(self.par_dir_path,'models', self.args.dataset_type, self.name)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
@@ -116,7 +118,6 @@ class MotionPlanner:
         base_path = os.path.join(self.par_dir_path, 'models_onnx', self.args.dataset_type)
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         file_path = os.path.join(base_path, self.name + ".onnx")
-        import pdb; pdb.set_trace()
         self.model_f = self.model_f.to(self.device)
         self.model_f.eval()
         self.initial_point = self.initial_set_center[0].reshape(1,self.dim_in).to(device=self.device, dtype=torch.float32) 
@@ -132,8 +133,8 @@ class MotionPlanner:
                 dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}  
             )
         onnx_model = onnx.load(os.path.join(base_path, self.name + ".onnx"))
-        onnx.checker.check_model(onnx_model)    
-    
+        onnx.checker.check_model(onnx_model)         
+        
     def generate_demo_data(self): 
         if self.args.dataset_type == 'LASA':
             if self.args.lasa_name == "Angle":
@@ -245,15 +246,15 @@ class MotionPlanner:
         train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
         test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
         batch_size = self.config["model_f"].get("batch_size", 128)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
-        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
         # Rescaling the images
         for i in range(len(self.demos)):
             self.demos[i].pos = self.demos[i].pos/self.pos_scaling.cpu().detach().numpy()
             self.demos[i].vel = self.demos[i].vel/self.vel_scaling.cpu().detach().numpy()
-      
+            
     def generate_domain_data(self):
         self.N_domain = self.config["domain"].get("N", 10000) 
         self.RANGE = self.config["domain"].get("range", [[-1, 1]] * self.dim_in)
@@ -333,7 +334,7 @@ class MotionPlanner:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), betas=(0.9, 0.999))    
-
+        
     def generate_counterexample_data(self):
         self.load_model_states()     
         input_domain, _ = data.generateRandomData(self.config["counterex"].get("N_cex_domain", 1000), self.RANGE, self.dim_in)
@@ -342,15 +343,12 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            if isinstance(self.uns_center[0], (int, float)):
-                mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-                self.unsafe_domain = input_domain[mask]
-            else:
-                all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
-                for center in self.uns_center:
-                    mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
-                    all_masks = all_masks | mask
-                unsafe_domain = input_domain[all_masks]
+            self.uns_center = self.uns_center.reshape(-1, self.dim_in)
+            all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
+            for center in self.uns_center:
+                mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
+                all_masks = all_masks | mask
+            unsafe_domain = input_domain[all_masks]
         elif self.config["unsafe"]["shape"] == 'Custom':
             x = input_domain[:,0]
             y = input_domain[:,1]
@@ -395,14 +393,11 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
-                if isinstance(self.uns_center[0], (int, float)):
-                    self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad)]                
-                else:
-                    all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
-                    for center in self.uns_center:
-                        mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
-                        all_masks = all_masks | mask
-                    self.unsafe_domain = self.domain[all_masks]
+                all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                self.unsafe_domain = self.domain[all_masks]
             elif self.config["unsafe"]["shape"] == 'Custom':
                 x = self.domain[:,0]
                 y = self.domain[:,1]
@@ -487,9 +482,11 @@ class MotionPlanner:
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
-
+    
     def trainCertificate(self):
         if self.config["Barrier"]:
+            self.mode_f = self.model_f.to(self.device)
+
             model_v_config = self.config["model_v"]
             model_b_config = self.config["model_b"]
 
@@ -673,11 +670,11 @@ class MotionPlanner:
         self.model_f.eval()
         self.mse = 0
         total_samples = 0
-        loss_fn = nn.MSELoss(reduction = 'sum')
         for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
             y_pred = self.model_f(X_batch.float().to(self.device))
+            loss_fn = nn.MSELoss(reduction = 'mean')
             batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
-            self.mse += batch_mse.item() 
+            self.mse += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
             total_samples += X_batch.size(0)  
         self.mse = self.mse / total_samples
 
@@ -738,6 +735,7 @@ if __name__ == "__main__":
     mp.generate_domain_data()
     iters = 1
     print_info("CERTIFICATE TRAINING")
+    mp.update_config()
     mp.trainCertificate()
     trial = 1
     while trial < 1000:
@@ -746,8 +744,17 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
+            if trial % 5 == 0:
+                if mp.dim_in == 2:
+                    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
             trial += 1      
         else:
+            import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             if mp.dim_in == 2:
                 fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)

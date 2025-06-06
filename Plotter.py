@@ -350,8 +350,8 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
             x,y = np.meshgrid(x, y)
             mask = (eval(function) <= 0)
             plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
-            plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
-            plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
+            # plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
+            # plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
 
     # Equilibrium Point
     plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
@@ -367,17 +367,6 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
                         mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
                         mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(1.05, 1), fontsize = 8)
-
-        # Setting labels and grid            arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='black', marker='>', markeredgewidth=2, markersize=5, label='Dyn. sys.')
-            plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
-            plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
-            #Create proxy artists for contours
-            contour_line_legend = mpl.lines.Line2D([0], [0], color='red', label='Barrier (bout=0)')
-            contour_fill_legend = mpl.patches.Patch(color='green', alpha=0.5, label='Invariant Set')
-        ax.legend(handles=[arrow_proxy, contour_line_legend, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Actual Trajectory'),
-                   mpl.lines.Line2D([0], [0], color='#ff00ff', label='Target Trajectory'),
-                   mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                   bbox_to_anchor=(1.05, 1), fontsize = 8)
     plt.xlabel('x')
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
