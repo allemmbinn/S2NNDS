@@ -15,9 +15,9 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.005,
-        "hidden_neurons": 128,
-        "layers": 5,
+        "learning_rate": 0.01,
+        "hidden_neurons": 64,
+        "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
@@ -65,9 +65,8 @@
         "ub": 0.0
     },
     "verification": {
-        "N_conf": 640000,
-        "epsilon": 0.0001,
-        "beta": 0.0001
+        "N_conf": 200000,
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "plots": true,
@@ -84,7 +83,7 @@
         ],
         "contour": false,
         "legend": false,
-        "name": "NShape LASA with Obstacles",
+        "name": "NShape",
         "init_range": [
             [
                 -1.0,
@@ -101,8 +100,8 @@
                 -0.879802935999896
             ],
             [
-                -0.8981621861457825,
-                -0.8862800002098083
+                -0.9945554709434509,
+                -0.8823959827423096
             ]
         ],
         "dt": 0.004994310008788874
