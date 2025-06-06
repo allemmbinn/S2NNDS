@@ -153,6 +153,9 @@ class MotionPlanner:
                 dataset = lasa.DataSet.PShape
             elif self.args.lasa_name == "NShape":
                 dataset = lasa.DataSet.NShape
+            # Experimental Shapes
+            elif self.args.lasa_name == "heee":
+                dataset = lasa.DataSet.heee
             else:
                 print_error("LASA Dataset not considered!")
                 raise NotImplementedError
@@ -282,10 +285,13 @@ class MotionPlanner:
                 self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
 
             elif self.config["unsafe"]["shape"] == 'Circle':
-                self.uns_center = torch.tensor(self.config["unsafe"]["center"])
+                self.uns_center = torch.tensor(self.config["unsafe"]["center"]).reshape(-1, self.dim_in)
                 self.uns_rad = self.config["unsafe"]["radius"]
-                mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
-                self.unsafe_domain = self.domain[mask]
+                all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                self.unsafe_domain = self.domain[all_masks]
 
             elif self.config["unsafe"]["shape"] == 'Custom':
                 x = self.domain[:,0]

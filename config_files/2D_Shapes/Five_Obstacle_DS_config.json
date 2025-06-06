@@ -3,7 +3,7 @@
         "activation_function": "Tanh",
         "hidden_neurons": 64,
         "layers": 3,
-        "epochs_warm": 400,
+        "epochs_warm": 250,
         "learning_rate": 0.01,
         "learning_rate_cert": 0.0001,
         "train_f_cert": true,
@@ -110,7 +110,7 @@
             ],
             [
                 -0.059441649642284614,
-                0.04593719946463559
+                0.05893719946463559
             ]
         ],
         "initial_conditions": [
