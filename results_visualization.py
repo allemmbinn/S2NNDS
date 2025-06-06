@@ -6,7 +6,7 @@ from main import MotionPlanner
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "NShape"
+    lasa_name : str = "CShape"
     dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"

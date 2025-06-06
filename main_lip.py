@@ -8,7 +8,7 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Worm"
+    lasa_name : str = "CShape"
     dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
@@ -143,28 +143,18 @@ class MotionPlanner:
                 dataset = lasa.DataSet.Worm
             elif self.args.lasa_name == "CShape":
                 dataset = lasa.DataSet.CShape
-            elif self.args.lasa_name == "DoubleBendedLine":
-                dataset = lasa.DataSet.DoubleBendedLine
             elif self.args.lasa_name == "GShape":
                 dataset = lasa.DataSet.GShape
             elif self.args.lasa_name == "Sshape":
                 dataset = lasa.DataSet.Sshape
-            elif self.args.lasa_name == "WShape":
-                dataset = lasa.DataSet.WShape
-            elif self.args.lasa_name == "Leaf_2":
-                dataset = lasa.DataSet.Leaf_2
             elif self.args.lasa_name == "Sine":
                 dataset = lasa.DataSet.Sine
-            elif self.args.lasa_name == "Snake":
-                dataset = lasa.DataSet.Snake
-            elif self.args.lasa_name == "heee":
-                dataset = lasa.DataSet.heee
             elif self.args.lasa_name == "PShape":
                 dataset = lasa.DataSet.PShape
             elif self.args.lasa_name == "NShape":
                 dataset = lasa.DataSet.NShape
             else:
-                print_error("Invalid LASA Dataset has been choosen")
+                print_error("LASA Dataset not considered!")
                 raise NotImplementedError
             self.dt = dataset.dt
             self.demos = dataset.demos
@@ -218,7 +208,7 @@ class MotionPlanner:
                     sys.exit(1)
             self.total_demos = len(self.demos)
         else:
-            print_error("Non-LASA Dataset has been choosen")   
+            print_error("Unsupported dataset has been choosen!")   
         self.demos = np.array(self.demos)         
         # Divide the data into training and testing
         train_size = int(5/7 * self.total_demos) # 5/7 datasets are used for training
@@ -553,7 +543,7 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
-                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -584,7 +574,7 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
-                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -641,7 +631,7 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= self.unsafe_min.clone().detach()) & (input_domain <= self.unsafe_max.clone().detach())).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            if isinstance(self.uns_center[0], (int, float)):
+            if isinstance(self.config["unsafe"]["center"][0], (int, float)):
                 mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
                 unsafe_domain = input_domain[mask]
             else:
@@ -756,16 +746,16 @@ if __name__ == "__main__":
         else:
             import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            if mp.dim_in == 2:
-                fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                plt.show()
-                Plotter.plotLyapunov(mp.model_v)
-                Plotter.plotBarrier(mp.model_b)
-            elif mp.dim_in == 3:
-                fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                plt.show()
             mp.verifyCertificate()
             if mp.flag_verified:
+                if mp.dim_in == 2:
+                    fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    plt.show()
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
                 mp.save_all_models()
                 mp.final_model_eval()
                 print_info(f"MSE for test data after certificate training: {mp.mse}")
@@ -774,6 +764,8 @@ if __name__ == "__main__":
                 mp.update_config()
                 mp.save_datasets()
                 break
+            else:
+               print_info("CONFORMAL PREDICTION FAILED; RETRAINING CERTIFICATE")
     if trial == 1000:
-        print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
+        print_error("MAXIMUM TRIALS EXCEEDED... VERIFICATION FAILED")
      
