@@ -462,11 +462,11 @@ class MotionPlanner:
             total_loss = 0
             for _, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
-                total_loss = loss_fn(y_pred, y_batch.float().to(self.device)).item()
-                history.append(total_loss)
-                if total_loss < best_mse:
-                    best_mse = total_loss
-                    best_weights = copy.deepcopy(self.model_f.state_dict())
+                total_loss += loss_fn(y_pred, y_batch.float().to(self.device)).item()
+            history.append(total_loss)
+            if total_loss < best_mse:
+                best_mse = total_loss
+                best_weights = copy.deepcopy(self.model_f.state_dict())
             with torch.no_grad():
                 torch.cuda.empty_cache()
         # restore model and return best accuracy
