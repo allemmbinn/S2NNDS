@@ -343,15 +343,12 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            if isinstance(self.uns_center[0], (int, float)):
-                mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-                self.unsafe_domain = input_domain[mask]
-            else:
-                all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
-                for center in self.uns_center:
-                    mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
-                    all_masks = all_masks | mask
-                unsafe_domain = input_domain[all_masks]
+            self.uns_center = self.uns_center.reshape(-1, self.dim_in)
+            all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
+            for center in self.uns_center:
+                mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
+                all_masks = all_masks | mask
+            unsafe_domain = input_domain[all_masks]
         elif self.config["unsafe"]["shape"] == 'Custom':
             x = input_domain[:,0]
             y = input_domain[:,1]
@@ -396,14 +393,11 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
-                if isinstance(self.uns_center[0], (int, float)):
-                    self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad)]                
-                else:
-                    all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
-                    for center in self.uns_center:
-                        mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
-                        all_masks = all_masks | mask
-                    self.unsafe_domain = self.domain[all_masks]
+                all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                self.unsafe_domain = self.domain[all_masks]
             elif self.config["unsafe"]["shape"] == 'Custom':
                 x = self.domain[:,0]
                 y = self.domain[:,1]
@@ -491,6 +485,8 @@ class MotionPlanner:
     
     def trainCertificate(self):
         if self.config["Barrier"]:
+            self.mode_f = self.model_f.to(self.device)
+
             model_v_config = self.config["model_v"]
             model_b_config = self.config["model_b"]
 
@@ -748,6 +744,14 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
+            if trial % 5 == 0:
+                if mp.dim_in == 2:
+                    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
             trial += 1      
         else:
             import pdb; pdb.set_trace()
