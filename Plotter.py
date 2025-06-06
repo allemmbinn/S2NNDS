@@ -149,9 +149,12 @@ def initialDSPlot(model_f, demos, initial_set_center, dim_in, config, model_b=No
                     z = center[2] + unsafe_set_radius * np.cos(phi)
                     ax.plot_surface(x, y, z, facecolor=(1, 0, 0, 0.2), edgecolor=(1, 0, 0, 0.05), linewidth=2, label="Unsafe Set", alpha = 0.1)
         elif config["unsafe"]["shape"] == "Rectangle":
-                x_min, x_max = config["unsafe"]["range"][0]
-                y_min, y_max = config["unsafe"]["range"][1]
-                z_min, z_max = config["unsafe"]["range"][2]
+            RANGE = np.array(config["unsafe"]["range"])
+            RANGE = RANGE.reshape(-1, 3, 2)
+            for i in range(RANGE.shape[0]):
+                x_min, x_max = RANGE[i][0]
+                y_min, y_max = RANGE[i][1]
+                z_min, z_max = RANGE[i][2]
 
                 # Define the 8 corners of the cuboid
                 corners = np.array([
@@ -176,7 +179,7 @@ def initialDSPlot(model_f, demos, initial_set_center, dim_in, config, model_b=No
                 ]
                 
                 ax.add_collection3d(Poly3DCollection(faces, facecolors='red', linewidths=1, edgecolors='red', alpha=0.2))
-    # For the Init Cube
+        # For the Init Cube
         ax.set_xlabel('X Label')
         ax.set_ylabel('Y Label')
         ax.set_zlabel('Z Label')
@@ -260,14 +263,14 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
         plt.contourf(X, Y, vout[:,:,0], cmap=cm.lajolla)
     # Plotting the Training Data
     initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
-    for i in range(4):
+    for i in range(len(demos)):
         ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
     # Plotting the final trajectory
     n = 10000
     dt= config["plotting"]["dt"]
     for i in range(initial_set_center.shape[0]):
         x = torch.zeros((n, 2)).to(device)
-        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        x[0,:] = initial_set_center[i].clone().detach()
         for j in range(1, n):
             Fout = model_f(x[j-1])
             x[j] = x[j-1] + Fout * dt
@@ -383,7 +386,8 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
     plot_name = plotting_config.get("name", "Final Plot with Obstacles")
     plt.title(plot_name)
     plt.grid(True)
-    plt.axis('auto')
+    # plt.axis('auto')
+    plt.axis('scaled') 
     plt.margins(x=0,y=0)
     plt.tight_layout()
     return fig
@@ -450,9 +454,12 @@ def final3DDSPlot(model_f, demos, initial_set_center, config, data_1=None, model
                 z = center[2] + unsafe_set_radius * np.cos(phi)
                 ax.plot_surface(x, y, z, facecolor=(1, 0, 0, 0.2), edgecolor=(1, 0, 0, 0.05), linewidth=2, label="Unsafe Set", alpha = 0.5)
     elif config["unsafe"]["shape"] == "Rectangle":
-            x_min, x_max = config["unsafe"]["range"][0]
-            y_min, y_max = config["unsafe"]["range"][1]
-            z_min, z_max = config["unsafe"]["range"][2]
+        RANGE = np.array(config["unsafe"]["range"])
+        RANGE = RANGE.reshape(-1, 3, 2)
+        for i in range(RANGE.shape[0]):
+            x_min, x_max = RANGE[i][0]
+            y_min, y_max = RANGE[i][1]
+            z_min, z_max = RANGE[i][2]
 
             # Define the 8 corners of the cuboid
             corners = np.array([

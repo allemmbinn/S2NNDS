@@ -7,7 +7,7 @@
         "learning_rate": 0.001,
         "learning_rate_cert": 1e-08,
         "train_f_cert": false,
-        "cert_train_factor": 0.2,
+        "cert_train_factor": 0.45,
         "batch_size": 64,
         "lr_factor": 0.1,
         "lr_patience": 5,
@@ -15,7 +15,7 @@
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.005,
+        "learning_rate": 0.01,
         "hidden_neurons": 128,
         "layers": 5,
         "lr_factor": 0.8,
@@ -24,7 +24,7 @@
     },
     "model_b": {
         "activation_function": "eLU",
-        "learning_rate": 0.005,
+        "learning_rate": 0.01,
         "hidden_neurons": 128,
         "layers": 5,
         "lr_factor": 0.8,
@@ -36,12 +36,12 @@
         "N": 5000,
         "range": [
             [
-                -1.5,
-                1.5
+                -1.0,
+                1.0
             ],
             [
-                -1.5,
-                1.5
+                -1.0,
+                1.0
             ]
         ]
     },
@@ -69,17 +69,16 @@
         "ub": 0.0
     },
     "verification": {
-        "N_conf": 640000,
-        "epsilon": 0.0001,
-        "beta": 0.0001
+        "N_conf": 200000,
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "plots": true,
     "plotting": {
         "range": [
             [
-                -1.5,
-                1.5
+                -1.2,
+                1.2
             ],
             [
                 -1.2,
@@ -88,15 +87,15 @@
         ],
         "contour": false,
         "legend": false,
-        "name": "PShape LASA with Obstacles",
+        "name": "PShape",
         "init_range": [
             [
-                -0.8431262317755014,
-                -0.5764579875032004
+                -0.8431262036719428,
+                -0.5764579682321889
             ],
             [
-                -0.6827212352468335,
-                -0.5604174878503339
+                -0.6827212124963337,
+                -0.5604174691146281
             ]
         ],
         "initial_conditions": [
@@ -105,15 +104,15 @@
                 -0.6209964865609816
             ],
             [
-                -0.7862738370895386,
-                -0.6072506904602051
+                -0.6389132738113403,
+                -0.571070671081543
             ]
         ],
         "dt": 0.005376172925218552
     },
     "hyperparameters": {
         "max_iters": 50,
-        "decay_mse": 10,
+        "decay_mse": 12,
         "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,

@@ -5,12 +5,10 @@
         "layers": 2,
         "epochs_warm": 150,
         "learning_rate": 0.0001,
-        "learning_rate_cert": 0.0001,
-        "train_f_cert": false,
-        "cert_train_factor": 0.2,
         "batch_size": 64,
         "lr_factor": 0.1,
-        "lr_patience": 5
+        "lr_patience": 5,
+        "init_decay": 0.1
     },
     "model_v": {
         "activation_function": "eLU",
@@ -61,7 +59,7 @@
         ]
     },
     "counterex": {
-        "N_cex_domain": 640000,
+        "N_cex_domain": 200000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -75,8 +73,7 @@
     },
     "verification": {
         "N_conf": 640000,
-        "epsilon": 0.0001,
-        "beta": 0.0001
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "plots": true,
@@ -92,16 +89,16 @@
             ]
         ],
         "contour": false,
-        "legend": true,
-        "name": "Angle LASA with Obstacles",
+        "legend": false,
+        "name": "Angle",
         "init_range": [
             [
                 -1.0,
-                -0.8373239352271472
+                -0.8373239126737058
             ],
             [
-                -0.11338028108765329,
-                0.09225352072510215
+                -0.1133802794766932,
+                0.09225351965112874
             ]
         ],
         "initial_conditions": [
@@ -120,13 +117,17 @@
         "max_iters": 30,
         "max_iters_ft": 30,
         "decay_mse": 5,
+        "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
+        "decay_cut": 1,
         "decay_lb": 1,
         "alpha": 1,
+        "epi_bound": 0.05,
+        "eta": 0.0001,
         "lyap_tol": 0.01,
         "pos_tol": 0.01,
         "bar_tol": 0.01,
