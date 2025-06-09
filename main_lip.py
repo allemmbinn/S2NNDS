@@ -273,9 +273,12 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe = self.config["unsafe"]["range"]
                 if not "unbounded" in self.config["unsafe"]:
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    # self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+                    # self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    self.unsafe_min = torch.tensor([self.unsafe[i][0] for i in range(self.dim_in)])
+                    self.unsafe_max = torch.tensor([self.unsafe[i][1] for i in range(self.dim_in)])
                 else:
+
                     if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
                         self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
                         self.unsafe_max = torch.tensor([100, self.unsafe[1][1]])       
@@ -292,10 +295,13 @@ class MotionPlanner:
                 self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
 
             elif self.config["unsafe"]["shape"] == 'Circle':
-                self.uns_center = torch.tensor(self.config["unsafe"]["center"])
+                self.uns_center = torch.tensor(self.config["unsafe"]["center"]).reshape(-1, self.dim_in)
                 self.uns_rad = self.config["unsafe"]["radius"]
-                mask = (torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )
-                self.unsafe_domain = self.domain[mask]
+                all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
+                for center in self.uns_center:
+                    mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
+                    all_masks = all_masks | mask
+                self.unsafe_domain = self.domain[all_masks]
 
             elif self.config["unsafe"]["shape"] == 'Custom':
                 x = self.domain[:,0]
@@ -343,7 +349,6 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            self.uns_center = self.uns_center.reshape(-1, self.dim_in)
             all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
             for center in self.uns_center:
                 mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
@@ -469,11 +474,11 @@ class MotionPlanner:
             total_loss = 0
             for _, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
-                total_loss = loss_fn(y_pred, y_batch.float().to(self.device)).item()
-                history.append(total_loss)
-                if total_loss < best_mse:
-                    best_mse = total_loss
-                    best_weights = copy.deepcopy(self.model_f.state_dict())
+                total_loss += loss_fn(y_pred, y_batch.float().to(self.device)).item()
+            history.append(total_loss)
+            if total_loss < best_mse:
+                best_mse = total_loss
+                best_weights = copy.deepcopy(self.model_f.state_dict())
             with torch.no_grad():
                 torch.cuda.empty_cache()
         # restore model and return best accuracy
@@ -553,7 +558,7 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
-                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        # torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -584,7 +589,7 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
-                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        # torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
