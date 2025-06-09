@@ -266,9 +266,12 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe = self.config["unsafe"]["range"]
                 if not "unbounded" in self.config["unsafe"]:
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    # self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+                    # self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    self.unsafe_min = torch.tensor([self.unsafe[i][0] for i in range(self.dim_in)])
+                    self.unsafe_max = torch.tensor([self.unsafe[i][1] for i in range(self.dim_in)])
                 else:
+
                     if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
                         self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
                         self.unsafe_max = torch.tensor([100, self.unsafe[1][1]])       
@@ -339,7 +342,6 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            self.uns_center = self.uns_center.reshape(-1, self.dim_in)
             all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
             for center in self.uns_center:
                 mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )

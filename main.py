@@ -57,8 +57,8 @@ class MotionPlanner:
         else:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -263,8 +263,10 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe = self.config["unsafe"]["range"]
                 if not "unbounded" in self.config["unsafe"]:
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    # self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
+                    # self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    self.unsafe_min = torch.tensor([self.unsafe[i][0] for i in range(self.dim_in)])
+                    self.unsafe_max = torch.tensor([self.unsafe[i][1] for i in range(self.dim_in)])
                 else:
                     if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
                         self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
@@ -283,7 +285,7 @@ class MotionPlanner:
 
             elif self.config["unsafe"]["shape"] == 'Circle':
                 self.uns_center = torch.tensor(self.config["unsafe"]["center"]).reshape(-1, self.dim_in)
-                self.uns_rad = self.config["unsafe"]["radius"]
+                self.uns_rad = self.config["unsafe"]["radius"]                
                 all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
                 for center in self.uns_center:
                     mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
