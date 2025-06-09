@@ -327,9 +327,12 @@ class MotionPlanner:
         if "learning_rate_cert" in self.config["model_f"]:
             if "reg_f" in self.config["hyperparameters"]:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
+                self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), betas=(0.9, 0.999))    
-        
+                self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
+            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+            
     def generate_counterexample_data(self):
         self.load_model_states()     
         input_domain, _ = data.generateRandomData(self.config["counterex"].get("N_cex_domain", 1000), self.RANGE, self.dim_in)
@@ -636,15 +639,11 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= self.unsafe_min.clone().detach()) & (input_domain <= self.unsafe_max.clone().detach())).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            if isinstance(self.config["unsafe"]["center"][0], (int, float)):
-                mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-                unsafe_domain = input_domain[mask]
-            else:
-                all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
-                for center in self.uns_center:
-                    mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
-                    all_masks = all_masks | mask
-                unsafe_domain = input_domain[all_masks]
+            all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
+            for center in self.uns_center:
+                mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
+                all_masks = all_masks | mask
+            unsafe_domain = input_domain[all_masks]
         elif self.config["unsafe"]["shape"] == 'Custom':
             x= input_domain[:,0]
             y = input_domain[:,1]
@@ -739,7 +738,7 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            if trial % 5 == 0:
+            if trial % 10 == 0:
                 if mp.dim_in == 2:
                     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
                     Plotter.plotLyapunov(mp.model_v)

@@ -385,8 +385,8 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
 
 # Plotting 3D Dynamics
 def final3DDSPlot(model_f, demos, initial_set_center, config, data_1=None, model_b=None):
-    # device = next(model_f.parameters()).device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = next(model_f.parameters()).device
+    # device = torch.device('cpu')
     # Create a figure and 3D axes
     fig = plt.figure(figsize=(10, 8))
     ax = plt.axes(projection='3d')
