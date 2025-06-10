@@ -2,20 +2,20 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 64,
-        "layers": 4,
+        "layers": 3,
         "epochs_warm": 500,
         "learning_rate": 0.01,
-        "learning_rate_cert": 0.001,
-        "train_f_cert": false,
-        "cert_train_factor": 0.2,
-        "batch_size": 4196,
+        "learning_rate_cert": 0.0001,
+        "train_f_cert": true,
+        "cert_train_factor": 0.65,
+        "batch_size": 512,
         "lr_factor": 0.1,
         "lr_patience": 5,
         "init_decay": 0.1
     },
     "model_v": {
         "activation_function": "eLU",
-        "learning_rate": 0.01,
+        "learning_rate": 0.001,
         "hidden_neurons": 256,
         "layers": 4,
         "lr_factor": 0.8,
@@ -29,11 +29,11 @@
         "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
-        "batch_size": 512,
+        "batch_size": 1024,
         "warmup": 30
     },
     "domain": {
-        "N": 20000,
+        "N": 10000,
         "range": [
             [
                 -1,
@@ -50,27 +50,26 @@
         ]
     },
     "init": {
-        "radius": 0.001
+        "radius": 0.05
     },
     "unsafe": {
-        "shape": "Rectangle",
-        "range": [
+        "shape": "Circle",
+        "center": [
             [
-                0.01,
-                0.05
+                0.03,
+                0.12,
+                0.0
             ],
             [
-                0.3,
-                0.55
-            ],
-            [
-                -0.13,
-                0.02
+                0.05,
+                0.52,
+                -0.05
             ]
-        ]
+        ],
+        "radius": 0.06
     },
     "counterex": {
-        "N_cex_domain": 100000,
+        "N_cex_domain": 70000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -83,23 +82,22 @@
         "ub": 0.0
     },
     "verification": {
-        "N_conf": 150000,
-        "epsilon": 0.0001,
-        "beta": 0.0001
+        "N_conf": 250000,
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "hyperparameters": {
         "max_iters": 70,
-        "decay_mse": 50,
+        "decay_mse": 30,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 25.0,
+        "decay_lv": 5.0,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
         "decay_cut": 1,
         "decay_lb": 1,
-        "alpha": 1,
+        "alpha": 1e-10,
         "lyap_tol": 0.05,
         "pos_tol": 0.05,
         "bar_tol": 0.05,
@@ -109,20 +107,32 @@
         "reg_v": 0.001
     },
     "plotting": {
-        "dt": 0.01,
-        "name": "Sink 3D Shape",
-        "init_range": [
+        "range": [
             [
-                -0.08802735843134651,
-                0.19721907673539438
+                -0.25,
+                0.25
             ],
             [
-                0.833003270533608,
+                -0.1,
+                1
+            ],
+            [
+                -0.3,
+                0.3
+            ]
+        ],
+        "init_range": [
+            [
+                -0.1370273584313465,
+                0.2462190767353944
+            ],
+            [
+                0.784003270533608,
                 1.0
             ],
             [
-                -0.10746253839165537,
-                -0.06394004944653893
+                -0.15646253839165536,
+                -0.014940049446538928
             ]
         ],
         "initial_conditions": [
@@ -132,10 +142,12 @@
                 -0.08754174553075451
             ],
             [
-                -0.026763439178466797,
-                0.9587208032608032,
-                -0.07564353942871094
+                0.23887217044830322,
+                0.862868070602417,
+                -0.05088543891906738
             ]
-        ]
+        ],
+        "dt": 0.01,
+        "name": "3D_Sink"
     }
 }
