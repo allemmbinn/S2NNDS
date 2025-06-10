@@ -8,8 +8,8 @@ import verification
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "CShape"
-    dataset_type : str = "LASA" # This can also be 3D_Shapes
+    dataset_type : str = "2D_Shapes" # This can also be 3D_Shapes, or LASA
+    lasa_name : str = "PShape"
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
     
@@ -738,19 +738,20 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
+
         if mp.counterexamples_added:
             mp.trainCertificate()
-            # if trial % 5 == 0:
-                # if mp.dim_in == 2:
-                    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                    # Plotter.plotLyapunov(mp.model_v)
-                    # Plotter.plotBarrier(mp.model_b)
-                # elif mp.dim_in == 3:
-                    # Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                    # plt.show()
+            if trial % 5 == 0:
+                if mp.dim_in == 2:
+                    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
             trial += 1      
         else:
-            import pdb; pdb.set_trace()
+            #import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             mp.verifyCertificate()
             if mp.flag_verified:

@@ -6,7 +6,7 @@ from main import MotionPlanner
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "CShape"
+    lasa_name : str = "PShape"
     dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
@@ -26,7 +26,7 @@ def load_config_models(args):
     # Construct the path to the configuration file
     config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files')
     config_path = os.path.join(config_dir, args.dataset_type, f"{model_name}_config.json")
-    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models_verified')
+    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models')
     os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
     model_path = os.path.join(model_dir, args.dataset_type, model_name) 
        
