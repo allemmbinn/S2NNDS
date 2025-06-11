@@ -16,8 +16,8 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 64,
-        "layers": 4,
+        "hidden_neurons": 128,
+        "layers": 2,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
