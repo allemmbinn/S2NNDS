@@ -50,7 +50,6 @@ class MotionPlanner:
         self.par_dir_path = os.path.dirname(os.path.realpath(__file__))
         # Load the configuration file
         file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
-        # file_path = os.path.join("config_files", self.args.dataset_type, self.name + "_config.json")
         if os.path.exists(file_path):     
             with open(file_path) as file:
                 self.config = json.load(file)
@@ -263,8 +262,6 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe = self.config["unsafe"]["range"]
                 if not "unbounded" in self.config["unsafe"]:
-                    # self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                    # self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
                     self.unsafe_min = torch.tensor([self.unsafe[i][0] for i in range(self.dim_in)])
                     self.unsafe_max = torch.tensor([self.unsafe[i][1] for i in range(self.dim_in)])
                 else:
@@ -551,7 +548,6 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
-                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -582,7 +578,6 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
-                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -666,7 +661,7 @@ class MotionPlanner:
         total_samples = 0
         for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
             y_pred = self.model_f(X_batch.float().to(self.device))
-            loss_fn = nn.MSELoss(reduction = 'mean')
+            loss_fn = nn.MSELoss(reduction = 'sum')
             batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
             self.mse += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
             total_samples += X_batch.size(0)  
@@ -738,14 +733,14 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            # if trial % 10 == 0:
-            #     if mp.dim_in == 2:
-            #         Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-            #         Plotter.plotLyapunov(mp.model_v)
-            #         Plotter.plotBarrier(mp.model_b)
-            #     elif mp.dim_in == 3:
-            #         Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-            #         plt.show()
+            if trial % 10 == 0:
+                if mp.dim_in == 2:
+                    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
             trial += 1      
         else:
             import pdb; pdb.set_trace()
