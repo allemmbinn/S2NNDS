@@ -56,8 +56,8 @@ class MotionPlanner:
         else:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
