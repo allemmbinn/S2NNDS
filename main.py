@@ -548,6 +548,7 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -578,6 +579,8 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -765,6 +768,6 @@ if __name__ == "__main__":
                 break
             else:
                print_info("CONFORMAL PREDICTION FAILED; RETRAINING CERTIFICATE")
-    if trial == 1000:
+    if trial == 250:
         print_error("MAXIMUM TRIALS EXCEEDED... VERIFICATION FAILED")
      
