@@ -56,8 +56,8 @@ class MotionPlanner:
         else:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -734,7 +734,7 @@ if __name__ == "__main__":
     mp.update_config()
     mp.trainCertificate()
     trial = 1
-    while trial < 1000:
+    while trial < 250:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
@@ -750,7 +750,6 @@ if __name__ == "__main__":
                     plt.show()
             trial += 1      
         else:
-            import pdb; pdb.set_trace()
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             mp.verifyCertificate()
             if mp.flag_verified:
