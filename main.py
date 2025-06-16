@@ -56,8 +56,8 @@ class MotionPlanner:
         else:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        # self.device = torch.device('cpu')
+        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -322,14 +322,18 @@ class MotionPlanner:
         
         #Reset learning rate, will be called after training the initial dynamics
         if "learning_rate_cert" in self.config["model_f"]:
-            if "reg_f" in self.config["hyperparameters"]:
-                self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
-                self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
+            if "learn_rate_change" not in self.config["model_f"] or self.config["model_f"]["learn_rate_change"] == False:
+                if "reg_f" in self.config["hyperparameters"]:
+                    self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
+                    self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
+                else:
+                    self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), betas=(0.9, 0.999))    
+                    self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
+                self.optimizer_f_state_dict = self.optimizer_f.state_dict()
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), betas=(0.9, 0.999))    
-                self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
-            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-            
+
+                
     def generate_counterexample_data(self):
         self.load_model_states()     
         input_domain, _ = data.generateRandomData(self.config["counterex"].get("N_cex_domain", 1000), self.RANGE, self.dim_in)
