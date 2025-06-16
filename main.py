@@ -56,8 +56,8 @@ class MotionPlanner:
         else:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -736,7 +736,7 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            if trial % 10 == 0:
+            if trial % 20 == 1:
                 if mp.dim_in == 2:
                     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
                     Plotter.plotLyapunov(mp.model_v)

@@ -5,6 +5,7 @@
         "layers": 4,
         "epochs_warm": 200,
         "learning_rate": 0.001,
+        "learning_rate_cert": 1e-08,
         "train_f_cert": false,
         "cert_train_factor": 0.5,
         "batch_size": 64,
