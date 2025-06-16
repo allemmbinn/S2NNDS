@@ -50,15 +50,14 @@ class MotionPlanner:
         self.par_dir_path = os.path.dirname(os.path.realpath(__file__))
         # Load the configuration file
         file_path = os.path.join(self.par_dir_path, "config_files", self.args.dataset_type, self.name + "_config.json")
-        # file_path = os.path.join("config_files", self.args.dataset_type, self.name + "_config.json")
         if os.path.exists(file_path):     
             with open(file_path) as file:
                 self.config = json.load(file)
         else:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -263,8 +262,8 @@ class MotionPlanner:
             if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe = self.config["unsafe"]["range"]
                 if not "unbounded" in self.config["unsafe"]:
-                    self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]])        
-                    self.unsafe_max = torch.tensor([self.unsafe[0][1],self.unsafe[1][1]])
+                    self.unsafe_min = torch.tensor([self.unsafe[i][0] for i in range(self.dim_in)])
+                    self.unsafe_max = torch.tensor([self.unsafe[i][1] for i in range(self.dim_in)])
                 else:
                     if self.config["unsafe"]["unbounded"] == 'x' and self.config["unsafe"]["max_min"] == 'min':
                         self.unsafe_min = torch.tensor([self.unsafe[0][0],self.unsafe[1][0]]) 
@@ -283,7 +282,7 @@ class MotionPlanner:
 
             elif self.config["unsafe"]["shape"] == 'Circle':
                 self.uns_center = torch.tensor(self.config["unsafe"]["center"]).reshape(-1, self.dim_in)
-                self.uns_rad = self.config["unsafe"]["radius"]
+                self.uns_rad = self.config["unsafe"]["radius"]                
                 all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
                 for center in self.uns_center:
                     mask = (torch.linalg.norm(self.domain - center, dim =1) <= self.uns_rad )
@@ -325,9 +324,12 @@ class MotionPlanner:
         if "learning_rate_cert" in self.config["model_f"]:
             if "reg_f" in self.config["hyperparameters"]:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), weight_decay = self.config["hyperparameters"]["reg_f"], betas=(0.9, 0.999))
+                self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=self.config["model_f"].get("learning_rate_cert", 1e-8), betas=(0.9, 0.999))    
-        
+                self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"].get("lr_factor", 1.0), patience=self.config["model_f"].get("lr_patience", 30))
+            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+            
     def generate_counterexample_data(self):
         self.load_model_states()     
         input_domain, _ = data.generateRandomData(self.config["counterex"].get("N_cex_domain", 1000), self.RANGE, self.dim_in)
@@ -546,7 +548,7 @@ class MotionPlanner:
                         loss_domain_v, _ = Loss_Functions.loss_function_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
                         loss_domain_v.backward(retain_graph=True)
                         torch.nn.utils.clip_grad_norm_(self.model_v.parameters(), max_norm=1.0)
-                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                         self.optimizer_v.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -577,7 +579,8 @@ class MotionPlanner:
                         loss_b = loss_domain_b + loss_init_b + loss_unsafe_b
                         loss_b.backward()
                         torch.nn.utils.clip_grad_norm_(self.model_b.parameters(), max_norm=1.0)
-                        #torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+                        torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
+
                         self.optimizer_b.step()
                         if "train_f_cert" not in self.config["model_f"]:    
                             self.optimizer_f.step()   
@@ -634,15 +637,11 @@ class MotionPlanner:
         if self.config["unsafe"]["shape"] == 'Rectangle':
             unsafe_domain =  input_domain[((input_domain >= self.unsafe_min.clone().detach()) & (input_domain <= self.unsafe_max.clone().detach())).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
-            if isinstance(self.config["unsafe"]["center"][0], (int, float)):
-                mask = (torch.linalg.norm(input_domain - self.uns_center, dim =1) <= self.uns_rad )
-                unsafe_domain = input_domain[mask]
-            else:
-                all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
-                for center in self.uns_center:
-                    mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
-                    all_masks = all_masks | mask
-                unsafe_domain = input_domain[all_masks]
+            all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
+            for center in self.uns_center:
+                mask = (torch.linalg.norm(input_domain - center, dim =1) <= self.uns_rad )
+                all_masks = all_masks | mask
+            unsafe_domain = input_domain[all_masks]
         elif self.config["unsafe"]["shape"] == 'Custom':
             x= input_domain[:,0]
             y = input_domain[:,1]
@@ -665,7 +664,7 @@ class MotionPlanner:
         total_samples = 0
         for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
             y_pred = self.model_f(X_batch.float().to(self.device))
-            loss_fn = nn.MSELoss(reduction = 'mean')
+            loss_fn = nn.MSELoss(reduction = 'sum')
             batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
             self.mse += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
             total_samples += X_batch.size(0)  
@@ -737,7 +736,7 @@ if __name__ == "__main__":
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            if trial % 5 == 0:
+            if trial % 20 == 1:
                 if mp.dim_in == 2:
                     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
                     Plotter.plotLyapunov(mp.model_v)
@@ -769,6 +768,6 @@ if __name__ == "__main__":
                 break
             else:
                print_info("CONFORMAL PREDICTION FAILED; RETRAINING CERTIFICATE")
-    if trial == 1000:
+    if trial == 250:
         print_error("MAXIMUM TRIALS EXCEEDED... VERIFICATION FAILED")
      
