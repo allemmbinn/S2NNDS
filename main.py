@@ -153,7 +153,7 @@ class MotionPlanner:
             elif self.args.lasa_name == "NShape":
                 dataset = lasa.DataSet.NShape
             else:
-                print_error("LASA Dataset not considered!")
+                print_error("Invalid LASA Dataset has been choosen")
                 raise NotImplementedError
             self.dt = dataset.dt
             self.demos = dataset.demos
