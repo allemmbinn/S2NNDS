@@ -228,8 +228,7 @@ def plotBarrier(model_b, dim_in=2):
 # Plotting 2D Dynamics
 def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None):
     device = next(model_v.parameters()).device
-    fig, ax = plt.subplots()
-    # Define grid for plotting
+    fig, ax = plt.subplots(figsize=(4, 4))    # Define grid for plotting
     RANGE = config["plotting"]["range"]
     flag_barrier = config["Barrier"]
     flag_contour = config["plotting"]["contour"]
@@ -373,14 +372,11 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
     plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-    plotting_config = config["plotting"]
-    plot_name = plotting_config.get("name", "Final Plot with Obstacles")
-    plt.title(plot_name)
+    ax.set_aspect('equal', adjustable='box')  # Maintain equal aspect ratio
     plt.grid(True)
-    # plt.axis('auto')
-    plt.axis('scaled') 
-    plt.margins(x=0,y=0)
-    plt.tight_layout()
+    plt.margins(0)
+    plt.tight_layout(pad=0)  # Remove padding around the figure
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Fill the entire figure space
     return fig
 
 # Plotting 3D Dynamics
