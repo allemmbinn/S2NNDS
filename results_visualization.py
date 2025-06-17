@@ -1,5 +1,6 @@
 from common_header import *
 import json
+import pandas as pd
 import os
 import Plotter
 from main import MotionPlanner
@@ -7,12 +8,13 @@ from main import MotionPlanner
 @dataclass
 class ConfigFile:
     lasa_name : str = "PShape"
-    dataset_type : str = "LASA" # This can also be 3D_Shapes
+    dataset_type : str = "2D_Shapes" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
+    real_time: bool = True  # Set to True for real-time plotting
 
 def filter_args(args):
-    known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d']
+    known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d', '--real_time']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
 
 def load_config_models(args):
@@ -29,7 +31,9 @@ def load_config_models(args):
     model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models')
     os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
     model_path = os.path.join(model_dir, args.dataset_type, model_name) 
-       
+    data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Robot_Data')
+    data_path = os.path.join(data_dir, args.dataset_type)
+
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -39,24 +43,30 @@ def load_config_models(args):
             model_v = torch.load(model_v_path, map_location=torch.device('cpu'))
             model_b = torch.load(model_b_path, map_location=torch.device('cpu'))
             model_f = torch.load(model_f_path, map_location=torch.device('cpu'))
-        return config, model_v, model_b, model_f
+            #robot_data = pd.read_csv(os.path.join(data_path,model_name+'.csv'), header=1)
+            robot_data_perturbed= pd.read_csv(os.path.join(data_path, model_name+'_perturbed.csv'), header=1)
+            return model_name, config, model_v, model_b, model_f, robot_data_perturbed
+            
     except FileNotFoundError:
         print(f"Error: Configuration file '{config_path}' or Models not found.")
         return None
     except json.JSONDecodeError as e:
         print(f"Error: Failed to parse JSON file '{config_path}'. {e}")
         return None
+    
 
 # The main function starts here
 filtered_args = filter_args(sys.argv[1:])
 args = pyrallis.parse(ConfigFile, args=filtered_args)
 mp = MotionPlanner(args)
 mp.generate_demo_data()
-config, model_v, model_b, model_f = load_config_models(args)
+model_name, config, model_v, model_b, model_f, robot_data_perturbed = load_config_models(args)
 # name_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),"robot_demonstrations",mp.dataset_type,"Recording_"+mp.name+".csv")
 # data_1 = pd.read_csv(name_file, header=1)
 # plot = Plotter.finalDSPlot(model_f, model_v, model_b, mp.demos, mp.initial_set_center, mp.dim_in, config, data_1)
 initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[3].pos[:, 0])])
+#x_data = robot_data['x'].to_numpy()
+#y_data = robot_data['y'].to_numpy()
 if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
     plt.show()
@@ -71,4 +81,10 @@ os.makedirs(fig_dir, exist_ok=True)
 plot.savefig(os.path.join(fig_dir, mp.name + '_main.svg'), format="svg", dpi=300)
 
 
-
+if args.real_time:
+    save_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'results', 'Videos',args.dataset_type)
+    x_data = robot_data_perturbed['x'].to_numpy()
+    y_data = robot_data_perturbed['y'].to_numpy()
+    if mp.dim_in == 2:
+        fig, ani = Plotter.realTimePlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data)
+        ani.save(os.path.join(save_path, model_name + '.mp4'), writer='ffmpeg', fps=1000)

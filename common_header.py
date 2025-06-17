@@ -12,6 +12,7 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.patches as patches
 from mpl_toolkits import mplot3d
+import matplotlib.animation as animation
 
 # Data Processing Requirements
 import numpy as np
