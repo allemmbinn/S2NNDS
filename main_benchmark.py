@@ -268,7 +268,7 @@ class MotionPlanner:
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
                     lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
-            # self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
     
     def generate_counterexample_data(self):
         self.load_model_states()     
@@ -639,8 +639,8 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        # if trial % 10 == 0:
-            # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+        if trial % 20 == 0:
+            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      

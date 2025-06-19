@@ -228,8 +228,7 @@ def plotBarrier(model_b, dim_in=2):
 # Plotting 2D Dynamics
 def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None):
     device = next(model_v.parameters()).device
-    fig, ax = plt.subplots()
-    # Define grid for plotting
+    fig, ax = plt.subplots(figsize=(4, 4))    # Define grid for plotting
     RANGE = config["plotting"]["range"]
     flag_barrier = config["Barrier"]
     flag_contour = config["plotting"]["contour"]
@@ -373,14 +372,11 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
     plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-    plotting_config = config["plotting"]
-    plot_name = plotting_config.get("name", "Final Plot with Obstacles")
-    plt.title(plot_name)
+    ax.set_aspect('equal', adjustable='box')  # Maintain equal aspect ratio
     plt.grid(True)
-    # plt.axis('auto')
-    plt.axis('scaled') 
-    plt.margins(x=0,y=0)
-    plt.tight_layout()
+    plt.margins(0)
+    plt.tight_layout(pad=0)  # Remove padding around the figure
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Fill the entire figure space
     return fig
 
 # Plotting 3D Dynamics
@@ -534,7 +530,6 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
     # Convert X and Y to torch tensors
     X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
     Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
-
     # Concatenate X and Y to create input data tensor
     input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
     unflatten = torch.nn.Unflatten(0, len_sample)
@@ -684,3 +679,151 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
     plt.tight_layout()
 
     return fig
+
+#2D Real-Time Plotting
+def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None):
+    device = next(model_v.parameters()).device
+    fig, ax = plt.subplots()
+    # Define grid for plotting
+    RANGE = config["plotting"]["range"]
+    flag_barrier = config["Barrier"]
+    flag_contour = config["plotting"]["contour"]
+    flag_legend = config["plotting"]["legend"]
+    
+    len_sample = [128, 128]
+    x = np.linspace(RANGE[0][0], RANGE[0][1], len_sample[0])
+    y = np.linspace(RANGE[1][0], RANGE[1][1], len_sample[1])
+    X, Y = np.meshgrid(x, y)
+    # Convert X and Y to torch tensors
+    X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
+    Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+    # Concatenate X and Y to create input data tensor
+    input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
+    unflatten = torch.nn.Unflatten(0, len_sample)
+    # Streamplot
+    with torch.no_grad():
+        V_out = model_v(input_data)
+        F_out = model_f(input_data)
+        vect_out = unflatten(F_out)
+        vect_out = vect_out.cpu().detach().numpy()
+        U = vect_out[:,:, 0]
+        V = vect_out[:,:,1]
+        vout = unflatten(V_out).cpu().detach().numpy()
+        if flag_barrier and model_b is not None:
+            B_out = model_b(input_data)
+            bout = unflatten(B_out).cpu().detach().numpy()
+    stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#a5a1a1')
+    # Create proxy artist for streamplot
+    arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='#a5a1a1', marker='>', markeredgewidth=2, markersize=5, label='Vector Field')
+    # Contour for Lyapunov Function
+    if flag_contour:
+        plt.contourf(X, Y, vout[:,:,0], cmap=cm.lajolla)
+    # Plotting the Training Data
+    initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
+    for i in range(len(demos)):
+        ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
+    plt.contour(X, Y, bout[:,:,0], levels=[0], colors='#cdebc5')
+    plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='#cdebc5')
+    contour_fill_legend = mpl.patches.Patch(color='#cdebc5', label=' $ \{x \in X \mid \mathrm{B}(x) \leq 0\}$')        
+    # Plotting the Initial Set
+    init_range = config["plotting"]["init_range"]
+    x_min = init_range[0][0]
+    x_max = init_range[0][1]
+    y_min = init_range[1][0]
+    y_max = init_range[1][1]
+    initial = patches.Rectangle(
+    (x_min, y_min),  # Bottom-left corner (x_min, y_min)
+    x_max - x_min,   # Width
+    y_max - y_min,   # Height
+    linewidth=2,     # Border thickness
+    edgecolor='cyan',  # Border color
+    facecolor='cyan',   # Transparent fill
+    label="Initial Set"
+    )
+
+    ax.add_patch(initial)
+
+    if config["unsafe"]["shape"] == 'Rectangle':
+        unsafe_rect_range = config["unsafe"]["range"]
+        if "unbounded" in config["unsafe"]:
+            flag_max_min = config["unsafe"]["max_min"]
+            flag_xy = config["unsafe"]["unbounded"]
+            if flag_max_min == "min" and flag_xy == "x":
+                unsafe_rect_range[0].append(1.0)
+            elif flag_max_min == "max" and flag_xy == "x":
+                unsafe_rect_range[0].insert(0,-1)
+            elif flag_max_min == "min" and flag_xy == "y":
+                unsafe_rect_range[1].append(1.0)
+            elif flag_max_min == "max" and flag_xy == "y":
+                unsafe_rect_range[1].insert(0,-1)
+        x_min = unsafe_rect_range[0][0]
+        x_max = unsafe_rect_range[0][1]
+        y_min = unsafe_rect_range[1][0]
+        y_max = unsafe_rect_range[1][1]
+        unsafe = patches.Rectangle(
+        (x_min, y_min),  # Bottom-left corner (x_min, y_min)
+        x_max - x_min,   # Width
+        y_max - y_min,   # Height
+        linewidth=2,     # Border thickness
+        edgecolor='red',  # Border color
+        facecolor='red', # Transparent fill
+        alpha = 0.5, 
+        label = "Unsafe Set"
+        )
+        ax.add_patch(unsafe)
+    elif config["unsafe"]["shape"] == 'Circle':
+        unsafe_set_center = config["unsafe"]["center"]
+        unsafe_set_radius = config["unsafe"]["radius"]
+        if isinstance(unsafe_set_center[0], (int, float)):
+            unsafe = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label="Unsafe Set")
+            ax.add_patch(unsafe)
+        else:
+            for ind, center in enumerate(unsafe_set_center):
+                unsafe = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label=f"Unsafe Set {ind+1}")
+                ax.add_patch(unsafe)
+    elif config["unsafe"]["shape"] == 'Custom':
+        function = config["unsafe"]["function"]
+        function = function.replace("torch.max", "np.maximum")
+        function = function.replace("torch.", "np.")
+        x = np.linspace(RANGE[0][0], RANGE[0][1], 500)
+        y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
+        x,y = np.meshgrid(x, y)
+        mask = (eval(function) <= 0)
+        unsafe = plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+        # plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
+        # plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
+
+    # Equilibrium Point
+    plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
+
+    if x_data is not None and y_data is not None:
+        robot_line = ax.plot([],[],  "#49332b", label="Robot Trajectory", linewidth=2)[0]
+        def init():
+            robot_line.set_data([], [])
+            return robot_line,
+
+        def update(frame):
+            robot_line.set_data(x_data[:frame], y_data[:frame])
+            return robot_line,
+
+        ani = animation.FuncAnimation(fig, update, frames=len(x_data), init_func=init, blit=True, interval=1,
+                                      repeat=False, cache_frame_data=False)
+
+    #Adding all legends
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
+    plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
+
+    if flag_barrier and model_b is not None:
+         ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+            robot_line, initial, unsafe,
+            mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+            bbox_to_anchor=(1.05, 1), fontsize = 8)
+    else:
+        ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
+                mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                bbox_to_anchor=(1.05, 1), fontsize = 8)
+
+    return fig, ani

@@ -60,53 +60,59 @@
         "lyap_tol": 0.0,
         "pos_tol": 0.0,
         "bar_tol": 0.0,
-        "inun_tol": 0.0001,
-        "lb": 0.0,
-        "ub": 0.0
+        "inun_tol": 0.0,
+        "lb": 0,
+        "ub": 0
     },
     "verification": {
         "N_conf": 200000,
-        "epsilon": 0.01
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "plots": true,
     "plotting": {
         "range": [
             [
-                -1.2,
-                0.2
+                -1.10,
+                0.15
             ],
             [
-                -0.4,
-                0.4
+                -0.65,
+                0.45
             ]
         ],
         "contour": false,
         "legend": false,
-        "name": "Sine",
-        "dt": 0.005768861400492263,
-        "init_center": [
-            -0.9383592762097986,
-            0.02880046315276329
-        ],
-        "init_rad": 0.07,
-        "initial_conditions": [
+        "name": "Sine - S2DS",
+        "init_range": [
             [
-                -0.9383592762097986,
-                0.02880046315276329
+                -1.0,
+                -0.8814084305561762
             ],
             [
-                -0.8839833736419678,
-                0.02664649486541748
+                -0.038779342303253486,
+                0.07164319133394743
             ]
-        ]
+        ],
+        "initial_conditions": [
+            [
+                -0.9396378059592285,
+                0.02883970425142531
+            ],
+            [
+                -0.9830392980575562,
+                -0.0026732683181762695
+            ]
+        ],
+        "dt": 0.005768861400492263
     },
     "hyperparameters": {
-        "max_iters": 60,
-        "decay_mse": 10,
+        "max_iters": 30,
+        "max_iters_ft": 30,
+        "decay_mse": 5,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 1,
+        "decay_lv": 1.2,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
@@ -119,7 +125,7 @@
         "pos_tol": 0.01,
         "bar_tol": 0.01,
         "inun_tol": 0.0001,
-        "lie_tol": 0.05,
+        "lie_tol": 0.005,
         "reg_bar": 0.001,
         "reg_v": 0.001
     }
