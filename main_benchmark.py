@@ -181,8 +181,8 @@ class MotionPlanner:
         self.initial_set_center = (np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling).reshape(1,2)
         train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
         test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
-        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
         self.demos = np.array(self.demos)
         for i in range(len(self.demos)):
             self.demos[i].pos /= self.pos_scaling.cpu().detach().numpy()
@@ -253,10 +253,10 @@ class MotionPlanner:
         init_batch_size = max(2, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(2, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"]["batch_size"], shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"]["batch_size"], shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
         self.N_cex_domain = self.config["counterex"]["N_cex_domain"] #The number of counterexample samples we want in the domain region        
         
@@ -268,7 +268,7 @@ class MotionPlanner:
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
                     lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
-            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+            # self.optimizer_f_state_dict = self.optimizer_f.state_dict()
     
     def generate_counterexample_data(self):
         self.load_model_states()     
@@ -353,9 +353,9 @@ class MotionPlanner:
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
     def trainInitialDynamics(self):
         self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
@@ -371,7 +371,7 @@ class MotionPlanner:
         loss_fn = nn.MSELoss()  
         self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
         self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
-                                                                    patience=self.config["model_f"]["lr_patience"], verbose=True)
+                                                                    patience=self.config["model_f"]["lr_patience"])
         for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
@@ -421,7 +421,7 @@ class MotionPlanner:
             warmup_scheduler_v = opt.WarmUpLR(self.optimizer_v, self.config["model_v"]["warmup"], self.config["model_v"]["learning_rate"])
                 
             self.scheduler_v = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_v, mode = 'min', factor = self.config["model_v"]["lr_factor"],
-                                                                    patience = self.config["model_v"]["lr_patience"], verbose = True)
+                                                                    patience = self.config["model_v"]["lr_patience"])
             
             #Building the Barrier Model
             hidden_neurons_b = self.config["model_b"]["hidden_neurons"]
@@ -436,7 +436,7 @@ class MotionPlanner:
             warmup_scheduler_b = opt.WarmUpLR(self.optimizer_b, self.config["model_b"]["warmup"], self.config["model_b"]["learning_rate"])
             
             self.scheduler_b = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_b, mode = 'min', factor = self.config["model_b"]["lr_factor"],
-                                                                    patience = self.config["model_b"]["lr_patience"], verbose = True)
+                                                                    patience = self.config["model_b"]["lr_patience"])
 
             # Load the stored model state dictionary if available
             
@@ -603,7 +603,7 @@ class MotionPlanner:
             json.dump(config, config_file, indent=4)
 
     def save_datasets(self):
-        base_path = os.path.join('Datasets_2D', 'LASA', self.args.lasa_name+'_benchmark')
+        base_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Datasets', 'LASA', self.args.lasa_name+'_benchmark')
         os.makedirs(base_path, exist_ok = True)
         torch.save(self.X_train, os.path.join(base_path,"X_train.pt"))
         torch.save(self.y_train, os.path.join(base_path,"y_train.pt"))
@@ -614,15 +614,15 @@ if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])
     args = pyrallis.parse(ConfigFile, args=filtered_args)
-    seed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'seeds', f'{args.lasa_name}_seed_benchmark.json')
+    seed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'seeds', 'LASA', f'{args.lasa_name}_seed_benchmark.json')
     # Check if the seed file exists
     try:
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
-    # print(seed)
-    set_seed(87)
-    # set_seed(seed)
+    # set_seed(87)
+    set_seed(seed)
+    print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
@@ -639,8 +639,8 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        if trial % 10 == 0:
-            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+        # if trial % 10 == 0:
+            # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      

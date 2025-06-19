@@ -219,13 +219,12 @@ def conformal_prediction(model_v, model_b, model_f,input_domain, init_domain, un
     lie_bar = torch.sort(lie_bar, descending=False).values
     B_init = torch.sort(B_init, descending=False).values
     B_uns = torch.sort(B_uns, descending=False).values
-
     #Compute the non conformity prediction scores
     quantile_n = math.ceil((N+1)*(1-epsilon))/N
-    score_lie_lyap = torch.quantile(lie_lyap,quantile_n, interpolation='lower')
-    score_V_pos = torch.quantile(V_pos,quantile_n, interpolation='lower')
-    score_lie_bar = torch.quantile(lie_bar, quantile_n, interpolation='lower')
-    score_B_init = torch.quantile(B_init, quantile_n, interpolation='lower')
-    score_B_uns = torch.quantile(B_uns, quantile_n, interpolation='lower')
+    score_lie_lyap = torch.quantile(lie_lyap,quantile_n, interpolation='higher')
+    score_V_pos = torch.quantile(V_pos,quantile_n, interpolation='higher')
+    score_lie_bar = torch.quantile(lie_bar, quantile_n, interpolation='higher')
+    score_B_init = torch.quantile(B_init, quantile_n, interpolation='higher')
+    score_B_uns = torch.quantile(B_uns, quantile_n, interpolation='higher')
     q = max(score_lie_lyap, score_V_pos, score_lie_bar, score_B_init, score_B_uns)
-    return beta, q
+    return q, beta

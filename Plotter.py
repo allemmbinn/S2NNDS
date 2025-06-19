@@ -677,7 +677,7 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
     #dataset = config["plotting"]["name"]
     #plt.title(dataset)
     plt.grid(True)
-    plt.axis('equal')
+    plt.axis('scaled')
     plt.margins(x=0,y=0)
     plt.xticks(fontsize=6)
     plt.yticks(fontsize=6)
