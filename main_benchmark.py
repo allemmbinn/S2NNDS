@@ -1,7 +1,7 @@
 from common_header import *
 import NNModels
-import data_new as data
-import Loss_Functions_new as Loss_Functions
+import data
+import Loss_Functions
 import opt 
 import Plotter
 import verification
@@ -38,9 +38,8 @@ class MotionPlanner:
     def __init__(self, args):
         self.args = args
         # Load the configuration file
-        self.par_dir_path = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config_files", "LASA", f"{self.args.lasa_name}_config_benchmark.json")
         # file_path = "./config_files/" + self.args.lasa_name + "_config_benchmark.json"
-        file_path = os.path.join(self.par_dir_path, 'config_files', self.args.dataset_type, self.args.lasa_name + "_config_benchmark.json")
         print_info(f"Loading configuration file from {file_path}")
         with open(file_path) as file:
             self.config = json.load(file)
@@ -94,17 +93,18 @@ class MotionPlanner:
         torch.save(model, model_path)
    
     def save_all_models(self):
-        base_path = os.path.join('models', self.args.lasa_name)
+        base_path = os.path.join('models', 'LASA', self.args.lasa_name + '_benchmark')
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
         self.save_model(self.model_f, os.path.join(base_path, 'model_f.pth'))
         self.save_model(self.model_v, os.path.join(base_path, 'model_v.pth'))
         self.save_model(self.model_b, os.path.join(base_path, 'model_b.pth'))
 
     def export_onnx(self):
-        base_path = os.path.join(self.par_dir_path, 'models_onnx', 'LASA')
+        base_path = os.path.join('models_onnx', 'LASA')
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
+        self.model_f = self.model_f.to(self.device)
         self.model_f.eval()
-        self.initial_point = self.initial_set_center[0].reshape(1,2).to(dtype=torch.float32)
+        self.initial_point = self.initial_set_center[0].reshape(1,2).to(dtype=torch.float32, device=self.device)  
         torch.onnx.export(
                 self.model_f,
                 self.initial_point,
@@ -125,12 +125,20 @@ class MotionPlanner:
                 dataset = lasa.DataSet.Angle
             elif self.args.lasa_name == "Worm":
                 dataset = lasa.DataSet.Worm
+            elif self.args.lasa_name == "CShape":
+                dataset = lasa.DataSet.CShape
+            elif self.args.lasa_name == "DoubleBendedLine":
+                dataset = lasa.DataSet.DoubleBendedLine
+            elif self.args.lasa_name == "GShape":
+                dataset = lasa.DataSet.GShape
             elif self.args.lasa_name == "Sshape":
                 dataset = lasa.DataSet.Sshape
             elif self.args.lasa_name == "Leaf_2":
                 dataset = lasa.DataSet.Leaf_2
             elif self.args.lasa_name == "Sine":
                 dataset = lasa.DataSet.Sine
+            elif self.args.lasa_name == "heee":
+                dataset = lasa.DataSet.heee
             elif self.args.lasa_name == "PShape":
                 dataset = lasa.DataSet.PShape
             elif self.args.lasa_name == "NShape":
@@ -173,8 +181,12 @@ class MotionPlanner:
         self.initial_set_center = (np.mean([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0)/self.pos_scaling).reshape(1,2)
         train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
         test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
-        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.demos = np.array(self.demos)
+        for i in range(len(self.demos)):
+            self.demos[i].pos /= self.pos_scaling.cpu().detach().numpy()
+            self.demos[i].vel /= self.vel_scaling.cpu().detach().numpy()
 
     def generate_domain_data(self):
         self.N_domain = self.config["domain"]["N"] #The number of samples we want in the domain region
@@ -241,10 +253,10 @@ class MotionPlanner:
         init_batch_size = max(2, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(2, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"]["batch_size"], shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["model_b"]["batch_size"], shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
         self.N_cex_domain = self.config["counterex"]["N_cex_domain"] #The number of counterexample samples we want in the domain region        
         
@@ -274,7 +286,6 @@ class MotionPlanner:
             y = input_domain[:,1]
             result = eval(self.config["unsafe"]["function"])
             unsafe_domain = input_domain[result <= 0]
-
         counterexamples_domain = verification.verify_domain(self.model_v, self.model_b, self.model_f, input_domain, self.config)
         counterexamples_init = verification.verify_init(self.model_b, init_domain, self.config)
         counterexamples_unsafe = verification.verify_unsafe(self.model_b, unsafe_domain, self.config)
@@ -311,6 +322,7 @@ class MotionPlanner:
              self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
              mask = (torch.linalg.norm(self.domain - self.init_center, dim =1) <= self.init_rad) 
              self.init_domain = self.domain[mask]            
+             #self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
              if self.config["unsafe"]["shape"] == 'Rectangle':
                 self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
              elif self.config["unsafe"]["shape"] == 'Circle':
@@ -341,42 +353,40 @@ class MotionPlanner:
         init_batch_size = max(4, int(len(self.init_domain) / total_size * self.batch_size))
         unsafe_batch_size = max(3, int(len(self.unsafe_domain) / total_size * self.batch_size))
 
-        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
-        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=0, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.domain_loader = torch.utils.data.DataLoader(domain_dataset, batch_size=domain_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.init_loader = torch.utils.data.DataLoader(init_dataset, batch_size=init_batch_size,  shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
+        self.unsafe_loader = torch.utils.data.DataLoader(unsafe_dataset, batch_size=unsafe_batch_size, shuffle=True, num_workers=2, pin_memory=True, worker_init_fn=self.seed_worker, generator=self.g)
 
     def trainInitialDynamics(self):
         self.hidden_neurons_f = self.config["model_f"]["hidden_neurons"]
         self.hidden_layers_f = self.config["model_f"]["layers"]
         sigmoid_f = NNModels.assignActivationFunction(self.config['model_f']['activation_function'])
         self.hidden_f = [self.hidden_neurons_f] * self.hidden_layers_f
-        self.model_f = NNModels.DyanmicsNet(self.dim_in, self.hidden_f, sigmoid_f).to(self.device)
+        self.model_f = NNModels.DyanmicsNet(self.dim_in, 
+                                            self.hidden_f, 
+                                            sigmoid_f).to(self.device)
         best_mse = np.inf   # init to infinity
         best_weights = None
         history = []
-        loss_fn = nn.MSELoss() 
+        loss_fn = nn.MSELoss()  
         self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
         self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
                                                                     patience=self.config["model_f"]["lr_patience"], verbose=True)
         for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
             total_loss = 0
-            # print(epoch)
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
                 # Calculate the loss
                 x_val = X_batch.float().to(self.device)
                 y_pred = self.model_f(x_val)
                 #hyperparameter for l2 regularization
-                loss_mse = loss_fn(y_pred, y_batch.float().to(self.device))
+                loss_mse = loss_fn(y_pred, y_batch.float().to(self.device)) 
                 loss = loss_mse 
                 # backward pass
                 self.optimizer_f.zero_grad()
                 loss.backward()
                 self.optimizer_f.step()
-                #self.model_f.clip_weights()
                 total_loss += loss.item()
-            # Log the Training Loss
-            #evaluate accuracy at end of each epoch           
             self.model_f.eval()
             for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
@@ -393,6 +403,7 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+
         print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def trainCertificate(self):
@@ -419,7 +430,6 @@ class MotionPlanner:
             self.model_b = NNModels.BarrierNet(
             n_input=self.dim_in,
             hidden_b=hidden_b,
-            #thresholds = self.config["model_b"]["clip"],
             sigmoid_b=NNModels.assignActivationFunction(self.config['model_b']['activation_function'])).to(self.device)
             #Optimizer and Scheduler for Barrier Function
             self.optimizer_b = torch.optim.Adam(self.model_b.parameters(), lr = self.config["model_b"]["learning_rate"], weight_decay = self.config["hyperparameters"]["reg_bar"])
@@ -429,7 +439,9 @@ class MotionPlanner:
                                                                     patience = self.config["model_b"]["lr_patience"], verbose = True)
 
             # Load the stored model state dictionary if available
+            
             self.load_model_states()        
+
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
 
@@ -455,6 +467,7 @@ class MotionPlanner:
                                 pass
                             else:
                                 self.optimizer_f.step()
+
                     else:
                         loss_domain_v = torch.tensor(0.0, requires_grad = True)
                     
@@ -486,29 +499,22 @@ class MotionPlanner:
                             else:
                                 self.optimizer_f.step()
 
-                        #self.model_b.clip_weights()
                     if batches[1] is not None:
                          input_train = batches[1][0].to(self.device)
                          output_train = batches[1][1].to(self.device)
                          self.optimizer_f.zero_grad()
                          loss_train = Loss_Functions.loss_function_dyn(self.model_f, input_train, output_train, self.config)
-                         loss_init = torch.tensor(0.0, requires_grad=True)
-                         if batches[2] is not None:
-                            input_init = batches[2][0].to(self.device)
-                            loss_init = Loss_Functions.loss_function_init_direction(self.model_f, input_train, output_train, input_init, self.initial_set_center[0], self.config)
-                         loss_dyn = loss_train + loss_init
-                         loss_dyn.backward()
+                         loss_train.backward()
                          torch.nn.utils.clip_grad_norm_(self.model_f.parameters(), max_norm=1.0)
                          self.optimizer_f.step()
-                         #self.model_f.clip_weights()
  
                     else:
-                        loss_dyn = torch.tensor(0.0, requires_grad=True)
+                        loss_train = torch.tensor(0.0, requires_grad=True)
                     
                     # Calculate average training loss for the epoch
                     cert_loss_b += loss_b
                     cert_loss_v += loss_domain_v
-                    dyn_loss += loss_dyn
+                    dyn_loss += loss_train
 
                     avg_loss_f = dyn_loss / len(self.train_loader)
                     # Step the scheduler with training loss
@@ -525,8 +531,7 @@ class MotionPlanner:
                     else:
                         avg_loss_cert_b = cert_loss_b/len(self.domain_loader)
                         self.scheduler_b.step(avg_loss_cert_b)
-                # Log the training loss
-                decay=self.config["hyperparameters"]["decay_mse"]
+
             # Save the recent versions of model_v and model_b in memory
             self.model_v_state_dict = self.model_v.state_dict()
             self.model_b_state_dict = self.model_b.state_dict()
@@ -555,16 +560,16 @@ class MotionPlanner:
         if q <= 0:
             self.flag_verified = True
             conf = 1-self.config["verification"]["epsilon"]
-            print(f"With a confidence of {1-beta}, conditions are valid with probability {conf}")
+            print_success(f"With a confidence of {1-beta}, conditions are valid with probability {conf}")
         else:
             self.flag_verified = False
-            print(f"Verification failed with marginal safety error: {q}")
+            print_error(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
         self.model_f.eval()
         self.mse = 0
         total_samples = 0
-
+        self.model_f = self.model_f.to(self.device)
         for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
             y_pred = self.model_f(X_batch.float().to(self.device))
             loss_fn = nn.MSELoss(reduction = 'sum')
@@ -575,9 +580,11 @@ class MotionPlanner:
 
     def update_config(self):
         # Construct the init_range value
-        file_path = os.path.join(self.par_dir_path, 'config_files', self.args.dataset_type, self.args.lasa_name + "_config_benchmark.json")
         # file_path = "./config_files/" + self.args.lasa_name + "_config_benchmark.json"
+        file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files', 'LASA', self.args.lasa_name + '_config_benchmark.json')
+        init_center = self.init_center[0].tolist()
         initial_conditions = self.initial_set_center.tolist()
+        init_rad = self.init_rad
 
         # Load the existing configuration file
         with open(file_path, 'r') as config_file:
@@ -586,7 +593,8 @@ class MotionPlanner:
         # Update the 'plotting' key with the init_range
         if "plotting" not in config:
             config["plotting"] = {}
-        # config["plotting"]["init_range"] = init_range
+        config["plotting"]["init_center"] = init_center
+        config["plotting"]["init_rad"] = init_rad
         config["plotting"]["initial_conditions"] = initial_conditions
         config["plotting"]["dt"] = self.dt
 
@@ -595,7 +603,7 @@ class MotionPlanner:
             json.dump(config, config_file, indent=4)
 
     def save_datasets(self):
-        base_path = os.path.join('Datasets_2D', self.args.lasa_name)
+        base_path = os.path.join('Datasets_2D', 'LASA', self.args.lasa_name+'_benchmark')
         os.makedirs(base_path, exist_ok = True)
         torch.save(self.X_train, os.path.join(base_path,"X_train.pt"))
         torch.save(self.y_train, os.path.join(base_path,"y_train.pt"))
@@ -606,21 +614,21 @@ if __name__ == "__main__":
     # Settings Seeds for Reproducibility
     filtered_args = filter_args(sys.argv[1:])
     args = pyrallis.parse(ConfigFile, args=filtered_args)
-    par_dir_path = os.path.dirname(os.path.realpath(__file__))
-    seed_filepath = os.path.join(par_dir_path, 'seeds', args.lasa_name + '_seed_benchmark.json')
-    #Check if the seed file exists
+    seed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'seeds', f'{args.lasa_name}_seed_benchmark.json')
+    # Check if the seed file exists
     try:
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
-#     print(seed)
-    # set_seed(87)
+    # print(seed)
+    set_seed(87)
+    # set_seed(seed)
     mp = MotionPlanner(args)
     print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
     print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
+    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
     print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
@@ -631,16 +639,14 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        if trial % 5 == 0:
-            Plotter.plotObstacle(mp.model_f, mp.model_b, mp.X_train, mp.initial_set_center[0], mp.config)
+        if trial % 10 == 0:
+            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      
         else:
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            Plotter.initialDSPlot(mp.model_f, mp.X_train, mp.initial_set_center, mp.dt)
-            Plotter.plotLyapunov(mp.model_v)
-            Plotter.plotBarrier(mp.model_b)
+            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
                 import pdb; pdb.set_trace()
