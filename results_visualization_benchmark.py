@@ -4,6 +4,15 @@ import json
 import os
 import Plotter
 
+@dataclass
+class ConfigFile:
+    lasa_name : str = "Sine"
+    dataset_type : str = "LASA"  # This can also be 3D_Shapes
+
+def filter_args(args):
+    known_args = ['--lasa_name', '--dataset_type']
+    return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
+
 def load_config_models(model_name):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
@@ -27,12 +36,15 @@ def load_config_models(model_name):
         return None
     
 if __name__ == "__main__":
+    filtered_args = filter_args(sys.argv[1:])
+    args = pyrallis.parse(ConfigFile, args=filtered_args)
     parent_dir = os.path.dirname(os.path.realpath(__file__))
-    model_name = "Worm"  # Replace with the results of the dataset you want to plot
+    model_name = args.lasa_name
     config, model_v, model_b, model_f = load_config_models(model_name)
     path = os.path.join(parent_dir, 'Datasets', 'LASA', model_name + '_benchmark')
     X_train = torch.load(os.path.join(path, "X_train.pt"))
     plot = Plotter.benchmarkPlot(model_v, model_b, model_f, X_train, config)
+    plt.show()
     #Saving the plots
     plot.savefig(os.path.join(parent_dir, 'results', 'LASA', model_name + '_benchmark.svg'), format="svg", dpi=300)
 

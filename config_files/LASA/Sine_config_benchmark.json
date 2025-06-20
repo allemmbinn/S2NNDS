@@ -1,11 +1,11 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 64,
+        "hidden_neurons": 128,
         "layers": 3,
         "epochs_warm": 150,
         "learning_rate": 0.01,
-        "learning_rate_cert": 1e-08,
+        "learning_rate_cert": 1e-06,
         "train_f_cert": false,
         "cert_train_factor": 0.45,
         "batch_size": 1024,
@@ -16,7 +16,7 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 256   ,
+        "hidden_neurons": 128,
         "layers": 4,
         "lr_factor": 0.99,
         "lr_patience": 30,
@@ -65,7 +65,7 @@
         "ub": 0
     },
     "verification": {
-        "N_conf": 200000,
+        "N_conf": 150000,
         "epsilon": 0.0001
     },
     "Barrier": true,
@@ -73,7 +73,7 @@
     "plotting": {
         "range": [
             [
-                -1.10,
+                -1.1,
                 0.15
             ],
             [
@@ -96,15 +96,20 @@
         ],
         "initial_conditions": [
             [
-                -0.9396378059592285,
-                0.02883970425142531
+                -0.9383592762097986,
+                0.02880046315276329
             ],
             [
-                -0.9830392980575562,
-                -0.0026732683181762695
+                -0.8936630487442017,
+                0.02778303623199463
             ]
         ],
-        "dt": 0.005768861400492263
+        "dt": 0.005768861400492263,
+        "init_center": [
+            -0.9383592762097986,
+            0.02880046315276329
+        ],
+        "init_rad": 0.07
     },
     "hyperparameters": {
         "max_iters": 30,

@@ -1,8 +1,8 @@
 {
     "model_f": {
         "activation_function": "eLU",
-        "hidden_neurons": 128,
-        "layers": 4,
+        "hidden_neurons": 64,
+        "layers": 3,
         "epochs_warm": 200,
         "learning_rate": 0.001,
         "learning_rate_cert": 1e-08,
@@ -16,8 +16,8 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 256,
-        "layers": 5,
+        "hidden_neurons": 128,
+        "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
@@ -26,7 +26,7 @@
         "activation_function": "eLU",
         "learning_rate": 0.01,
         "hidden_neurons": 128,
-        "layers": 5,
+        "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "batch_size": 512,
@@ -100,8 +100,8 @@
                 -0.5973566159298854
             ],
             [
-                -0.7372832298278809,
-                -0.6412888765335083
+                -0.7461203336715698,
+                -0.7151204347610474
             ]
         ],
         "dt": 0.005376172925218552,
@@ -113,7 +113,7 @@
     },
     "hyperparameters": {
         "max_iters": 50,
-        "decay_mse": 12,
+        "decay_mse": 15,
         "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1,

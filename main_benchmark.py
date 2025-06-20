@@ -153,6 +153,7 @@ class MotionPlanner:
             self.dim_in = self.demos[0].pos.shape[0]
             train_size = int(5/7 * self.total_demos) # 5/7 datasets are used for training
             train_indices = random.sample(range(self.total_demos), train_size)
+            import pdb; pdb.set_trace()
             test_indices = list(set(range(self.total_demos)) - set(train_indices))
             self.X_train = np.concatenate([self.demos[i].pos for i in train_indices], axis=1).T
             self.X_test = np.concatenate([self.demos[i].pos for i in test_indices], axis=1).T
@@ -268,7 +269,9 @@ class MotionPlanner:
             else:
                 self.optimizer_f = torch.optim.Adam(self.model_f.parameters(),
                     lr=self.config["model_f"]["learning_rate_cert"], betas=(0.9, 0.999))
-            self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+            if "train_rate_change" not in self.config["model_f"] or self.config["model_f"]["train_rate_change"] == False:
+                self.optimizer_f_state_dict = self.optimizer_f.state_dict()
+
     
     def generate_counterexample_data(self):
         self.load_model_states()     
@@ -577,6 +580,7 @@ class MotionPlanner:
             self.mse += batch_mse.item()
             total_samples += X_batch.size(0)  
         self.mse = self.mse / total_samples
+        print_success(f"Final MSE of the model: {self.mse:.4f}")
 
     def update_config(self):
         # Construct the init_range value
@@ -621,6 +625,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
     # set_seed(87)
+    # seed = random.randint(0, 100)  # seed value
     set_seed(seed)
     print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
@@ -634,12 +639,13 @@ if __name__ == "__main__":
     iters = 1
     print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
+    mp.update_config()
     trial = 1
     while trial < 500:
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        if trial % 20 == 0:
+        if trial % 10 == 5:
             Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
@@ -659,6 +665,6 @@ if __name__ == "__main__":
                 #save datasets for results
                 mp.save_datasets()
                 break
-    if trial == 100:
+    if trial == 500:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
      
