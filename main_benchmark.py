@@ -625,7 +625,6 @@ if __name__ == "__main__":
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
     # set_seed(87)
-    # seed = random.randint(0, 100)  # seed value
     set_seed(seed)
     print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)

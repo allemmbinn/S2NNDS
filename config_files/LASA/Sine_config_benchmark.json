@@ -1,7 +1,7 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 128,
+        "hidden_neurons": 64,
         "layers": 3,
         "epochs_warm": 150,
         "learning_rate": 0.01,
@@ -16,7 +16,7 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 128,
+        "hidden_neurons": 256,
         "layers": 4,
         "lr_factor": 0.99,
         "lr_patience": 30,
@@ -100,8 +100,8 @@
                 0.02880046315276329
             ],
             [
-                -0.8936630487442017,
-                0.02778303623199463
+                -0.9419040679931641,
+                0.0784902572631836
             ]
         ],
         "dt": 0.005768861400492263,
