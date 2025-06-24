@@ -506,9 +506,9 @@ def final3DDSPlot(model_f, demos, initial_set_center, config, data_1=None, model
     if data_1 is not None:
         ax.plot(data_1["x"].to_numpy(), data_1["y"].to_numpy(), data_1["z"].to_numpy(), color="#49332b", label="Robot Trajectory", linewidth=3) 
     ax.scatter(0, 0, 0, color='black', s=150, label='Equilibrium (0,0,0)')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
     plt.title(config["plotting"]["name"])
     plt.grid(True)
     plt.tight_layout()
@@ -684,7 +684,7 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
 #2D Real-Time Plotting
 def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None):
     device = next(model_v.parameters()).device
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10,6))
     # Define grid for plotting
     RANGE = config["plotting"]["range"]
     flag_barrier = config["Barrier"]
@@ -797,8 +797,27 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
     # Equilibrium Point
     plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
 
+        #Adding all legends
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
+    plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
+
+
     if x_data is not None and y_data is not None:
         robot_line = ax.plot([],[],  "#49332b", label="Robot Trajectory", linewidth=2)[0]
+
+        if flag_barrier and model_b is not None:
+            ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                robot_line, initial, unsafe,
+                mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                bbox_to_anchor=(1.05, 1), fontsize = 8)
+        else:
+            ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                    mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
+                    mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                    bbox_to_anchor=(1.05, 1), fontsize = 8)
+
         def init():
             robot_line.set_data([], [])
             return robot_line,
@@ -810,24 +829,138 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
         ani = animation.FuncAnimation(fig, update, frames=len(x_data), init_func=init, blit=True, interval=1,
                                       repeat=False, cache_frame_data=False)
 
-    #Adding all legends
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
-    plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
 
-    if flag_barrier and model_b is not None:
-         ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-            robot_line, initial, unsafe,
-            mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-            bbox_to_anchor=(1.05, 1), fontsize = 8)
-    else:
-        ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
-                mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                bbox_to_anchor=(1.05, 1), fontsize = 8)
+        plt.tight_layout()
+    return fig, ani
+
+def realTimePlot3D(model_f, demos, initial_set_center, config, x_data, y_data, z_data):
+    device = next(model_f.parameters()).device
+    # device = torch.device('cpu')
+    # Create a figure and 3D axes
+    fig, ax = plt.subplots(figsize=(10,6))
+    ax = plt.axes(projection='3d')
+    for i in range(demos.shape[0]):
+        ax.plot3D(demos[i].pos[0,:], demos[i].pos[1,:], demos[i].pos[2,:], color = "#1F75FE", label="Demonstrated Trajectory" if i == 1 else "")
+
+    # For the sphere
+    if config["unsafe"]["shape"] == "Circle":
+        theta = np.linspace(0, 2 * np.pi, 100)
+        phi = np.linspace(0, np.pi, 50)
+        theta, phi = np.meshgrid(theta, phi)
+        unsafe_set_center = config["unsafe"]["center"]
+        unsafe_set_radius = config["unsafe"]["radius"]
+        if isinstance(unsafe_set_center[0], (int, float)):
+            x = unsafe_set_center[0] + unsafe_set_radius * np.sin(phi) * np.cos(theta)
+            y = unsafe_set_center[1] + unsafe_set_radius * np.sin(phi) * np.sin(theta)
+            z = unsafe_set_center[2] + unsafe_set_radius * np.cos(phi)
+            unsafe = ax.plot_surface(x, y, z, facecolor=(1, 0, 0, 0.2), edgecolor=(1, 0, 0, 0.05), linewidth=2, label="Unsafe Set", alpha = 0.1)
+        else:
+            for center in unsafe_set_center:
+                x = center[0] + unsafe_set_radius * np.sin(phi) * np.cos(theta)
+                y = center[1] + unsafe_set_radius * np.sin(phi) * np.sin(theta)
+                z = center[2] + unsafe_set_radius * np.cos(phi)
+                unsafe = ax.plot_surface(x, y, z, facecolor=(1, 0, 0, 0.2), edgecolor=(1, 0, 0, 0.05), linewidth=2, label="Unsafe Set", alpha = 0.5)
+    elif config["unsafe"]["shape"] == "Rectangle":
+        RANGE = np.array(config["unsafe"]["range"])
+        RANGE = RANGE.reshape(-1, 3, 2)
+        for i in range(RANGE.shape[0]):
+            x_min, x_max = RANGE[i][0]
+            y_min, y_max = RANGE[i][1]
+            z_min, z_max = RANGE[i][2]
+
+            # Define the 8 corners of the cuboid
+            corners = np.array([
+                [x_min, y_min, z_min],
+                [x_max, y_min, z_min],
+                [x_max, y_max, z_min],
+                [x_min, y_max, z_min],
+                [x_min, y_min, z_max],
+                [x_max, y_min, z_max],
+                [x_max, y_max, z_max],
+                [x_min, y_max, z_max]
+            ])
+
+            # Define the 6 faces using the corners
+            faces = [
+                [corners[0], corners[1], corners[2], corners[3]],  # bottom
+                [corners[4], corners[5], corners[6], corners[7]],  # top
+                [corners[0], corners[1], corners[5], corners[4]],  # front
+                [corners[2], corners[3], corners[7], corners[6]],  # back
+                [corners[1], corners[2], corners[6], corners[5]],  # right
+                [corners[3], corners[0], corners[4], corners[7]],  # left
+            ]
+            
+            unsafe = ax.add_collection3d(Poly3DCollection(faces, facecolors='red', linewidths=1, edgecolors='red', alpha=0.2))
+
+    # For the Init Cube
+    x_min, x_max = config["plotting"]["init_range"][0]
+    y_min, y_max = config["plotting"]["init_range"][1]
+    z_min, z_max = config["plotting"]["init_range"][2]
+
+    # Define the 8 corners of the cuboid
+    corners = np.array([
+        [x_min, y_min, z_min],
+        [x_max, y_min, z_min],
+        [x_max, y_max, z_min],
+        [x_min, y_max, z_min],
+        [x_min, y_min, z_max],
+        [x_max, y_min, z_max],
+        [x_max, y_max, z_max],
+        [x_min, y_max, z_max]
+    ])
+
+    # Define the 6 faces using the corners
+    faces = [
+        [corners[0], corners[1], corners[2], corners[3]],  # bottom
+        [corners[4], corners[5], corners[6], corners[7]],  # top
+        [corners[0], corners[1], corners[5], corners[4]],  # front
+        [corners[2], corners[3], corners[7], corners[6]],  # back
+        [corners[1], corners[2], corners[6], corners[5]],  # right
+        [corners[3], corners[0], corners[4], corners[7]],  # left
+    ]
+    
+    init = ax.add_collection3d(Poly3DCollection(faces, facecolors='cyan', linewidths=1, edgecolors='cyan', alpha=0.2))
+    eq_point = ax.scatter(0, 0, 0, color='black', s=150, label='Equilibrium (0,0,0)')
+    robot_line = ax.plot([],[], [], "#49332b", label="Robot Trajectory", linewidth=2)[0]
+
+    # --- Proxy artists for legend ---
+    demo_traj_proxy = Line2D([0], [0], color='#1F75FE', linewidth=2, label='Demonstrated Trajectories')
+    robot_traj_proxy = Line2D([0], [0], color='#49332b', linewidth=2, label='Robot Trajectory')
+    init_cube_proxy = Patch(facecolor='cyan', edgecolor='cyan', alpha=0.2, label='Initial Set')
+    unsafe_cube_proxy = Patch(facecolor='red', edgecolor='red', alpha=0.2, label='Unsafe Set')
+    eq_proxy = Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=10, label='Equilibrium (0,0,0)')
+
+
+    ax.legend(handles=[
+        demo_traj_proxy,
+        robot_traj_proxy,
+        init_cube_proxy,
+        unsafe_cube_proxy,
+        eq_proxy
+    ], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                    bbox_to_anchor=(1.05, 1), fontsize = 8)
+
+    def init():
+        robot_line.set_data([], [])
+        robot_line.set_3d_properties([])
+        return robot_line,
+
+    def update(frame):
+        robot_line.set_data(x_data[:frame], y_data[:frame])
+        robot_line.set_3d_properties(z_data[:frame])
+        return robot_line,
+
+    ani = animation.FuncAnimation(fig, update, frames=len(x_data), init_func=init, blit=True, interval=1,
+                                    repeat=False, cache_frame_data=False)
+
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    plt.grid(True)
+    plt.tight_layout()
 
     return fig, ani
+
 
 # Replaces the variables of MATLAB-like polynomials with numpy variables
 def compile_poly(expr: str):

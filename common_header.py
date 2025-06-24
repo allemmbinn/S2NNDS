@@ -13,6 +13,16 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.patches as patches
 from mpl_toolkits import mplot3d
 import matplotlib.animation as animation
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtGui, QtCore
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from cmcrameri import cm
+from tqdm import tqdm
+from matplotlib.patches import Patch
+from matplotlib.lines import Line2D
+
+
 
 # Data Processing Requirements
 import numpy as np
