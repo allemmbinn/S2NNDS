@@ -4,7 +4,7 @@ import Plotter
 @dataclass
 class ConfigFile:
     lasa_name : str = "Sine"
-    dataset_type : str = "LASA"  # This can also be 3D_Shapes
+    dataset_type : str = "LASA"  
 
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type']
@@ -37,11 +37,21 @@ if __name__ == "__main__":
     args = pyrallis.parse(ConfigFile, args=filtered_args)
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     model_name = args.lasa_name
+    # Obtain the models for S2-NNDS
     config, model_v, model_b, model_f = load_config_models(model_name)
-    path = os.path.join(parent_dir, 'Datasets', 'LASA', model_name + '_benchmark')
-    X_train = torch.load(os.path.join(path, "X_train.pt"))
-    plot = Plotter.benchmarkPlot(model_v, model_b, model_f, X_train, config)
+    # Obtain the polynomials of ABC-DS
+    abc_result_path = os.path.join(parent_dir, 'abc_ds_config', f"{model_name}_result_config.json")
+    try:
+        with open(abc_result_path, 'r') as result_file:
+            abc_data = json.load(result_file)
+    except FileNotFoundError:
+        print(f"Error: Result file '{abc_result_path}' not found.")
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"Error: Failed to parse JSON file '{abc_result_path}'. {e}")
+        sys.exit(1)    
+    plot = Plotter.combinedBenchmarkPlot(abc_data, model_b, model_f, config, model_name)
     plt.show()
     #Saving the plots
-    plot.savefig(os.path.join(parent_dir, 'results', 'LASA', model_name + '_benchmark.svg'), format="svg", dpi=300)
+    plot.savefig(os.path.join(parent_dir, 'results', 'LASA', model_name + '_combined_benchmark.svg'), format="svg", dpi=300)
 

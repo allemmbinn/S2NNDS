@@ -1,6 +1,7 @@
 from common_header import *
 from cmcrameri import cm
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import matplotlib.patches as mpatches
 
 # Plotting of the Dynamics without the Barrier
 def initialDSPlot(model_f, demos, initial_set_center, dim_in, config, model_b=None):
@@ -593,7 +594,8 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
             linewidth=2,     # Border thickness
             edgecolor='cyan',  # Border color
             facecolor='cyan',   # Transparent fill
-            label="Initial Set"
+            label="Initial Set",
+            alpha=0.6
         )
         ax.add_patch(initial)
 
@@ -1046,8 +1048,8 @@ def abcdsPlot(data, demos, config, lasa_name):
     # For the vector field
     U = fx_poly(X, Y)
     V = fy_poly(X, Y)
-    stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#a5a1a1')
-    arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='#a5a1a1', marker='>', markeredgewidth=2, markersize=5, label='Vector Field')
+    # stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#a5a1a1')
+    # arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='#a5a1a1', marker='>', markeredgewidth=2, markersize=5, label='Vector Field')
     # For the Lyapunov function and Barrier function
     V_out = V_poly(X, Y)
     B_out = B_poly(X, Y)
@@ -1056,8 +1058,8 @@ def abcdsPlot(data, demos, config, lasa_name):
         plt.contourf(X, Y, V_out, cmap=cm.lajolla)
     # Plotting the Training Data
     initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
-    for i in range(len(demos)):
-        ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
+    # for i in range(len(demos)):
+    #     ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
     # Plotting the final trajectory
     n = 10000
     dt = config["plotting"]["dt"]    
@@ -1168,4 +1170,166 @@ def abcdsPlot(data, demos, config, lasa_name):
     plt.yticks(fontsize=6)
     plt.tight_layout()
     return fig
+
+def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
+    fig, ax = plt.subplots(figsize=(4, 4))    # Define grid for plotting
+    RANGE = config["plotting"]["range"]
+    flag_barrier = config["Barrier"]
+    device = next(model_f.parameters()).device
+
+    # Get the polynomials
+    f1_str, f2_str = abc_data["f_fh_str_arr"]
+    B_str = abc_data["B_fh_str_arr"]
     
+    # Compile the polynomials
+    fx_poly, fy_poly = map(compile_poly, (f1_str, f2_str))
+    B_poly = compile_poly(B_str)
+     
+    len_sample = [256, 256]
+    x = np.linspace(RANGE[0][0], RANGE[0][1], len_sample[0])
+    y = np.linspace(RANGE[1][0], RANGE[1][1], len_sample[1])
+    X, Y = np.meshgrid(x, y)
+    
+    # FOR ABC-DS
+    # For the Barrier function
+    B_out_abc = B_poly(X, Y)
+    mask_abc = (B_out_abc < 0)
+    # Plot the contour for ABC-DS
+    contour_abc = ax.contour(X, Y, B_out_abc, levels=[0], colors='#60c040', linewidths=1)
+    contourf_abc = ax.contourf(X, Y, mask_abc, levels=[0.5, 1], colors='#cdebc5', alpha=0.7, zorder=1)
+    # plt.contour(X, Y, B_out_abc, levels=[0], colors='#cdebc5')
+    # plt.contourf(X, Y, B_out_abc, levels=[-np.inf, 0], colors='#cdebc5')
+
+
+    # FOR S2-NNDS
+    X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
+    Y_tensor = torch.tensor(Y, dtype=torch.float32).to(device)
+    input_data = torch.stack((X_tensor, Y_tensor), dim=-1).reshape(-1, 2).to(device)
+    unflatten = torch.nn.Unflatten(0, len_sample)
+    with torch.no_grad():
+        B_out = model_b(input_data)
+        B_out_nnds = unflatten(B_out).cpu().detach().numpy()[:,:,0]       
+    mask_nnds = (B_out_nnds < 0)
+    contour_nnds = ax.contour(X, Y, B_out_nnds, levels=[0], colors='#0e5fde', linewidths=1)
+    contourf_nnds = ax.contourf(X, Y, mask_nnds, levels=[0.5, 1], colors='#b0c4ff', alpha=0.5, zorder=2)
+    # plt.contour(X, Y, B_out_nnds[:,:,0], levels=[0], colors='#cdebc5')
+    # plt.contourf(X, Y, B_out_nnds[:,:,0], levels=[-np.inf, 0], colors='#b0c4ff')
+    
+    # Intersection Region
+    mask_intersect = mask_abc & mask_nnds
+    contourf_inter = ax.contourf(X, Y, mask_intersect, levels=[0.5, 1], colors='#b074ff', alpha=0.7, zorder=3)  # purple
+
+    # Plotting the Training Data
+    initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
+    # Plotting the final trajectory
+    n = 10000
+    dt = config["plotting"]["dt"]    
+    for i in range(initial_set_center.shape[0]):
+        # Initialize the trajectory with the initial condition
+        x = np.zeros((n, 2))
+        x[0, :] = initial_set_center[i].clone().detach().numpy()
+        for j in range(1, n):
+            vx, vy = fx_poly(x[j-1, 0], x[j-1, 1]), fy_poly(x[j-1, 0], x[j-1, 1])
+            x[j, 0] = x[j-1, 0] + vx * dt
+            x[j, 1] = x[j-1, 1] + vy * dt
+        ax.plot(x[:, 0], x[:, 1], color='#ff00ff', label="ABC-DS Trajectory" if i == 0 else None, zorder=5)
+
+
+    for i in range(initial_set_center.shape[0]):
+        x = torch.zeros((n, 2)).to(device)
+        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        for j in range(1, n):
+            Fout = model_f(x[j-1])
+            x[j] = x[j-1] + Fout * dt
+        x = x.cpu().detach().numpy()
+        ax.plot(x[:, 0], x[:, 1], color='#0080ff', label="S2-NNDS Trajectory" if i == 0 else None, zorder=6)
+    
+    # FOR THE INITIAL SET
+    init_rad = config["plotting"]["init_rad"]
+    init_center = config["plotting"]["init_center"]
+    initial = patches.Circle(
+        init_center,  # Center of the circle
+        init_rad,  # Radius
+        linewidth=2,     # Border thickness
+        edgecolor='cyan',  # Border color
+        facecolor='cyan',   # Transparent fill
+        label="Initial Set",
+        zorder=4
+    )
+    ax.add_patch(initial)
+    # FOR THE UNSAFE SETS
+    if config["unsafe"]["shape"] == 'Rectangle':
+        unsafe_rect_range = config["unsafe"]["range"]
+        if "unbounded" in config["unsafe"]:
+            flag_max_min = config["unsafe"]["max_min"]
+            flag_xy = config["unsafe"]["unbounded"]
+            if flag_max_min == "min" and flag_xy == "x":
+                unsafe_rect_range[0].append(1.0)
+            elif flag_max_min == "max" and flag_xy == "x":
+                unsafe_rect_range[0].insert(0,-1)
+            elif flag_max_min == "min" and flag_xy == "y":
+                unsafe_rect_range[1].append(1.0)
+            elif flag_max_min == "max" and flag_xy == "y":
+                unsafe_rect_range[1].insert(0,-1)
+        x_min = unsafe_rect_range[0][0]
+        x_max = unsafe_rect_range[0][1]
+        y_min = unsafe_rect_range[1][0]
+        y_max = unsafe_rect_range[1][1]
+        unsafe = patches.Rectangle(
+        (x_min, y_min),  # Bottom-left corner (x_min, y_min)
+        x_max - x_min,   # Width
+        y_max - y_min,   # Height
+        linewidth=2,     # Border thickness
+        edgecolor='red',  # Border color
+        facecolor='red', # Transparent fill
+        alpha = 0.5, 
+        label = "Unsafe Set"
+        )
+        ax.add_patch(unsafe)
+    elif config["unsafe"]["shape"] == 'Circle':
+        unsafe_set_center = config["unsafe"]["center"]
+        unsafe_set_radius = config["unsafe"]["radius"]
+        if isinstance(unsafe_set_center[0], (int, float)):
+            unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label="Unsafe Set")
+            ax.add_patch(unsafe_shape)
+        else:
+            for ind, center in enumerate(unsafe_set_center):
+                unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label=f"Unsafe Set {ind+1}")
+                ax.add_patch(unsafe_shape)
+    elif config["unsafe"]["shape"] == 'Custom':
+        function = config["unsafe"]["function"]
+        function = function.replace("torch.max", "np.maximum")
+        function = function.replace("torch.", "np.")
+        x = np.linspace(RANGE[0][0], RANGE[0][1], 500)
+        y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
+        x,y = np.meshgrid(x, y)
+        mask = (eval(function) <= 0)
+        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+    
+    patch_abc = mpatches.Patch(color='#cdebc5', label='B < 0 (ABC-DS)', alpha=0.7)
+    patch_nnds = mpatches.Patch(color='#b0c4ff', label='B < 0 (S2-NNDS)', alpha=0.5)
+    patch_inter = mpatches.Patch(color='#b074ff', label='B < 0 (Intersection)', alpha=0.7)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    # Insert patches at the beginning to preserve order
+    legend_handles = [patch_abc, patch_nnds, patch_inter] + list(by_label.values())
+    legend_labels = ['B < 0 (ABC-DS)', 'B < 0 (S2-NNDS)', 'B < 0 (Intersection)'] + list(by_label.keys())
+    plt.legend(legend_handles, legend_labels, fontsize=6, loc='upper right')
+    # Equilibrium Point
+    plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
+    # Setting labels and grid
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
+    plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
+    # dataset = config["plotting"]["name"]
+    if lasa_name is not None:
+        dataset = lasa_name + ' Benchmark Plot'
+        plt.title(dataset)
+    plt.grid(True)
+    plt.axis('scaled')
+    plt.margins(x=0,y=0)
+    plt.xticks(fontsize=6)
+    plt.yticks(fontsize=6)
+    plt.tight_layout()
+    return fig

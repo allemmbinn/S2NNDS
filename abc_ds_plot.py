@@ -5,7 +5,7 @@ import Plotter
 @dataclass
 class ConfigFile:
     lasa_name : str = "Sine"
-    dataset_type : str = "LASA"  # This can also be 3D_Shapes
+    dataset_type : str = "LASA"  
 
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type']
