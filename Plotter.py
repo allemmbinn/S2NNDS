@@ -680,7 +680,7 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
     return fig
 
 #2D Real-Time Plotting
-def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None):
+def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=None, x_contact=None, y_contact=None, z_contact=None):
     device = next(model_v.parameters()).device
     fig, ax = plt.subplots(figsize=(10,6))
     # Define grid for plotting
@@ -800,32 +800,86 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
     plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-
-
-    if x_data is not None and y_data is not None:
-        robot_line = ax.plot([],[],  "#49332b", label="Robot Trajectory", linewidth=2)[0]
-
-        if flag_barrier and model_b is not None:
-            ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                robot_line, initial, unsafe,
-                mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                bbox_to_anchor=(1.05, 1), fontsize = 8)
-        else:
-            ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                    mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
+    
+    if x_contact is None and y_contact is None and z_contact is None:
+        if x_data is not None and y_data is not None :
+            robot_line = ax.plot([],[],  "#49332b", label="Robot Trajectory", linewidth=2)[0]
+            
+            if flag_barrier and model_b is not None:
+                ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                    robot_line, initial, unsafe,
                     mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                     bbox_to_anchor=(1.05, 1), fontsize = 8)
+            else:
+                ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
+                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                        bbox_to_anchor=(1.05, 1), fontsize = 8)
 
-        def init():
-            robot_line.set_data([], [])
-            return robot_line,
+            def init():
+                robot_line.set_data([], [])
+                return robot_line,
 
-        def update(frame):
-            robot_line.set_data(x_data[:frame], y_data[:frame])
-            return robot_line,
+            def update(frame):
+                robot_line.set_data(x_data[:frame], y_data[:frame])
+                return robot_line,
 
-        ani = animation.FuncAnimation(fig, update, frames=len(x_data), init_func=init, blit=True, interval=1,
-                                      repeat=False, cache_frame_data=False)
+            ani = animation.FuncAnimation(fig, update, frames=len(x_data), init_func=init, blit=True, interval=1,
+                                        repeat=False, cache_frame_data=False)
+    else:
+        if x_data is not None and y_data is not None:
+            robot_line = ax.plot([],[],  "#49332b", label="Robot Trajectory", linewidth=2)[0]
+            contact_line = ax.plot([],[], 'red', label = "Perturbation", linewidth = 2)[0]
+
+
+            if flag_barrier and model_b is not None:
+                if x_contact is None or y_contact is None:
+                    ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                        robot_line, initial, unsafe,
+                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                        bbox_to_anchor=(1.05, 1), fontsize = 8)
+                else:
+                    ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                        robot_line, contact_line, initial, unsafe,
+                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                        bbox_to_anchor=(1.05, 1), fontsize = 8)
+
+            else:
+                ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
+                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                        bbox_to_anchor=(1.05, 1), fontsize = 8)
+
+            contact_mask = (x_contact != 0) | (y_contact != 0)	| (z_contact != 0)
+            def init():
+                robot_line.set_data([], [])
+                contact_line.set_data([], [])
+                return robot_line, contact_line
+
+            def update(frame):
+                x = x_data[:frame]
+                y = y_data[:frame]
+                contact = contact_mask[:frame]
+
+                # For non-contact: set contact points to np.nan
+                x_non_contact = np.copy(x)
+                y_non_contact = np.copy(y)
+                x_non_contact[contact] = np.nan
+                y_non_contact[contact] = np.nan
+
+                # For contact: set non-contact points to np.nan
+                x_contact_only = np.copy(x)
+                y_contact_only = np.copy(y)
+                x_contact_only[~contact] = np.nan
+                y_contact_only[~contact] = np.nan
+
+                robot_line.set_data(x_non_contact, y_non_contact)
+                contact_line.set_data(x_contact_only, y_contact_only)
+                return robot_line, contact_line
+
+            ani = animation.FuncAnimation(fig, update, frames=len(x_data), init_func=init, blit=True, interval=1,
+                                        repeat=False, cache_frame_data=False)
+
 
 
         plt.tight_layout()

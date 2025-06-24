@@ -8,12 +8,12 @@ from NNModels import DyanmicsNet, LyapunovNet, BarrierNet
 
 @dataclass
 class ConfigFile:
-    lasa_name : str = "Sshape"
-    dataset_type : str = "3D_Shapes" # This can also be 3D_Shapes
+    lasa_name : str = "NShape"
+    dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
     real_time: bool = True  # Set to True for real-time plotting
-    perturbed: bool = False  # Set to True if you want to use perturbed data
+    perturbed: bool = True  # Set to True if you want to use perturbed data
 
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d', '--real_time', '--perturbed']
@@ -30,7 +30,7 @@ def load_config_models(args):
     # Construct the path to the configuration file
     config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files')
     config_path = os.path.join(config_dir, args.dataset_type, f"{model_name}_config.json")
-    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models')
+    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models_verified')
     os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
     model_path = os.path.join(model_dir, args.dataset_type, model_name) 
     data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Robot_Data')
@@ -90,8 +90,25 @@ if args.real_time:
     step = 10  # Downsampling step for real-time plotting
     x_data = robot_data['x'].to_numpy()[::step]
     y_data = robot_data['y'].to_numpy()[::step]
+    if 'cartesian_contact[0]' in robot_data.columns and 'cartesian_contact[1]' in robot_data.columns:
+        x_contact = robot_data['cartesian_contact[0]'].to_numpy()[::step]
+        y_contact = robot_data['cartesian_contact[1]'].to_numpy()[::step]
+        z_contact = robot_data['cartesian_contact[2]'].to_numpy()[::step]
+    assert len(x_data) == len(y_data) == len(x_contact) == len(y_contact), "Data length mismatch"
     fp_s = 1000/step
-    if mp.dim_in == 2:
+    if mp.dim_in == 2 and args.perturbed:
+        fig, ani = Plotter.realTimePlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data, x_contact, y_contact, z_contact)
+        nframes = len(x_data)
+        pbar = tqdm(total=nframes, desc="Saving video")
+        def progress(i, n):
+            pbar.update(i - pbar.n)
+        ani.save(
+            os.path.join(save_path, model_name + '.mp4'),
+            writer='ffmpeg',
+            fps=fp_s,
+            progress_callback=progress
+        )
+    elif mp.dim_in == 2 and  not args.perturbed:
         fig, ani = Plotter.realTimePlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data)
         nframes = len(x_data)
         pbar = tqdm(total=nframes, desc="Saving video")
@@ -103,7 +120,6 @@ if args.real_time:
             fps=fp_s,
             progress_callback=progress
         )
-        pbar.close()
     if mp.dim_in == 3:
         z_data = robot_data['z'].to_numpy()[::step]
         fig, ani= Plotter.realTimePlot3D(model_f, mp.demos, initial_set_center, config, x_data, y_data, z_data)
