@@ -10,7 +10,7 @@ from NNModels import DyanmicsNet, LyapunovNet, BarrierNet
 class ConfigFile:
     lasa_name : str = "Sshape"
     dataset_type : str = "3D_Shapes" # This can also be 3D_Shapes
-    name_3d: str = "Cshape_bottom"
+    name_3d: str = "sink"
     name_2d: str = "Five_Obstacle_DS"
     real_time: bool = True  # Set to True for real-time plotting
     perturbed: bool = False  # Set to True if you want to use perturbed data
