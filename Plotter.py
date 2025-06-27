@@ -725,7 +725,9 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
         ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
     plt.contour(X, Y, bout[:,:,0], levels=[0], colors='#cdebc5')
     plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='#cdebc5')
-    contour_fill_legend = mpl.patches.Patch(color='#cdebc5', label=' $ \{x \in X \mid \mathrm{B}(x) \leq 0\}$')        
+    contour_fill_legend = mpl.patches.Patch(color='#cdebc5', label=' $ \{x \in X \mid \mathrm{B}(x) \leq 0\}$') 
+    demo = mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories') 
+    learned = mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories')      
     # Plotting the Initial Set
     init_range = config["plotting"]["init_range"]
     x_min = init_range[0][0]
@@ -790,7 +792,8 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
         y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
         x,y = np.meshgrid(x, y)
         mask = (eval(function) <= 0)
-        unsafe = plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+        unsafe = mpl.patches.Patch(color='r', alpha=0.5, label="Unsafe Set")
         # plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
         # plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
 
@@ -802,20 +805,20 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
     plt.ylabel('y')
     plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
     plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-    
+    eq = mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')
     if x_contact is None and y_contact is None and z_contact is None:
         if x_data is not None and y_data is not None :
             robot_line = ax.plot([],[],  "#49332b", label="Robot Trajectory", linewidth=2)[0]
             
             if flag_barrier and model_b is not None:
-                ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                    robot_line, initial, unsafe,
-                    mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                ax.legend(handles=[arrow_proxy, contour_fill_legend, demo, learned,
+                    robot_line, initial, unsafe, eq],
+                    loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                     bbox_to_anchor=(1.05, 1), fontsize = 8)
             else:
-                ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
-                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                ax.legend(handles=[arrow_proxy, demo,
+                        initial,
+                        eq], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(1.05, 1), fontsize = 8)
 
             def init():
@@ -836,20 +839,20 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
 
             if flag_barrier and model_b is not None:
                 if x_contact is None or y_contact is None:
-                    ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                    ax.legend(handles=[arrow_proxy, contour_fill_legend, demo,
                         robot_line, initial, unsafe,
-                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                        eq], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(1.05, 1), fontsize = 8)
                 else:
-                    ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
+                    ax.legend(handles=[arrow_proxy, contour_fill_legend, demo,
                         robot_line, contact_line, initial, unsafe,
-                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                        eq], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(1.05, 1), fontsize = 8)
 
             else:
-                ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
-                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
+                ax.legend(handles=[arrow_proxy, demo,
+                        learned, initial,
+                        eq], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
                         bbox_to_anchor=(1.05, 1), fontsize = 8)
 
             contact_mask = (x_contact != 0) | (y_contact != 0)	| (z_contact != 0)
@@ -891,7 +894,7 @@ def realTimePlot3D(model_f, demos, initial_set_center, config, x_data, y_data, z
     device = next(model_f.parameters()).device
     # device = torch.device('cpu')
     # Create a figure and 3D axes
-    fig, ax = plt.subplots(figsize=(10,6))
+    fig, ax = plt.subplots(figsize=(9,6))
     ax = plt.axes(projection='3d')
     for i in range(demos.shape[0]):
         ax.plot3D(demos[i].pos[0,:], demos[i].pos[1,:], demos[i].pos[2,:], color = "#1F75FE", label="Demonstrated Trajectory" if i == 1 else "")
@@ -992,7 +995,7 @@ def realTimePlot3D(model_f, demos, initial_set_center, config, x_data, y_data, z
         unsafe_cube_proxy,
         eq_proxy
     ], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                    bbox_to_anchor=(1.05, 1), fontsize = 8)
+                    bbox_to_anchor=(1.05, 1), fontsize = 7)
 
     def init():
         robot_line.set_data([], [])
