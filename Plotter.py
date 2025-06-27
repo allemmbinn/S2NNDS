@@ -565,8 +565,7 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
     dt= config["plotting"]["dt"]
     for i in range(initial_set_center.shape[0]):
         x = torch.zeros((n, 2)).to(device)
-        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
-        #x[0] = torch.tensor([1, 0.5], dtype=torch.float32)
+        x[0,:] = initial_set_center[i].clone().detach()
         for j in range(1, n):
             Fout = model_f(x[j-1])
             x[j] = x[j-1] + Fout * dt
@@ -578,12 +577,7 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
         plt.contour(X, Y, bout[:,:,0], levels=[0], colors='#cdebc5')
         plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='#cdebc5')
         #Create proxy artists for contours
-        #contour_line_legend = mpl.lines.Line2D([0], [0], color='red')
         contour_fill_legend = mpl.patches.Patch(color='#cdebc5', label=' $ \{x \in X \mid \mathrm{B}(x) \leq 0\}$')
-        #unsafe_set_center = config["unsafe"]["centre"]
-        #unsafe_set_radius = config["unsafe"]["radius"]
-        #circle2 = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='#505050', edgecolor='#303030', linewidth=2, label="Unsafe Set")
-        #ax.add_patch(circle2)
         
         # Plotting the Initial Set
         init_rad = config["plotting"]["init_rad"]
@@ -620,17 +614,15 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
             (x_min, y_min),  # Bottom-left corner (x_min, y_min)
             x_max - x_min,   # Width
             y_max - y_min,   # Height
-            linewidth=2,     # Border thickness
             edgecolor='red',  # Border color
             facecolor='red', # Transparent fill
-            alpha = 0.5, 
-            label = "Unsafe Set"
+            alpha = 0.5
             )
             ax.add_patch(unsafe)
         elif config["unsafe"]["shape"] == 'Circle':
             center = config["unsafe"]["center"]
             radius = config["unsafe"]["radius"]
-            unsafe = plt.Circle(center, radius, facecolor='r', edgecolor='r', linewidth=2, label="Unsafe Set", alpha = 0.5)
+            unsafe = plt.Circle(center, radius, facecolor='r', edgecolor='r', alpha = 0.5)
             ax.add_patch(unsafe)
         elif config["unsafe"]["shape"] == 'Custom':
             function = config["unsafe"]["function"]
@@ -640,20 +632,12 @@ def benchmarkPlot(model_v, model_b, model_f, X_train, config):
             y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
             x,y = np.meshgrid(x, y)
             mask = (eval(function) <= 0)
-            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
-
-            
-    
-    # initial_set_radius = config["init"]["radius"]
-    # circle1 = plt.Circle(initia, initial_set_radius, facecolor='#00ffff', edgecolor='#008080', linewidth=2, label="Initial Set")
-    # ax.add_patch(circle1)
+            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', alpha = 0.5)
 
     # Equilibrium Point
     plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
 
-
     #Adding all legends
-    
     if flag_legend:
         if flag_barrier and model_b is not None:
             ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
@@ -1188,7 +1172,7 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
     fx_poly, fy_poly = map(compile_poly, (f1_str, f2_str))
     B_poly = compile_poly(B_str)
      
-    len_sample = [256, 256]
+    len_sample = [512, 512]
     x = np.linspace(RANGE[0][0], RANGE[0][1], len_sample[0])
     y = np.linspace(RANGE[1][0], RANGE[1][1], len_sample[1])
     X, Y = np.meshgrid(x, y)
@@ -1198,10 +1182,10 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
     B_out_abc = B_poly(X, Y)
     mask_abc = (B_out_abc < 0)
     # Plot the contour for ABC-DS
-    contour_abc = ax.contour(X, Y, B_out_abc, levels=[0], colors='#60c040', linewidths=1)
-    contourf_abc = ax.contourf(X, Y, mask_abc, levels=[0.5, 1], colors='#cdebc5', alpha=0.7, zorder=1)
-    # plt.contour(X, Y, B_out_abc, levels=[0], colors='#cdebc5')
-    # plt.contourf(X, Y, B_out_abc, levels=[-np.inf, 0], colors='#cdebc5')
+    contour_abc = ax.contour(X, Y, B_out_abc, levels=[0], colors='#0e5fde', linewidths=1)
+    contourf_abc = ax.contourf(X, Y, mask_abc, levels=[0.5, 1], colors='#b0c4ff', alpha=0.7, zorder=1)
+    # contour_abc = ax.contour(X, Y, B_out_abc, levels=[0], colors='#60c040', linewidths=1)
+    # contourf_abc = ax.contourf(X, Y, mask_abc, levels=[0.5, 1], colors='#cdebc5', alpha=0.7, zorder=1)
 
 
     # FOR S2-NNDS
@@ -1213,10 +1197,10 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
         B_out = model_b(input_data)
         B_out_nnds = unflatten(B_out).cpu().detach().numpy()[:,:,0]       
     mask_nnds = (B_out_nnds < 0)
-    contour_nnds = ax.contour(X, Y, B_out_nnds, levels=[0], colors='#0e5fde', linewidths=1)
-    contourf_nnds = ax.contourf(X, Y, mask_nnds, levels=[0.5, 1], colors='#b0c4ff', alpha=0.5, zorder=2)
-    # plt.contour(X, Y, B_out_nnds[:,:,0], levels=[0], colors='#cdebc5')
-    # plt.contourf(X, Y, B_out_nnds[:,:,0], levels=[-np.inf, 0], colors='#b0c4ff')
+    contour_nnds = ax.contour(X, Y, B_out_nnds, levels=[0], colors='#60c040', linewidths=1)
+    contourf_nnds = ax.contourf(X, Y, mask_nnds, levels=[0.5, 1], colors='#cdebc5', alpha=0.5, zorder=2)
+    # contour_nnds = ax.contour(X, Y, B_out_nnds, levels=[0], colors='#0e5fde', linewidths=1)
+    # contourf_nnds = ax.contourf(X, Y, mask_nnds, levels=[0.5, 1], colors='#b0c4ff', alpha=0.5, zorder=2)
     
     # Intersection Region
     mask_intersect = mask_abc & mask_nnds
@@ -1240,7 +1224,7 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
 
     for i in range(initial_set_center.shape[0]):
         x = torch.zeros((n, 2)).to(device)
-        x[0,:] = torch.tensor(initial_set_center[i], dtype=torch.float32)
+        x[0,:] = initial_set_center[i].clone().detach().to(device)
         for j in range(1, n):
             Fout = model_f(x[j-1])
             x[j] = x[j-1] + Fout * dt
@@ -1293,11 +1277,11 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
         unsafe_set_center = config["unsafe"]["center"]
         unsafe_set_radius = config["unsafe"]["radius"]
         if isinstance(unsafe_set_center[0], (int, float)):
-            unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label="Unsafe Set")
+            unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5)
             ax.add_patch(unsafe_shape)
         else:
             for ind, center in enumerate(unsafe_set_center):
-                unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label=f"Unsafe Set {ind+1}")
+                unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5)
                 ax.add_patch(unsafe_shape)
     elif config["unsafe"]["shape"] == 'Custom':
         function = config["unsafe"]["function"]
@@ -1307,19 +1291,19 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
         y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
         x,y = np.meshgrid(x, y)
         mask = (eval(function) <= 0)
-        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', alpha = 0.5)
     
-    patch_abc = mpatches.Patch(color='#cdebc5', label='B < 0 (ABC-DS)', alpha=0.7)
-    patch_nnds = mpatches.Patch(color='#b0c4ff', label='B < 0 (S2-NNDS)', alpha=0.5)
-    patch_inter = mpatches.Patch(color='#b074ff', label='B < 0 (Intersection)', alpha=0.7)
-    handles, labels = plt.gca().get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-    # Insert patches at the beginning to preserve order
-    legend_handles = [patch_abc, patch_nnds, patch_inter] + list(by_label.values())
-    legend_labels = ['B < 0 (ABC-DS)', 'B < 0 (S2-NNDS)', 'B < 0 (Intersection)'] + list(by_label.keys())
-    plt.legend(legend_handles, legend_labels, fontsize=6, loc='upper right')
+    # patch_abc = mpatches.Patch(color='#b0c4ff', label='B < 0 (ABC-DS)', alpha=0.7)
+    # patch_nnds = mpatches.Patch(color='#cdebc5', label='B < 0 (S2-NNDS)', alpha=0.5)
+    # patch_inter = mpatches.Patch(color='#b074ff', label='B < 0 (Intersection)', alpha=0.7)
+    # handles, labels = plt.gca().get_legend_handles_labels()
+    # by_label = dict(zip(labels, handles))
+    # # Insert patches at the beginning to preserve order
+    # legend_handles = [patch_abc, patch_nnds, patch_inter] + list(by_label.values())
+    # legend_labels = ['B < 0 (ABC-DS)', 'B < 0 (S2-NNDS)', 'B < 0 (Intersection)'] + list(by_label.keys())
+    # plt.legend(legend_handles, legend_labels, fontsize=6, loc='upper right')
     # Equilibrium Point
-    plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
+    plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium", zorder=8)
     # Setting labels and grid
     plt.xlabel('x')
     plt.ylabel('y')
