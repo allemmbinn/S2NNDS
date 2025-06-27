@@ -12,8 +12,8 @@ class ConfigFile:
     dataset_type : str = "LASA" # This can also be 3D_Shapes
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
-    real_time: bool = True  # Set to True for real-time plotting
-    perturbed: bool = True  # Set to True if you want to use perturbed data
+    real_time: bool = False  # Set to True for real-time plotting
+    perturbed: bool = False  # Set to True if you want to use perturbed data
 
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d', '--real_time', '--perturbed']
@@ -65,14 +65,13 @@ args = pyrallis.parse(ConfigFile, args=filtered_args)
 mp = MotionPlanner(args)
 mp.generate_demo_data()
 model_name, config, model_v, model_b, model_f, robot_data = load_config_models(args)
-# name_file = os.path.join(os.path.dirname(os.path.realpath(__file__)),"robot_demonstrations",mp.dataset_type,"Recording_"+mp.name+".csv")
-# data_1 = pd.read_csv(name_file, header=1)
+#data_1 = pd.read_csv(name_file, header=1)
 # plot = Plotter.finalDSPlot(model_f, model_v, model_b, mp.demos, mp.initial_set_center, mp.dim_in, config, data_1)
 initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[3].pos[:, 0])])
-#x_data = robot_data['x'].to_numpy()
-#y_data = robot_data['y'].to_numpy()
+x_data = robot_data['x'].to_numpy()
+y_data = robot_data['y'].to_numpy()
 if mp.dim_in == 2:
-    plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config)
+    plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data)
     plt.show()
     # Plotter.plotLyapunov(mp.model_v)
     # Plotter.plotBarrier(mp.model_b)
@@ -90,11 +89,11 @@ if args.real_time:
     step = 10  # Downsampling step for real-time plotting
     x_data = robot_data['x'].to_numpy()[::step]
     y_data = robot_data['y'].to_numpy()[::step]
-    if 'cartesian_contact[0]' in robot_data.columns and 'cartesian_contact[1]' in robot_data.columns:
+    if args.perturbed and 'cartesian_contact[0]' in robot_data.columns and 'cartesian_contact[1]' in robot_data.columns:
         x_contact = robot_data['cartesian_contact[0]'].to_numpy()[::step]
         y_contact = robot_data['cartesian_contact[1]'].to_numpy()[::step]
         z_contact = robot_data['cartesian_contact[2]'].to_numpy()[::step]
-    assert len(x_data) == len(y_data) == len(x_contact) == len(y_contact), "Data length mismatch"
+        assert len(x_data) == len(y_data) == len(x_contact) == len(y_contact), "Data length mismatch"
     fp_s = 1000/step
     if mp.dim_in == 2 and args.perturbed:
         fig, ani = Plotter.realTimePlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data, x_contact, y_contact, z_contact)
