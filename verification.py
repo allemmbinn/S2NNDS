@@ -45,7 +45,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         num_samples = min(N, num_elements)
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         lie_lyap_cex = filtered_input_domain[min_indices]
-        print("CEs for Lie_lyap:", lie_lyap_cex)
     else:
         lie_lyap_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
     
@@ -63,7 +62,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         # Select the corresponding counterexample points
         V_pos_cex = filtered_input_domain[min_indices]
-        print("CEs for V_pos:", V_pos_cex)
     else:
         V_pos_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 
@@ -90,7 +88,6 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         # Select the corresponding counterexample points
         lie_bar_cex = filtered_input_domain[min_indices]
-        print("CEs for Lie_bar:", lie_bar_cex)
     else:
         lie_bar_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 

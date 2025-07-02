@@ -4,7 +4,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
 
 Official implementation of Safe and Stable Neural Network Dynamical Systems for Robot Motion
-Planning with stability and safety certificates, developed at MIRMI, Technical University of Munich. This repository contains code for learning stable dynamical systems from demonstrations using Lyapunov and Barrier certificates.
+Planning with stability and safety certificates.
 
 ## Installation
 

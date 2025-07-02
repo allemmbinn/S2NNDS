@@ -1,3 +1,4 @@
+# %%
 from common_header import *
 import NNModels
 import data
@@ -43,8 +44,8 @@ class MotionPlanner:
         print_info(f"Loading configuration file from {file_path}")
         with open(file_path) as file:
             self.config = json.load(file)
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        # self.device = torch.device('cpu')
+        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -153,7 +154,6 @@ class MotionPlanner:
             self.dim_in = self.demos[0].pos.shape[0]
             train_size = int(5/7 * self.total_demos) # 5/7 datasets are used for training
             train_indices = random.sample(range(self.total_demos), train_size)
-            import pdb; pdb.set_trace()
             test_indices = list(set(range(self.total_demos)) - set(train_indices))
             self.X_train = np.concatenate([self.demos[i].pos for i in train_indices], axis=1).T
             self.X_test = np.concatenate([self.demos[i].pos for i in test_indices], axis=1).T
@@ -321,15 +321,15 @@ class MotionPlanner:
             add_data_unsafe = None
 
         if add_data_domain is not None:
-             print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
-             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
-             mask = (torch.linalg.norm(self.domain - self.init_center, dim =1) <= self.init_rad) 
-             self.init_domain = self.domain[mask]            
-             #self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
-             if self.config["unsafe"]["shape"] == 'Rectangle':
-                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
-             elif self.config["unsafe"]["shape"] == 'Circle':
-                self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )]
+            print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
+            self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
+            mask = (torch.linalg.norm(self.domain - self.init_center, dim =1) <= self.init_rad) 
+            self.init_domain = self.domain[mask]            
+            #self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
+            if self.config["unsafe"]["shape"] == 'Rectangle':
+               self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+            elif self.config["unsafe"]["shape"] == 'Circle':
+               self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )]
         if add_data_init is not None:
             print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
@@ -407,7 +407,7 @@ class MotionPlanner:
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
 
-        print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
+        # print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def trainCertificate(self):
         if self.config["Barrier"]:
@@ -626,22 +626,22 @@ if __name__ == "__main__":
        seed = random.randint(0, 100)  # seed value
     # set_seed(87)
     set_seed(seed)
-    print_info(f"Using seed: {seed}")
+    # print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
-    print_info("OBTAINING DEMO DATA")
+    # print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
-    print_info("DYNAMICAL SYSTEM TRAINING")
+    # print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
-    print_info("OBTAINING TRAINING DATA")
+    # print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    print_info("CERTIFICATE TRAINING")
+    # print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
     mp.update_config()
     trial = 1
     while trial < 500:
-        print_info("ADDING COUNTEREXAMPLES")
+        # print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
         if trial % 10 == 5:
@@ -650,7 +650,7 @@ if __name__ == "__main__":
             mp.trainCertificate()
             trial += 1      
         else:
-            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            # print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
@@ -667,3 +667,4 @@ if __name__ == "__main__":
     if trial == 500:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
      
+# %%

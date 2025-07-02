@@ -17,7 +17,7 @@
         "activation_function": "eLU",
         "learning_rate": 0.01,
         "hidden_neurons": 64,
-        "layers": 4,
+        "layers": 3,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30

@@ -108,8 +108,37 @@ if __name__ == "__main__":
         total_samples += 1
     abc_mse_train /= total_samples
     # Print the results
-    print_success(f"NNDS MSE Train: {nnds_mse_train:.6f}")
-    print_success(f"NNDS MSE Test: {nnds_mse_test:.6f}")
-    print_success(f"ABC-DS MSE Train: {abc_mse_train:.6f}")
-    print_success(f"ABC-DS MSE Test: {abc_mse_test:.6f}")
+    # print_success(f"NNDS MSE Train: {nnds_mse_train:.6f}")
+    # print_success(f"NNDS MSE Test: {nnds_mse_test:.6f}")
+    # print_success(f"ABC-DS MSE Train: {abc_mse_train:.6f}")
+    # print_success(f"ABC-DS MSE Test: {abc_mse_test:.6f}")
     
+    model_f.eval()
+    all_errors = []
+    with torch.no_grad():
+        for X, y in zip(X_test_tensor, y_test_tensor):
+            pred = model_f(X.float())
+            error = (pred - y.float()).cpu().numpy()
+            error_norm = np.linalg.norm(error)  # L2 error for this sample
+            all_errors.append(error_norm)
+    all_errors = np.array(all_errors)
+    mse = np.mean(all_errors ** 2)
+    sd = np.std(all_errors)
+    print_success(f"S2-NNDS MSE: {mse:.6f}")
+    print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
+    
+    abc_mse_test = 0
+    total_samples = 0
+    all_errors = []
+    for X_batch, y_batch in zip(X_test, y_test):
+        y_pred = np.array([fx_poly(X_batch[0], X_batch[1]), fy_poly(X_batch[0], X_batch[1])])
+        error_norm = np.linalg.norm(y_pred - y_batch)
+        all_errors.append(error_norm)
+        # abc_mse_test += np.sum((y_pred - y_batch) ** 2)
+        # total_samples += 1
+    # abc_mse_test /= total_samples
+    all_errors = np.array(all_errors)
+    mse = np.mean(all_errors ** 2)
+    sd = np.std(all_errors)
+    print_success(f"ABC-DS MSE: {mse:.6f}")
+    print_success(f"ABC-DS Standard Deviation: {sd:.6f}")

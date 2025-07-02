@@ -1,14 +1,14 @@
 {
     "model_f": {
-        "activation_function": "Tanh",
+        "activation_function": "eLU",
         "hidden_neurons": 64,
-        "layers": 3,
-        "epochs_warm": 150,
+        "layers": 4,
+        "epochs_warm": 200,
         "learning_rate": 0.01,
-        "learning_rate_cert": 1e-06,
+        "learning_rate_cert": 5e-08,
         "train_f_cert": false,
         "cert_train_factor": 0.45,
-        "batch_size": 1024,
+        "batch_size": 512,
         "lr_factor": 0.5,
         "lr_patience": 20,
         "init_decay": 0.1
@@ -16,11 +16,11 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 256,
-        "layers": 4,
-        "lr_factor": 0.99,
-        "lr_patience": 30,
-        "warmup": 50
+        "hidden_neurons": 128,
+        "layers": 3,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "warmup": 30
     },
     "model_b": {
         "activation_function": "eLU",
@@ -29,7 +29,7 @@
         "layers": 5,
         "lr_factor": 0.8,
         "lr_patience": 15,
-        "batch_size": 1024,
+        "batch_size": 512,
         "warmup": 30
     },
     "domain": {
@@ -100,8 +100,8 @@
                 0.02880046315276329
             ],
             [
-                -0.9419040679931641,
-                0.0784902572631836
+                -0.8892827033996582,
+                0.022320032119750977
             ]
         ],
         "dt": 0.005768861400492263,
@@ -122,7 +122,7 @@
         "decay_init": 1,
         "decay_unsafe": 1,
         "decay_cut": 1,
-        "decay_lb": 1,
+        "decay_lb": 1.2,
         "alpha": 1,
         "epi_bound": 0.05,
         "eta": 0.0001,

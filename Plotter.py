@@ -1234,17 +1234,18 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
         y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
         x,y = np.meshgrid(x, y)
         mask = (eval(function) <= 0)
-        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', alpha = 0.5)
+        plt.contourf(x, y, mask.astype(int), levels=[0.5, 1], colors='r', alpha=0.5, zorder=8)
     
-    # patch_abc = mpatches.Patch(color='#b0c4ff', label='B < 0 (ABC-DS)', alpha=0.7)
-    # patch_nnds = mpatches.Patch(color='#cdebc5', label='B < 0 (S2-NNDS)', alpha=0.5)
-    # patch_inter = mpatches.Patch(color='#b074ff', label='B < 0 (Intersection)', alpha=0.7)
-    # handles, labels = plt.gca().get_legend_handles_labels()
-    # by_label = dict(zip(labels, handles))
-    # # Insert patches at the beginning to preserve order
-    # legend_handles = [patch_abc, patch_nnds, patch_inter] + list(by_label.values())
-    # legend_labels = ['B < 0 (ABC-DS)', 'B < 0 (S2-NNDS)', 'B < 0 (Intersection)'] + list(by_label.keys())
-    # plt.legend(legend_handles, legend_labels, fontsize=6, loc='upper right')
+    patch_abc = mpatches.Patch(color='#b0c4ff', label='B < 0 (ABC-DS)', alpha=0.7)
+    patch_nnds = mpatches.Patch(color='#cdebc5', label='B < 0 (S2-NNDS)', alpha=0.5)
+    patch_inter = mpatches.Patch(color='#b074ff', label='B < 0 (Intersection)', alpha=0.7)
+    patch_unsafe = mpatches.Patch(color='red', label='Unsafe Set', alpha=0.5)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    # Insert patches at the beginning to preserve order
+    legend_handles = [patch_abc, patch_nnds, patch_inter, patch_unsafe] + list(by_label.values())
+    legend_labels = ['B < 0 (ABC-DS)', 'B < 0 (S2-NNDS)', 'B < 0 (Intersection)', 'Unsafe Set'] + list(by_label.keys())
+    plt.legend(legend_handles, legend_labels, fontsize=6, facecolor='white', loc='upper right', framealpha=1.0)
     # Equilibrium Point
     plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium", zorder=8)
     # Setting labels and grid

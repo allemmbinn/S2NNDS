@@ -152,6 +152,8 @@ class MotionPlanner:
                 dataset = lasa.DataSet.PShape
             elif self.args.lasa_name == "NShape":
                 dataset = lasa.DataSet.NShape
+            elif self.args.lasa_name == "Leaf_2":
+                dataset = lasa.DataSet.Leaf_2
             else:
                 print_error("Invalid LASA Dataset has been choosen")
                 raise NotImplementedError
@@ -278,7 +280,7 @@ class MotionPlanner:
                         self.unsafe_min = torch.tensor([self.unsafe[0][0], -100]) 
                         self.unsafe_max = torch.tensor([self.unsafe[0][1], self.unsafe[1][0]])       
 
-                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+                self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
 
             elif self.config["unsafe"]["shape"] == 'Circle':
                 self.uns_center = torch.tensor(self.config["unsafe"]["center"]).reshape(-1, self.dim_in)
@@ -340,7 +342,7 @@ class MotionPlanner:
         init_domain = input_domain[((input_domain >= torch.tensor(self.init_min)) & (input_domain <= torch.tensor(self.init_max))).all(dim=1)]
         
         if self.config["unsafe"]["shape"] == 'Rectangle':
-            unsafe_domain =  input_domain[((input_domain >= torch.tensor(self.unsafe_min)) & (input_domain <= torch.tensor(self.unsafe_max))).all(dim=1)]        
+            unsafe_domain =  input_domain[((input_domain >= self.unsafe_min.clone().detach()) & (input_domain <= self.unsafe_max.clone().detach())).all(dim=1)]        
         elif self.config["unsafe"]["shape"] == 'Circle':
             self.uns_center = self.uns_center.reshape(-1, self.dim_in)
             all_masks = torch.zeros(len(input_domain), dtype=torch.bool)
@@ -390,7 +392,7 @@ class MotionPlanner:
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
-               self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
+               self.unsafe_domain = self.domain[((self.domain >= self.unsafe_min.clone().detach()) & (self.domain <= self.unsafe_max.clone().detach())).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
                 all_masks = torch.zeros(len(self.domain), dtype=torch.bool)
                 for center in self.uns_center:
@@ -402,21 +404,22 @@ class MotionPlanner:
                 y = self.domain[:,1]
                 result = eval(self.config["unsafe"]["function"])
                 self.unsafe_domain = self.domain[result <= 0]
+            self.counterexamples_added = True
                 
         if add_data_init is not None:
             print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
+            self.counterexamples_added = True
         
         if add_data_unsafe is not None:
             print_warning(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim =0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
-                
+            self.counterexamples_added = True    
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
             print_success("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
-
         #Dataset Generation and Shuffling
 
         domain_dataset = torch.utils.data.TensorDataset(self.domain)
@@ -748,7 +751,6 @@ if __name__ == "__main__":
                 elif mp.dim_in == 3:
                     Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
                     plt.show()
-            trial += 1      
         else:
             print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             mp.verifyCertificate()
@@ -771,6 +773,7 @@ if __name__ == "__main__":
                 break
             else:
                print_info("CONFORMAL PREDICTION FAILED; RETRAINING CERTIFICATE")
+        trial += 1
     if trial == 250:
         print_error("MAXIMUM TRIALS EXCEEDED... VERIFICATION FAILED")
      
