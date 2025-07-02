@@ -5,7 +5,7 @@ import Loss_Functions
 import opt 
 import Plotter
 import verification
-
+import time
 @dataclass
 class ConfigFile:
     lasa_name : str = "CShape"
@@ -388,7 +388,7 @@ class MotionPlanner:
             add_data_unsafe = None
 
         if add_data_domain is not None:
-            print_warning(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
+            # print_warning(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -407,18 +407,18 @@ class MotionPlanner:
             self.counterexamples_added = True
                 
         if add_data_init is not None:
-            print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
+            # print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
             self.counterexamples_added = True
         
         if add_data_unsafe is not None:
-            print_warning(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
+            # print_warning(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim =0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
             self.counterexamples_added = True    
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
-            print_success("NO COUNTEREXAMPLES ADDED")
+            # print_success("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
         #Dataset Generation and Shuffling
 
@@ -452,7 +452,7 @@ class MotionPlanner:
         self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=model_f_config.get("learning_rate", 1e-2), betas=(0.9, 0.999))
         self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=model_f_config.get("lr_factor", 1.0), patience=model_f_config.get("lr_patience", 30))
 
-        for epoch in tqdm(range(model_f_config.get("epochs_warm", 1000))):
+        for epoch in range(model_f_config.get("epochs_warm", 1000)):
             total_loss = 0
             for _, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
@@ -483,7 +483,7 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-        print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
+        # print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
     
     def trainCertificate(self):
         if self.config["Barrier"]:
@@ -542,7 +542,7 @@ class MotionPlanner:
             self.load_model_states()        
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
-            for epoch in tqdm(range(max_iter)):
+            for epoch in range(max_iter):
                 cert_loss_b = 0
                 cert_loss_v = 0
                 dyn_loss = 0
@@ -654,14 +654,14 @@ class MotionPlanner:
             y = input_domain[:,1]
             result = eval(self.config["unsafe"]["function"])
             unsafe_domain = input_domain[result <= 0]
-        beta, q = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
+        q, beta = verification.conformal_prediction(self.model_v, self.model_b, self.model_f,input_domain, init_domain, unsafe_domain, self.config)
         if q <= 0:
             self.flag_verified = True
             conf = 1-self.config["verification"].get("epsilon", 0.0001)
-            print_info(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
+            # print_info(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
         else:
             self.flag_verified = False
-            print_error(f"Verification failed with marginal safety error: {q}")
+            # print_error(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
         self.model_f = self.model_f.to(self.device)
@@ -706,6 +706,25 @@ class MotionPlanner:
             torch.save(self.y_train, os.path.join(base_path,"y_train.pt"))
             torch.save(self.X_test, os.path.join(base_path,"X_test.pt"))
             torch.save(self.y_test, os.path.join(base_path,"y_test.pt"))
+    
+    def evaluate_new_models(self):
+        self.model_f.eval()
+        self.model_f = self.model_f.to(self.device)
+        all_errors = []
+        with torch.no_grad():
+            for X, y in self.test_loader:
+                X = X.to(self.device)
+                y = y.to(self.device)
+                pred = self.model_f(X.float())
+                error = (pred - y.float()).cpu().numpy()
+                error_norm = np.linalg.norm(error)  # L2 error for this sample
+                all_errors.append(error_norm)
+        all_errors = np.array(all_errors)
+        mse = np.mean(all_errors ** 2)
+        sd = np.std(all_errors)
+        print_success(f"S2-NNDS MSE: {mse:.6f}")
+        print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
+
 
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
@@ -725,47 +744,53 @@ if __name__ == "__main__":
        seed = random.randint(0, 100)  # seed value
     set_seed(seed)
     mp = MotionPlanner(args)
-    print_info("OBTAINING DEMO DATA")
+    # print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
-    print_info("DYNAMICAL SYSTEM TRAINING")
+    # print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
-    print_info("OBTAINING TRAINING DATA")
+    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+    # print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    print_info("CERTIFICATE TRAINING")
+    # print_info("CERTIFICATE TRAINING")
     mp.update_config()
     mp.trainCertificate()
     trial = 1
+    start_time = time.time()
     while trial < 250:
-        print_info("ADDING COUNTEREXAMPLES")
+        # print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            if trial % 20 == 1:
-                if mp.dim_in == 2:
-                    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                    Plotter.plotLyapunov(mp.model_v)
-                    Plotter.plotBarrier(mp.model_b)
-                elif mp.dim_in == 3:
-                    Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                    plt.show()
+            # if trial % 20 == 1:
+                # if mp.dim_in == 2:
+                    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    # Plotter.plotLyapunov(mp.model_v)
+                    # Plotter.plotBarrier(mp.model_b)
+                # elif mp.dim_in == 3:
+                    # Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    # plt.show()
         else:
-            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            # print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             mp.verifyCertificate()
             if mp.flag_verified:
-                if mp.dim_in == 2:
-                    fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                    plt.show()
-                    Plotter.plotLyapunov(mp.model_v)
-                    Plotter.plotBarrier(mp.model_b)
-                elif mp.dim_in == 3:
-                    fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                    plt.show()
+                # if mp.dim_in == 2:
+                #     fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                #     plt.show()
+                #     Plotter.plotLyapunov(mp.model_v)
+                #     Plotter.plotBarrier(mp.model_b)
+                # elif mp.dim_in == 3:
+                #     fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                #     plt.show()
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                print_info(f"Total time taken: {elapsed_time:.2f} seconds")
+                mp.evaluate_new_models()
+                print_info("Motion Planning Completed Successfully")
                 mp.save_all_models()
                 mp.final_model_eval()
-                print_info(f"MSE for test data after certificate training: {mp.mse}")
+                # print_info(f"MSE for test data after certificate training: {mp.mse}")
                 save_seed(seed,seed_filepath)
                 mp.export_onnx()
                 mp.update_config()
@@ -776,4 +801,3 @@ if __name__ == "__main__":
         trial += 1
     if trial == 250:
         print_error("MAXIMUM TRIALS EXCEEDED... VERIFICATION FAILED")
-     
