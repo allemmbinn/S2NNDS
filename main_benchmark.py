@@ -43,8 +43,8 @@ class MotionPlanner:
         print_info(f"Loading configuration file from {file_path}")
         with open(file_path) as file:
             self.config = json.load(file)
-        # self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -623,7 +623,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
     # set_seed(87)
-    seed = random.randint(0, 100)
+    # seed = random.randint(0, 100)
     set_seed(seed)
     # print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
@@ -643,9 +643,9 @@ if __name__ == "__main__":
         # print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        if trial % 5 == 0:
-            Plotter.plotLyapunov(mp.model_v)
-            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+        # if trial % 5 == 0:
+        #     Plotter.plotLyapunov(mp.model_v)
+        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      
