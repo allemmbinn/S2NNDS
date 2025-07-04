@@ -151,8 +151,6 @@ class MotionPlanner:
                 dataset = lasa.DataSet.PShape
             elif self.args.lasa_name == "NShape":
                 dataset = lasa.DataSet.NShape
-            elif self.args.lasa_name == "Leaf_2":
-                dataset = lasa.DataSet.Leaf_2
             else:
                 print_error("Invalid LASA Dataset has been choosen")
                 raise NotImplementedError
@@ -705,24 +703,6 @@ class MotionPlanner:
             torch.save(self.y_train, os.path.join(base_path,"y_train.pt"))
             torch.save(self.X_test, os.path.join(base_path,"X_test.pt"))
             torch.save(self.y_test, os.path.join(base_path,"y_test.pt"))
-    
-    def evaluate_new_models(self):
-        self.model_f.eval()
-        self.model_f = self.model_f.to(self.device)
-        all_errors = []
-        with torch.no_grad():
-            for X, y in self.test_loader:
-                X = X.to(self.device)
-                y = y.to(self.device)
-                pred = self.model_f(X.float())
-                error = (pred - y.float()).cpu().numpy()
-                error_norm = np.linalg.norm(error, axis=1)
-                all_errors.extend(error_norm)
-        all_errors = np.array(all_errors)
-        mse = np.mean(all_errors ** 2)
-        sd = np.std(all_errors)
-        print_success(f"S2-NNDS MSE: {mse:.6f}")
-        print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
 
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility

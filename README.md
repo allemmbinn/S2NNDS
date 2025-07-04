@@ -54,9 +54,6 @@ git clone https://github.com/allemmbinn/Neural-Network-Dynamical-System.git
 
     We have tested for the following datasets: 
     - 3D_CShape_bottom
-    - 3D_CShape_top
-    - 3D_sink
-
 
 ## Quick Start
 
