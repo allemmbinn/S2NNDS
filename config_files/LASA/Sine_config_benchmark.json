@@ -1,13 +1,13 @@
 {
     "model_f": {
-        "activation_function": "eLU",
+        "activation_function": "Tanh",
         "hidden_neurons": 64,
-        "layers": 4,
-        "epochs_warm": 200,
+        "layers": 3,
+        "epochs_warm": 150,
         "learning_rate": 0.01,
-        "learning_rate_cert": 5e-08,
+        "learning_rate_cert": 1e-06,
         "train_f_cert": false,
-        "cert_train_factor": 0.45,
+        "cert_train_factor": 0.4,
         "batch_size": 512,
         "lr_factor": 0.5,
         "lr_patience": 20,
@@ -16,9 +16,9 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 128,
-        "layers": 3,
-        "lr_factor": 0.8,
+        "hidden_neurons": 64,
+        "layers": 4,
+        "lr_factor": 0.7,
         "lr_patience": 15,
         "warmup": 30
     },
@@ -53,7 +53,7 @@
         "function": "-(-4.37331042835-102.652674111*x-0.578737807402*y-598.803195658*x**2-89.6494640322*y**2-112.45337034*y**3-654.556409433*y**4+65.7476057344*x*y-695.267147441*x*y**2+45.3633297733*x*y**3+137.99206574*x**2*y-740.166068978*x**2*y**2-1077.2838158*x**3+69.9624712496*x**3*y-597.983006982*x**4)"
     },
     "counterex": {
-        "N_cex_domain": 150000,
+        "N_cex_domain": 200000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -65,7 +65,7 @@
         "ub": 0
     },
     "verification": {
-        "N_conf": 150000,
+        "N_conf": 200000,
         "epsilon": 0.0001
     },
     "Barrier": true,
@@ -100,8 +100,8 @@
                 0.02880046315276329
             ],
             [
-                -0.8892827033996582,
-                0.022320032119750977
+                -0.9419040679931641,
+                0.0784902572631836
             ]
         ],
         "dt": 0.005768861400492263,
@@ -122,7 +122,8 @@
         "decay_init": 1,
         "decay_unsafe": 1,
         "decay_cut": 1,
-        "decay_lb": 1.2,
+        "decay_lb": 2.0,
+        "decay_tune": 5.0,
         "alpha": 1,
         "epi_bound": 0.05,
         "eta": 0.0001,

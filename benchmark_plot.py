@@ -21,9 +21,9 @@ def load_config_models(model_name):
             model_v_path = os.path.join(model_path,'model_v.pth')
             model_b_path = os.path.join(model_path,'model_b.pth')
             model_f_path = os.path.join(model_path,'model_f.pth')
-            model_v = torch.load(model_v_path)
-            model_b = torch.load(model_b_path)
-            model_f = torch.load(model_f_path)
+            model_v = torch.load(model_v_path, map_location=torch.device('cpu'))
+            model_b = torch.load(model_b_path, map_location=torch.device('cpu'))
+            model_f = torch.load(model_f_path, map_location=torch.device('cpu'))
         return config, model_v, model_b, model_f
     except FileNotFoundError:
         print(f"Error: Configuration file '{config_path}' or Models not found.")
@@ -39,6 +39,10 @@ if __name__ == "__main__":
     model_name = args.lasa_name
     # Obtain the models for S2-NNDS
     config, model_v, model_b, model_f = load_config_models(model_name)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model_v = model_v.cpu().to(device)
+    model_b = model_b.cpu().to(device)
+    model_f = model_f.cpu().to(device)
     # Obtain the polynomials of ABC-DS
     abc_result_path = os.path.join(parent_dir, 'abc_ds_config', f"{model_name}_result_config.json")
     try:

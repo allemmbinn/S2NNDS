@@ -90,11 +90,11 @@ def initialDSPlot(model_f, demos, initial_set_center, dim_in, config, model_b=No
             center = unsafe_config.get("center")
             radius = unsafe_config.get("radius", 0.01)
             if isinstance(center[0], (int, float)):
-                unsafe = plt.Circle(center, radius, facecolor='black', edgecolor='black', linewidth=2, label="Unsafe Set", alpha = 0.5)
+                unsafe = plt.Circle(center, radius, facecolor='black', edgecolor='black', alpha = 0.5)
                 ax.add_patch(unsafe)
             else:
                 for c in center:
-                    unsafe = plt.Circle(c, radius, facecolor='black', edgecolor='black', linewidth=2, label="Unsafe Set", alpha = 0.5)
+                    unsafe = plt.Circle(c, radius, facecolor='black', edgecolor='black', alpha = 0.5)
                     ax.add_patch(unsafe)
         elif unsafe_shape == 'Custom':
             RANGE = config["plotting"].get("range", [[-1, 1], [-1, 1]])
@@ -105,7 +105,7 @@ def initialDSPlot(model_f, demos, initial_set_center, dim_in, config, model_b=No
             y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
             x,y = np.meshgrid(x, y)
             mask = (eval(function) <= 0)
-            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'black', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'black', alpha = 0.5)
         ax.set_xlabel('X Label')
         ax.set_ylabel('Y Label')
         plt.title('Trajectories of the Dynamical System')
@@ -196,9 +196,9 @@ def plotLyapunov(model_v, dim_in=2):
     x2 = torch.linspace(-1, 1, 50)
     X1, X2 = torch.meshgrid(x1, x2)  # Create a 2D grid
     # Flatten to pass into the model
-    model_v = model_v.cpu()
-    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1).to('cpu')
-    V_value = model_v(inputs).detach().numpy()
+    device = next(model_v.parameters()).device
+    inputs = torch.stack([X1.flatten(), X2.flatten()], dim=1).to(device)
+    V_value = model_v(inputs).detach().cpu().numpy()
     V_value = V_value.reshape(50,50)
     plt.figure(figsize=(8, 6))
     plt.contourf(X1, X2, V_value, levels=50, cmap="inferno")
@@ -1184,9 +1184,6 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
     # Plot the contour for ABC-DS
     contour_abc = ax.contour(X, Y, B_out_abc, levels=[0], colors='#0e5fde', linewidths=1)
     contourf_abc = ax.contourf(X, Y, mask_abc, levels=[0.5, 1], colors='#b0c4ff', alpha=0.7, zorder=1)
-    # contour_abc = ax.contour(X, Y, B_out_abc, levels=[0], colors='#60c040', linewidths=1)
-    # contourf_abc = ax.contourf(X, Y, mask_abc, levels=[0.5, 1], colors='#cdebc5', alpha=0.7, zorder=1)
-
 
     # FOR S2-NNDS
     X_tensor = torch.tensor(X, dtype=torch.float32).to(device)
@@ -1199,8 +1196,6 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
     mask_nnds = (B_out_nnds < 0)
     contour_nnds = ax.contour(X, Y, B_out_nnds, levels=[0], colors='#60c040', linewidths=1)
     contourf_nnds = ax.contourf(X, Y, mask_nnds, levels=[0.5, 1], colors='#cdebc5', alpha=0.5, zorder=2)
-    # contour_nnds = ax.contour(X, Y, B_out_nnds, levels=[0], colors='#0e5fde', linewidths=1)
-    # contourf_nnds = ax.contourf(X, Y, mask_nnds, levels=[0.5, 1], colors='#b0c4ff', alpha=0.5, zorder=2)
     
     # Intersection Region
     mask_intersect = mask_abc & mask_nnds
@@ -1219,7 +1214,7 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
             vx, vy = fx_poly(x[j-1, 0], x[j-1, 1]), fy_poly(x[j-1, 0], x[j-1, 1])
             x[j, 0] = x[j-1, 0] + vx * dt
             x[j, 1] = x[j-1, 1] + vy * dt
-        ax.plot(x[:, 0], x[:, 1], color='#ff00ff', label="ABC-DS Trajectory" if i == 0 else None, zorder=5)
+        ax.plot(x[:, 0], x[:, 1], color="#ffff00", label="ABC-DS Trajectory" if i == 0 else None, zorder=5)
 
 
     for i in range(initial_set_center.shape[0]):
@@ -1229,7 +1224,7 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
             Fout = model_f(x[j-1])
             x[j] = x[j-1] + Fout * dt
         x = x.cpu().detach().numpy()
-        ax.plot(x[:, 0], x[:, 1], color='#0080ff', label="S2-NNDS Trajectory" if i == 0 else None, zorder=6)
+        ax.plot(x[:, 0], x[:, 1], color="#ff0000", label="S2-NNDS Trajectory" if i == 0 else None, zorder=6)
     
     # FOR THE INITIAL SET
     init_rad = config["plotting"]["init_rad"]
@@ -1292,7 +1287,6 @@ def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
         x,y = np.meshgrid(x, y)
         mask = (eval(function) <= 0)
         plt.contourf(x, y, mask.astype(int), levels=[0.5, 1], colors='r', alpha=0.5, zorder=8)
-    
     patch_abc = mpatches.Patch(color='#b0c4ff', label='B < 0 (ABC-DS)', alpha=0.7)
     patch_nnds = mpatches.Patch(color='#cdebc5', label='B < 0 (S2-NNDS)', alpha=0.5)
     patch_inter = mpatches.Patch(color='#b074ff', label='B < 0 (Intersection)', alpha=0.7)
