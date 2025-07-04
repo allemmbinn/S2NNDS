@@ -1,4 +1,3 @@
-# %%
 from common_header import *
 import NNModels
 import data
@@ -406,8 +405,7 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-
-        # print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
+        print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def trainCertificate(self):
         if self.config["Barrier"]:
@@ -625,6 +623,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
     # set_seed(87)
+    seed = random.randint(0, 100)
     set_seed(seed)
     # print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
@@ -644,7 +643,8 @@ if __name__ == "__main__":
         # print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        if trial % 10 == 5:
+        if trial % 5 == 0:
+            Plotter.plotLyapunov(mp.model_v)
             Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
@@ -666,5 +666,3 @@ if __name__ == "__main__":
                 break
     if trial == 500:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
-     
-# %%

@@ -57,7 +57,6 @@ class MotionPlanner:
             print_error(f"Error: Configuration file '{file_path}' not found!")
             sys.exit(1)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -237,8 +236,8 @@ class MotionPlanner:
         train_dataset = torch.utils.data.TensorDataset(self.X_train, self.y_train)
         test_dataset = torch.utils.data.TensorDataset(self.X_test, self.y_test)
         batch_size = self.config["model_f"].get("batch_size", 128)
-        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
-        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, worker_init_fn=self.seed_worker, generator=self.g)
+        self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
+        self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
 
         # Rescaling the images
@@ -388,7 +387,7 @@ class MotionPlanner:
             add_data_unsafe = None
 
         if add_data_domain is not None:
-            # print_warning(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
+            print_warning(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -407,18 +406,18 @@ class MotionPlanner:
             self.counterexamples_added = True
                 
         if add_data_init is not None:
-            # print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
+            print_warning(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
             self.counterexamples_added = True
         
         if add_data_unsafe is not None:
-            # print_warning(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
+            print_warning(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim =0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
             self.counterexamples_added = True    
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
-            # print_success("NO COUNTEREXAMPLES ADDED")
+            print_success("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
         #Dataset Generation and Shuffling
 
@@ -452,7 +451,7 @@ class MotionPlanner:
         self.optimizer_f = torch.optim.Adam(self.model_f.parameters(), lr=model_f_config.get("learning_rate", 1e-2), betas=(0.9, 0.999))
         self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=model_f_config.get("lr_factor", 1.0), patience=model_f_config.get("lr_patience", 30))
 
-        for epoch in range(model_f_config.get("epochs_warm", 1000)):
+        for epoch in tqdm(range(model_f_config.get("epochs_warm", 1000))):
             total_loss = 0
             for _, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
@@ -483,7 +482,7 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-        # print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
+        print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
     
     def trainCertificate(self):
         if self.config["Barrier"]:
@@ -542,7 +541,7 @@ class MotionPlanner:
             self.load_model_states()        
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
-            for epoch in range(max_iter):
+            for epoch in tqdm(range(max_iter)):
                 cert_loss_b = 0
                 cert_loss_v = 0
                 dyn_loss = 0
@@ -658,10 +657,10 @@ class MotionPlanner:
         if q <= 0:
             self.flag_verified = True
             conf = 1-self.config["verification"].get("epsilon", 0.0001)
-            # print_info(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
+            print_success(f"With a confidence of {1-beta}, conditions are valid with satisfaction level {conf}")
         else:
             self.flag_verified = False
-            # print_error(f"Verification failed with marginal safety error: {q}")
+            print_error(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
         self.model_f = self.model_f.to(self.device)
@@ -717,14 +716,13 @@ class MotionPlanner:
                 y = y.to(self.device)
                 pred = self.model_f(X.float())
                 error = (pred - y.float()).cpu().numpy()
-                error_norm = np.linalg.norm(error)  # L2 error for this sample
-                all_errors.append(error_norm)
+                error_norm = np.linalg.norm(error, axis=1)
+                all_errors.extend(error_norm)
         all_errors = np.array(all_errors)
         mse = np.mean(all_errors ** 2)
         sd = np.std(all_errors)
         print_success(f"S2-NNDS MSE: {mse:.6f}")
         print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
-
 
 if __name__ == "__main__":
     # Settings Seeds for Reproducibility
@@ -744,45 +742,38 @@ if __name__ == "__main__":
        seed = random.randint(0, 100)  # seed value
     set_seed(seed)
     mp = MotionPlanner(args)
-    # print_info("OBTAINING DEMO DATA")
+    print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
-    # print_info("DYNAMICAL SYSTEM TRAINING")
+    print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
-    # print_info("OBTAINING TRAINING DATA")
+    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+    print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    # print_info("CERTIFICATE TRAINING")
+    print_info("CERTIFICATE TRAINING")
     mp.update_config()
     mp.trainCertificate()
     trial = 1
     start_time = time.time()
-    while trial < 250:
-        # print_info("ADDING COUNTEREXAMPLES")
+    max_trials = 250
+    while trial < max_trials:
+        print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
         if mp.counterexamples_added:
             mp.trainCertificate()
-            # if trial % 20 == 1:
-                # if mp.dim_in == 2:
-                    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                    # Plotter.plotLyapunov(mp.model_v)
-                    # Plotter.plotBarrier(mp.model_b)
-                # elif mp.dim_in == 3:
-                    # Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                    # plt.show()
         else:
-            # print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             mp.verifyCertificate()
             if mp.flag_verified:
-                # if mp.dim_in == 2:
-                #     fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-                #     plt.show()
-                #     Plotter.plotLyapunov(mp.model_v)
-                #     Plotter.plotBarrier(mp.model_b)
-                # elif mp.dim_in == 3:
-                #     fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
-                #     plt.show()
+                if mp.dim_in == 2:
+                    fig = Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+                    plt.show()
+                    Plotter.plotLyapunov(mp.model_v)
+                    Plotter.plotBarrier(mp.model_b)
+                elif mp.dim_in == 3:
+                    fig = Plotter.final3DDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.config)
+                    plt.show()
                 end_time = time.time()
                 elapsed_time = end_time - start_time
                 print_info(f"Total time taken: {elapsed_time:.2f} seconds")
@@ -790,7 +781,7 @@ if __name__ == "__main__":
                 print_info("Motion Planning Completed Successfully")
                 mp.save_all_models()
                 mp.final_model_eval()
-                # print_info(f"MSE for test data after certificate training: {mp.mse}")
+                print_info(f"MSE for test data after certificate training: {mp.mse}")
                 save_seed(seed,seed_filepath)
                 mp.export_onnx()
                 mp.update_config()
@@ -799,5 +790,5 @@ if __name__ == "__main__":
             else:
                print_info("CONFORMAL PREDICTION FAILED; RETRAINING CERTIFICATE")
         trial += 1
-    if trial == 250:
+    if trial == max_trials:
         print_error("MAXIMUM TRIALS EXCEEDED... VERIFICATION FAILED")

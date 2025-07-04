@@ -3,12 +3,12 @@
         "activation_function": "Tanh",
         "hidden_neurons": 64,
         "layers": 3,
-        "epochs_warm": 150,
+        "epochs_warm": 350,
         "learning_rate": 0.01,
-        "learning_rate_cert": 1e-06,
+        "learning_rate_cert": 1e-05,
         "train_f_cert": false,
         "cert_train_factor": 0.4,
-        "batch_size": 512,
+        "batch_size": 128,
         "lr_factor": 0.5,
         "lr_patience": 20,
         "init_decay": 0.1
@@ -16,9 +16,9 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 64,
-        "layers": 4,
-        "lr_factor": 0.7,
+        "hidden_neurons": 32,
+        "layers": 2,
+        "lr_factor": 0.8,
         "lr_patience": 15,
         "warmup": 30
     },
@@ -100,8 +100,8 @@
                 0.02880046315276329
             ],
             [
-                -0.9419040679931641,
-                0.0784902572631836
+                -0.9952353239059448,
+                0.006796598434448242
             ]
         ],
         "dt": 0.005768861400492263,
@@ -114,7 +114,7 @@
     "hyperparameters": {
         "max_iters": 30,
         "max_iters_ft": 30,
-        "decay_mse": 5,
+        "decay_mse": 25,
         "decay_lf": 0.0,
         "decay_vpos": 1,
         "decay_lv": 1.2,
@@ -123,7 +123,7 @@
         "decay_unsafe": 1,
         "decay_cut": 1,
         "decay_lb": 2.0,
-        "decay_tune": 5.0,
+        "decay_tune": 30.0,
         "alpha": 1,
         "epi_bound": 0.05,
         "eta": 0.0001,

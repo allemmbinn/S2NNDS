@@ -337,11 +337,11 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
             unsafe_set_center = config["unsafe"]["center"]
             unsafe_set_radius = config["unsafe"]["radius"]
             if isinstance(unsafe_set_center[0], (int, float)):
-                unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label="Unsafe Set")
+                unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', alpha = 0.5)
                 ax.add_patch(unsafe_shape)
             else:
                 for ind, center in enumerate(unsafe_set_center):
-                    unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label=f"Unsafe Set {ind+1}")
+                    unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', alpha = 0.5)
                     ax.add_patch(unsafe_shape)
         elif config["unsafe"]["shape"] == 'Custom':
             function = config["unsafe"]["function"]
@@ -351,7 +351,7 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
             y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
             x,y = np.meshgrid(x, y)
             mask = (eval(function) <= 0)
-            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', alpha = 0.5)
             # plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
             # plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
 
@@ -776,10 +776,8 @@ def realTimePlot(model_v, model_b, model_f, demos, config, x_data=None, y_data=N
         y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
         x,y = np.meshgrid(x, y)
         mask = (eval(function) <= 0)
-        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
+        plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', alpha = 0.5)
         unsafe = mpl.patches.Patch(color='r', alpha=0.5, label="Unsafe Set")
-        # plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
-        # plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
 
     # Equilibrium Point
     plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
@@ -1010,153 +1008,6 @@ def compile_poly(expr: str):
     expr = expr.replace("xi2", "y")
     code = compile(expr, "<expr>", "eval")
     return lambda x, y: eval(code, {"x": x, "y": y, "np": np})
-
-def abcdsPlot(data, demos, config, lasa_name):
-    fig, ax = plt.subplots(figsize=(4, 4))    # Define grid for plotting
-    RANGE = config["plotting"]["range"]
-    flag_barrier = config["Barrier"]
-    flag_contour = config["plotting"]["contour"]
-    flag_legend = config["plotting"]["legend"]
-    
-    # Get the polynomials
-    f1_str, f2_str = data["f_fh_str_arr"]
-    B_str = data["B_fh_str_arr"]
-    V_str = data["V_fh_str_arr"]
-    
-    # Compile the polynomials
-    fx_poly, fy_poly = map(compile_poly, (f1_str, f2_str))
-    B_poly = compile_poly(B_str)
-    V_poly = compile_poly(V_str)
-     
-    len_sample = [128, 128]
-    x = np.linspace(RANGE[0][0], RANGE[0][1], len_sample[0])
-    y = np.linspace(RANGE[1][0], RANGE[1][1], len_sample[1])
-    X, Y = np.meshgrid(x, y)
-    # For the vector field
-    U = fx_poly(X, Y)
-    V = fy_poly(X, Y)
-    # stream = ax.streamplot(X, Y, U, V, density=2, linewidth=1, color='#a5a1a1')
-    # arrow_proxy = mpl.lines.Line2D([0], [0], linestyle='-', color='#a5a1a1', marker='>', markeredgewidth=2, markersize=5, label='Vector Field')
-    # For the Lyapunov function and Barrier function
-    V_out = V_poly(X, Y)
-    B_out = B_poly(X, Y)
-    # Contour for Lyapunov Function
-    if flag_contour:
-        plt.contourf(X, Y, V_out, cmap=cm.lajolla)
-    # Plotting the Training Data
-    initial_set_center = torch.tensor(config["plotting"]["initial_conditions"])
-    # for i in range(len(demos)):
-    #     ax.plot(demos[i].pos[0,:], demos[i].pos[1,:], color = "#1F75FE", label="Actual Trajectory" if i == 1 else "")
-    # Plotting the final trajectory
-    n = 10000
-    dt = config["plotting"]["dt"]    
-    for i in range(initial_set_center.shape[0]):
-        # Initialize the trajectory with the initial condition
-        x = np.zeros((n, 2))
-        x[0, :] = initial_set_center[i].clone().detach().numpy()
-        for j in range(1, n):
-            vx, vy = fx_poly(x[j-1, 0], x[j-1, 1]), fy_poly(x[j-1, 0], x[j-1, 1])
-            x[j, 0] = x[j-1, 0] + vx * dt
-            x[j, 1] = x[j-1, 1] + vy * dt
-        ax.plot(x[:, 0], x[:, 1], '#ff00ff', label="Learned Trajectory")
-            
-    if flag_barrier:
-        plt.contour(X, Y, B_out, levels=[0], colors='#cdebc5')
-        plt.contourf(X, Y, B_out, levels=[-np.inf, 0], colors='#cdebc5')
-        contour_fill_legend = mpl.patches.Patch(color='#cdebc5', label=' $ \{x \in X \mid \mathrm{B}(x) \leq 0\}$')        
-        # Plotting the Initial Set
-        init_rad = config["plotting"]["init_rad"]
-        init_center = config["plotting"]["init_center"]
-        initial = patches.Circle(
-            init_center,  # Center of the circle
-            init_rad,  # Radius
-            linewidth=2,     # Border thickness
-            edgecolor='cyan',  # Border color
-            facecolor='cyan',   # Transparent fill
-            label="Initial Set"
-        )
-        ax.add_patch(initial)
-
-        if config["unsafe"]["shape"] == 'Rectangle':
-            unsafe_rect_range = config["unsafe"]["range"]
-            if "unbounded" in config["unsafe"]:
-                flag_max_min = config["unsafe"]["max_min"]
-                flag_xy = config["unsafe"]["unbounded"]
-                if flag_max_min == "min" and flag_xy == "x":
-                    unsafe_rect_range[0].append(1.0)
-                elif flag_max_min == "max" and flag_xy == "x":
-                    unsafe_rect_range[0].insert(0,-1)
-                elif flag_max_min == "min" and flag_xy == "y":
-                    unsafe_rect_range[1].append(1.0)
-                elif flag_max_min == "max" and flag_xy == "y":
-                    unsafe_rect_range[1].insert(0,-1)
-            x_min = unsafe_rect_range[0][0]
-            x_max = unsafe_rect_range[0][1]
-            y_min = unsafe_rect_range[1][0]
-            y_max = unsafe_rect_range[1][1]
-            unsafe = patches.Rectangle(
-            (x_min, y_min),  # Bottom-left corner (x_min, y_min)
-            x_max - x_min,   # Width
-            y_max - y_min,   # Height
-            linewidth=2,     # Border thickness
-            edgecolor='red',  # Border color
-            facecolor='red', # Transparent fill
-            alpha = 0.5, 
-            label = "Unsafe Set"
-            )
-            ax.add_patch(unsafe)
-        elif config["unsafe"]["shape"] == 'Circle':
-            unsafe_set_center = config["unsafe"]["center"]
-            unsafe_set_radius = config["unsafe"]["radius"]
-            if isinstance(unsafe_set_center[0], (int, float)):
-                unsafe_shape = plt.Circle(unsafe_set_center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label="Unsafe Set")
-                ax.add_patch(unsafe_shape)
-            else:
-                for ind, center in enumerate(unsafe_set_center):
-                    unsafe_shape = plt.Circle(center, unsafe_set_radius, facecolor='r', edgecolor='r', linewidth=2, alpha = 0.5, label=f"Unsafe Set {ind+1}")
-                    ax.add_patch(unsafe_shape)
-        elif config["unsafe"]["shape"] == 'Custom':
-            function = config["unsafe"]["function"]
-            function = function.replace("torch.max", "np.maximum")
-            function = function.replace("torch.", "np.")
-            x = np.linspace(RANGE[0][0], RANGE[0][1], 500)
-            y = np.linspace(RANGE[1][0], RANGE[1][1], 500)
-            x,y = np.meshgrid(x, y)
-            mask = (eval(function) <= 0)
-            plt.contourf(x, y, mask.astype(int), levels = [0.5, 1], colors = 'r', linewidths=2, label = "Unsafe Set", alpha = 0.5)
-            # plt.contour(X, Y, bout[:,:,0], levels=[0], colors='green')
-            # plt.contourf(X, Y, bout[:,:,0], levels=[-np.inf, 0], colors='green', alpha=0.5)
-
-    # Equilibrium Point
-    plt.plot(0, 0, marker='o', markersize=7.5, color="#000000", label="Equilibrium")
-    #Adding all legends
-    if flag_legend:
-        if flag_barrier and B_out is not None:
-            ax.legend(handles=[arrow_proxy, contour_fill_legend, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                   mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), mpl.lines.Line2D([0], [0], color='#49332b', label='Robot Trajectory'), initial, unsafe,
-                   mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                   bbox_to_anchor=(1.05, 1), fontsize = 8)
-        else:
-            ax.legend(handles=[arrow_proxy, mpl.lines.Line2D([0], [0], color='#1F75FE', label='Demonstrated Trajectories'),
-                        mpl.lines.Line2D([0], [0], color='#ff00ff', label='Learned Trajectories'), initial,
-                        mpl.lines.Line2D([0], [0], marker='o', color='black', label='Equilibrium')], loc='upper left', edgecolor='black', facecolor='white', framealpha = 1,
-                        bbox_to_anchor=(1.05, 1), fontsize = 8)
-    # Setting labels and grid
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.gca().set_xlim(RANGE[0][0], RANGE[0][1])
-    plt.gca().set_ylim(RANGE[1][0], RANGE[1][1])
-    # dataset = config["plotting"]["name"]
-    if lasa_name is not None:
-        dataset = lasa_name + ' - ABC-DS'
-        plt.title(dataset)
-    plt.grid(True)
-    plt.axis('scaled')
-    plt.margins(x=0,y=0)
-    plt.xticks(fontsize=6)
-    plt.yticks(fontsize=6)
-    plt.tight_layout()
-    return fig
 
 def combinedBenchmarkPlot(abc_data, model_b, model_f, config, lasa_name):
     fig, ax = plt.subplots(figsize=(4, 4))    # Define grid for plotting
