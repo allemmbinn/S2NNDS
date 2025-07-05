@@ -26,10 +26,6 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 pip install termcolor scipy matplotlib onnx numpy pandas pyrallis pyLasaDataset tqdm 
 ```
 
-### Install this repo
-```sh
-git clone https://github.com/allemmbinn/Neural-Network-Dynamical-System.git
-```
 ## Datasets
 
 1. **LASA Dataset**: This dataset is obtained directly from [pyLasaDataset](https://github.com/justagist/pyLasaDataset)
