@@ -39,12 +39,10 @@ class MotionPlanner:
         self.args = args
         # Load the configuration file
         file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config_files", "LASA", f"{self.args.lasa_name}_config_benchmark.json")
-        # file_path = "./config_files/" + self.args.lasa_name + "_config_benchmark.json"
         print_info(f"Loading configuration file from {file_path}")
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        # self.device = torch.device('cpu')
         #Initialize state dictionaries
         self.model_v_state_dict = None
         self.model_b_state_dict = None
@@ -324,7 +322,6 @@ class MotionPlanner:
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             mask = (torch.linalg.norm(self.domain - self.init_center, dim =1) <= self.init_rad) 
             self.init_domain = self.domain[mask]            
-            #self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
             if self.config["unsafe"]["shape"] == 'Rectangle':
                self.unsafe_domain = self.domain[((self.domain >= torch.tensor(self.unsafe_min)) & (self.domain <= torch.tensor(self.unsafe_max))).all(dim=1)]
             elif self.config["unsafe"]["shape"] == 'Circle':
@@ -582,7 +579,6 @@ class MotionPlanner:
 
     def update_config(self):
         # Construct the init_range value
-        # file_path = "./config_files/" + self.args.lasa_name + "_config_benchmark.json"
         file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files', 'LASA', self.args.lasa_name + '_config_benchmark.json')
         init_center = self.init_center[0].tolist()
         initial_conditions = self.initial_set_center.tolist()
@@ -622,39 +618,34 @@ if __name__ == "__main__":
        seed = load_seed(seed_filepath)
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
-    # set_seed(87)
-    # seed = random.randint(0, 100)
     set_seed(seed)
-    # print_info(f"Using seed: {seed}")
+    print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
-    # print_info("OBTAINING DEMO DATA")
+    print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
-    # print_info("DYNAMICAL SYSTEM TRAINING")
+    print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
-    # print_info("OBTAINING TRAINING DATA")
+    print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    # print_info("CERTIFICATE TRAINING")
+    print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
     mp.update_config()
     trial = 1
-    while trial < 500:
-        # print_info("ADDING COUNTEREXAMPLES")
+    max_trials = 250
+    while trial < max_trials:
+        print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
-        # if trial % 5 == 0:
-        #     Plotter.plotLyapunov(mp.model_v)
-        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      
         else:
-            # print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
             Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
-                import pdb; pdb.set_trace()
                 mp.save_all_models()
                 mp.final_model_eval()
                 save_seed(seed,seed_filepath)
@@ -664,5 +655,5 @@ if __name__ == "__main__":
                 #save datasets for results
                 mp.save_datasets()
                 break
-    if trial == 500:
+    if trial == max_trials:
         print_error("MAXIMUM TRIALS EXCEEDED... SAMPLING VERIFICATION FAILED")
