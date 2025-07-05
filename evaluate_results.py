@@ -43,8 +43,6 @@ if __name__ == "__main__":
     dataset_path = os.path.join(parent_dir, 'Datasets', 'LASA', f"{model_name}")
     X_test_tensor = torch.load(os.path.join(dataset_path, "X_test.pt"))
     y_test_tensor = torch.load(os.path.join(dataset_path, "y_test.pt"))
-    X_train_tensor = torch.load(os.path.join(dataset_path, "X_train.pt"))
-    y_train_tensor = torch.load(os.path.join(dataset_path, "y_train.pt"))
     # For S2-NNDS
     model_f.eval()
     model_f = model_f.to('cpu')    
