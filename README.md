@@ -1,8 +1,5 @@
 # Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning
 
-![Python 3.7](https://img.shields.io/badge/python-3.7-green.svg)
-[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
-
 Official implementation of Safe and Stable Neural Network Dynamical Systems for Robot Motion
 Planning with stability and safety certificates.
 
@@ -17,7 +14,7 @@ Planning with stability and safety certificates.
 
 ### Create Conda Environment
  ```sh
-conda create --name <your_env_name> python=3.7
+conda create --name <your_env_name> python=3.8
 
 conda activate <your_env_name>
  ```
@@ -77,6 +74,18 @@ python main.py --dataset_type=3DShapes
 
 ## Running the Code
 
+### Visualising the Plots
+
+The plots of the dynamical systems are stored in the `results` folder.
+
+Use the arguments for `--dataset_type` and the name of the dataset as per shown above. Run the following command
+
+```bash
+python results_visualisation.py 
+```
+
+The models for these visulisation is found in the `models_verified` folder. Plese edit these models carefully. 
+
 ### Training new models
 For training the models for the dynamical system and the certificates we can run the following command.
 
@@ -99,15 +108,36 @@ The hyperparameters for the config files can be changed by changing the paramete
 
 The verified models are stored in the `models` folder. We also have the `models_onnx` folder to store the onnx models for the dynamical system to be implemented on a Franka Panda robot arm.
 
-The plots of the dynamical systems are stored in the `results` folder.
+### Validating the Results
+
+For obtaining the MSE and SD for the errors, you can run the following command with the arguments corresponding to the dataset
+
+```bash
+python evaluate_results.py
+```
+
+## Benchmarking Results
+The benchmarking has been performed for the followign LASA Datasets:
+- Worm
+- PShape
+- Sshape
+- Sine
+### ABC-DS Polynomials
+We use the best results reported in the [code](https://github.com/martinschonger/abc-ds). The config file containing these polynomials are stored in the folder `abc_ds_config`.
 
 ### Validating the Results
 
-Use the arguments for `--dataset_type` and the name of the dataset as per shown above. Run the following command
+For obtaining the MSE and SD for the errors, you can run the following command with the arguments corresponding to the dataset
 
 ```bash
-python results_visualisation.py 
+python evaluate_benchmark.py
 ```
 
-The models for these visulisation is found in the `models_verified` folder. Plese edit these models carefully. 
+### Plotting the Results
 
+The plots of the trajectories of $S^2NN-DS$  and $ABC-DS$ are stored in the `results` folder.
+
+To plot theses results, run the following code with the required arguments:
+```bash
+python benchmark_plot.py
+```
