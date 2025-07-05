@@ -46,30 +46,22 @@ if __name__ == "__main__":
     X_train_tensor = torch.load(os.path.join(dataset_path, "X_train.pt"))
     y_train_tensor = torch.load(os.path.join(dataset_path, "y_train.pt"))
     # For S2-NNDS
-    model_f = model_f.to('cpu')
     model_f.eval()
-    nnds_mse_test = 0
-    total_samples = 0
-    loss_fn = nn.MSELoss(reduction = 'sum')
-    for X_batch, y_batch in zip(X_test_tensor, y_test_tensor):
-        y_pred = model_f(X_batch.float())
-        batch_mse = loss_fn(y_pred, y_batch.float())
-        nnds_mse_test += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
-        total_samples += X_batch.size(0)  
-    nnds_mse_test /= total_samples
-    
-    nnds_mse_train = 0
-    total_samples = 0
-    loss_fn = nn.MSELoss(reduction = 'sum')
-    for X_batch, y_batch in zip(X_train_tensor, y_train_tensor):
-        y_pred = model_f(X_batch.float())
-        batch_mse = loss_fn(y_pred, y_batch.float())
-        nnds_mse_train += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
-        total_samples += X_batch.size(0)  
-    nnds_mse_train /= total_samples
-    # Print the results
-    print_success(f"NNDS MSE Train: {nnds_mse_train:.6f}")
-    print_success(f"NNDS MSE Test: {nnds_mse_test:.6f}")
+    model_f = model_f.to('cpu')    
+    all_errors = []
+    with torch.no_grad():
+        for X, y in zip(X_test_tensor, y_test_tensor):
+            pred = model_f(X.float())
+            error = (pred - y.float()).cpu().numpy()
+            error_norm = np.linalg.norm(error)  # L2 error for this sample
+            all_errors.append(error_norm)
+    all_errors = np.array(all_errors)
+    mse = np.mean(all_errors ** 2)
+    sd = np.std(all_errors)
+    print_info(f"For S2-NNDS model: {model_name}")
+    print_success(f"S2-NNDS MSE: {mse:.6f}")
+    print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
+
     
     
     

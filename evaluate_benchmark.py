@@ -14,7 +14,7 @@ def load_config_models(model_name):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(parent_dir, "config_files", "LASA", f"{model_name}_config_benchmark.json")
-    model_path = os.path.join(parent_dir, "models", "LASA", f"{model_name}_benchmark")
+    model_path = os.path.join(parent_dir, "models_verified", "LASA", f"{model_name}_benchmark")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -68,52 +68,8 @@ if __name__ == "__main__":
         print(f"Error: Failed to parse JSON file '{abc_result_path}'. {e}")
         sys.exit(1)
     # For S2-NNDS
-    model_f = model_f.to('cpu')
     model_f.eval()
-    nnds_mse_test = 0
-    total_samples = 0
-    loss_fn = nn.MSELoss(reduction = 'sum')
-    for X_batch, y_batch in zip(X_test_tensor, y_test_tensor):
-        y_pred = model_f(X_batch.float())
-        batch_mse = loss_fn(y_pred, y_batch.float())
-        nnds_mse_test += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
-        total_samples += X_batch.size(0)  
-    nnds_mse_test /= total_samples
-    
-    nnds_mse_train = 0
-    total_samples = 0
-    loss_fn = nn.MSELoss(reduction = 'sum')
-    for X_batch, y_batch in zip(X_train_tensor, y_train_tensor):
-        y_pred = model_f(X_batch.float())
-        batch_mse = loss_fn(y_pred, y_batch.float())
-        nnds_mse_train += batch_mse.item() * X_batch.size(0)  # Multiply by batch size to get total loss
-        total_samples += X_batch.size(0)  
-    nnds_mse_train /= total_samples
-    # For ABC-DS
-    f1_str, f2_str = abc_data["f_fh_str_arr"]
-    fx_poly, fy_poly = map(compile_poly, (f1_str, f2_str))
-    abc_mse_test = 0
-    total_samples = 0
-    for X_batch, y_batch in zip(X_test, y_test):
-        y_pred = np.array([fx_poly(X_batch[0], X_batch[1]), fy_poly(X_batch[0], X_batch[1])])
-        abc_mse_test += np.sum((y_pred - y_batch) ** 2)
-        total_samples += 1
-    abc_mse_test /= total_samples
-    
-    abc_mse_train = 0
-    total_samples = 0
-    for X_batch, y_batch in zip(X_train, y_train):
-        y_pred = np.array([fx_poly(X_batch[0], X_batch[1]), fy_poly(X_batch[0], X_batch[1])])
-        abc_mse_train += np.sum((y_pred - y_batch) ** 2)
-        total_samples += 1
-    abc_mse_train /= total_samples
-    # Print the results
-    # print_success(f"NNDS MSE Train: {nnds_mse_train:.6f}")
-    # print_success(f"NNDS MSE Test: {nnds_mse_test:.6f}")
-    # print_success(f"ABC-DS MSE Train: {abc_mse_train:.6f}")
-    # print_success(f"ABC-DS MSE Test: {abc_mse_test:.6f}")
-    
-    model_f.eval()
+    model_f = model_f.to('cpu')    
     all_errors = []
     with torch.no_grad():
         for X, y in zip(X_test_tensor, y_test_tensor):
@@ -127,6 +83,9 @@ if __name__ == "__main__":
     print_success(f"S2-NNDS MSE: {mse:.6f}")
     print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
     
+    # For ABC-DS
+    f1_str, f2_str = abc_data["f_fh_str_arr"]
+    fx_poly, fy_poly = map(compile_poly, (f1_str, f2_str))
     abc_mse_test = 0
     total_samples = 0
     all_errors = []
@@ -134,9 +93,6 @@ if __name__ == "__main__":
         y_pred = np.array([fx_poly(X_batch[0], X_batch[1]), fy_poly(X_batch[0], X_batch[1])])
         error_norm = np.linalg.norm(y_pred - y_batch)
         all_errors.append(error_norm)
-        # abc_mse_test += np.sum((y_pred - y_batch) ** 2)
-        # total_samples += 1
-    # abc_mse_test /= total_samples
     all_errors = np.array(all_errors)
     mse = np.mean(all_errors ** 2)
     sd = np.std(all_errors)
