@@ -5,7 +5,7 @@
         "layers": 4,
         "epochs_warm": 100,
         "learning_rate": 0.001,
-        "learning_rate_cert": 1e-08,
+        "learning_rate_cert": 1e-06,
         "train_f_cert": false,
         "cert_train_factor": 0.45,
         "batch_size": 64,
@@ -26,7 +26,7 @@
         "activation_function": "eLU",
         "learning_rate": 0.01,
         "hidden_neurons": 128,
-        "layers": 3,
+        "layers": 4,
         "lr_factor": 0.2,
         "lr_patience": 10,
         "batch_size": 512,
@@ -49,12 +49,8 @@
         "radius": 0.02
     },
     "unsafe": {
-        "shape": "Circle",
-        "center": [
-            -0.4,
-            0.35
-        ],
-        "radius": 0.1
+        "shape": "Custom",
+        "function": "torch.max(torch.max(y + 0.2 * torch.sin(9.5 * x - torch.pi/6) - 0.5, -0.2 * torch.sin(9.5 * x - torch.pi/6) + 0.28 - y),torch.max(x-0,-1-x))"
     },
     "counterex": {
         "N_cex_domain": 200000,
@@ -104,8 +100,8 @@
                 0.02883970425142531
             ],
             [
-                -0.9430392980575562,
-                -0.0026732683181762695
+                -0.9184128046035767,
+                -0.01222074031829834
             ]
         ],
         "dt": 0.005768861400492263
@@ -116,12 +112,12 @@
         "decay_mse": 5,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 1,
+        "decay_lv": 1.5,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
         "decay_cut": 1,
-        "decay_lb": 1,
+        "decay_lb": 1.5,
         "alpha": 1,
         "epi_bound": 0.05,
         "eta": 0.0001,

@@ -14,7 +14,7 @@ def load_config_models(model_name):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(parent_dir, "config_files", "LASA", f"{model_name}_config_benchmark.json")
-    model_path = os.path.join(parent_dir, "models_verified", "LASA", f"{model_name}_benchmark")
+    model_path = os.path.join(parent_dir, "models", "LASA", f"{model_name}_benchmark")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -46,14 +46,17 @@ if __name__ == "__main__":
     model_name = args.lasa_name
     # Obtain the models for S2-NNDS
     config, model_v, model_b, model_f = load_config_models(model_name)
+    model_v = model_v.to('cpu')
+    model_b = model_b.to('cpu')
+    model_f = model_f.to('cpu')
     # Obtain the polynomials of ABC-DS
     abc_result_path = os.path.join(parent_dir, 'abc_ds_config', f"{model_name}_result_config.json")
     # Get the datasets
     dataset_path = os.path.join(parent_dir, 'Datasets', 'LASA', f"{model_name}_benchmark")
     X_test_tensor = torch.load(os.path.join(dataset_path, "X_test.pt"))
     y_test_tensor = torch.load(os.path.join(dataset_path, "y_test.pt"))
-    X_test = X_test_tensor.numpy()
-    y_test = y_test_tensor.numpy()
+    X_test = X_test_tensor.cpu().numpy()
+    y_test = y_test_tensor.cpu().numpy()
     X_train_tensor = torch.load(os.path.join(dataset_path, "X_train.pt"))
     y_train_tensor = torch.load(os.path.join(dataset_path, "y_train.pt"))
     X_train = X_train_tensor.numpy()
@@ -73,8 +76,8 @@ if __name__ == "__main__":
     all_errors = []
     with torch.no_grad():
         for X, y in zip(X_test_tensor, y_test_tensor):
-            pred = model_f(X.float())
-            error = (pred - y.float()).cpu().numpy()
+            pred = model_f(X.cpu().float()).cpu()
+            error = (pred - y.cpu().float()).numpy()
             error_norm = np.linalg.norm(error)  # L2 error for this sample
             all_errors.append(error_norm)
     all_errors = np.array(all_errors)

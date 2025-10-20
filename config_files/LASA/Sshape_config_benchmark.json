@@ -1,12 +1,12 @@
 {
     "model_f": {
-        "activation_function": "Tanh",
+        "activation_function": "eLU",
         "hidden_neurons": 128,
-        "layers": 3,
+        "layers": 4,
         "epochs_warm": 250,
         "learning_rate": 0.001,
         "learning_rate_cert": 1e-07,
-        "cert_train_factor": 0.3,
+        "cert_train_factor": 0.6,
         "train_f_cert": true,
         "batch_size": 1024,
         "lr_factor": 0.1,
@@ -101,8 +101,8 @@
                 0.7402630057546735
             ],
             [
-                0.568432092666626,
-                0.7027552127838135
+                0.6353600025177002,
+                0.7510565519332886
             ]
         ],
         "dt": 0.004622234108395177,
@@ -118,7 +118,7 @@
         "decay_mse": 15.0,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 1.5,
+        "decay_lv": 1.7,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,

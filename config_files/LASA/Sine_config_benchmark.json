@@ -2,12 +2,12 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 64,
-        "layers": 3,
+        "layers": 4,
         "epochs_warm": 150,
         "learning_rate": 0.01,
-        "learning_rate_cert": 1e-06,
+        "learning_rate_cert": 1e-08,
         "train_f_cert": false,
-        "cert_train_factor": 0.45,
+        "cert_train_factor": 0.6,
         "batch_size": 1024,
         "lr_factor": 0.5,
         "lr_patience": 20,
@@ -26,7 +26,7 @@
         "activation_function": "eLU",
         "learning_rate": 0.01,
         "hidden_neurons": 128,
-        "layers": 5,
+        "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
         "batch_size": 1024,
@@ -53,7 +53,7 @@
         "function": "-(-4.37331042835-102.652674111*x-0.578737807402*y-598.803195658*x**2-89.6494640322*y**2-112.45337034*y**3-654.556409433*y**4+65.7476057344*x*y-695.267147441*x*y**2+45.3633297733*x*y**3+137.99206574*x**2*y-740.166068978*x**2*y**2-1077.2838158*x**3+69.9624712496*x**3*y-597.983006982*x**4)"
     },
     "counterex": {
-        "N_cex_domain": 150000,
+        "N_cex_domain": 180000,
         "N": 1,
         "no_min": 10,
         "radius": 0.001,
@@ -65,7 +65,7 @@
         "ub": 0
     },
     "verification": {
-        "N_conf": 150000,
+        "N_conf": 180000,
         "epsilon": 0.0001
     },
     "Barrier": true,
@@ -100,8 +100,8 @@
                 0.02880046315276329
             ],
             [
-                -0.9419040679931641,
-                0.0784902572631836
+                -0.8892827033996582,
+                0.022320032119750977
             ]
         ],
         "dt": 0.005768861400492263,
@@ -112,17 +112,17 @@
         "init_rad": 0.07
     },
     "hyperparameters": {
-        "max_iters": 30,
-        "max_iters_ft": 30,
-        "decay_mse": 5,
+        "max_iters": 50,
+        "decay_mse": 40,
         "decay_lf": 0.0,
         "decay_vpos": 1,
-        "decay_lv": 1.2,
+        "decay_lv": 1.1,
         "decay_v0": 1,
         "decay_init": 1,
         "decay_unsafe": 1,
         "decay_cut": 1,
         "decay_lb": 1,
+        "decay_tune": 5,
         "alpha": 1,
         "epi_bound": 0.05,
         "eta": 0.0001,

@@ -740,6 +740,9 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
+        # if trial % 10 == 0:
+        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+        #     plt.show()
         if mp.counterexamples_added:
             mp.trainCertificate()
         else:
@@ -757,7 +760,7 @@ if __name__ == "__main__":
                 end_time = time.time()
                 elapsed_time = end_time - start_time
                 print_info(f"Total time taken: {elapsed_time:.2f} seconds")
-                mp.evaluate_new_models()
+                # mp.evaluate_new_models()
                 print_info("Motion Planning Completed Successfully")
                 mp.save_all_models()
                 mp.final_model_eval()

@@ -39,7 +39,7 @@ class MotionPlanner:
         self.args = args
         # Load the configuration file
         file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config_files", "LASA", f"{self.args.lasa_name}_config_benchmark.json")
-        print_info(f"Loading configuration file from {file_path}")
+        #print_info(f"Loading configuration file from {file_path}")
         with open(file_path) as file:
             self.config = json.load(file)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -318,7 +318,7 @@ class MotionPlanner:
             add_data_unsafe = None
 
         if add_data_domain is not None:
-            print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
+            #print_info(f"DOMAIN COUNTEREXAMPLES ADDED : {add_data_domain.shape[0]} CEs")
             self.domain = torch.unique(torch.cat([self.domain, add_data_domain], dim=0), dim = 0)
             mask = (torch.linalg.norm(self.domain - self.init_center, dim =1) <= self.init_rad) 
             self.init_domain = self.domain[mask]            
@@ -327,17 +327,17 @@ class MotionPlanner:
             elif self.config["unsafe"]["shape"] == 'Circle':
                self.unsafe_domain = self.domain[(torch.linalg.norm(self.domain - self.uns_center, dim =1) <= self.uns_rad )]
         if add_data_init is not None:
-            print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
+            #print_info(f"INIT COUNTEREXAMPLES ADDED : {add_data_init.shape[0]} CEs")
             self.init_domain = torch.unique(torch.cat([self.init_domain, add_data_init], dim=0), dim = 0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_init], dim=0), dim = 0)
         
         if add_data_unsafe is not None:
-            print_info(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
+            #print_info(f"UNSAFE COUNTEREXAMPLES ADDED : {add_data_unsafe.shape[0]} CEs")
             self.unsafe_domain = torch.unique(torch.cat([self.unsafe_domain, add_data_unsafe], dim=0), dim =0)
             self.domain = torch.unique(torch.cat([self.domain, add_data_unsafe], dim=0), dim = 0)
                 
         elif add_data_domain is None and add_data_init is None and add_data_unsafe is None:
-            print_info("NO COUNTEREXAMPLES ADDED")
+            #print_info("NO COUNTEREXAMPLES ADDED")
             self.counterexamples_added = False
 
         #Dataset Generation and Shuffling
@@ -371,7 +371,8 @@ class MotionPlanner:
         self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
         self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
                                                                     patience=self.config["model_f"]["lr_patience"])
-        for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
+        # for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
+        for epoch in range(self.config["model_f"]["epochs_warm"]):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
@@ -402,7 +403,7 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-        print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
+        #print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def trainCertificate(self):
         if self.config["Barrier"]:
@@ -443,7 +444,8 @@ class MotionPlanner:
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
 
-            for epoch in tqdm(range(max_iter)):
+            # for epoch in tqdm(range(max_iter)):
+            for epoch in range(max_iter):
                 cert_loss_b = 0
                 cert_loss_v = 0
                 dyn_loss = 0
@@ -564,18 +566,35 @@ class MotionPlanner:
             print_error(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
-        self.model_f.eval()
-        self.mse = 0
-        total_samples = 0
+        # self.model_f.eval()
+        # self.mse = 0
+        # total_samples = 0
+        # self.model_f = self.model_f.to(self.device)
+        # for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
+        #     y_pred = self.model_f(X_batch.float().to(self.device))
+        #     loss_fn = nn.MSELoss(reduction = 'sum')
+        #     batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
+        #     self.mse += batch_mse.item()
+        #     total_samples += X_batch.size(0)  
+        # self.mse = self.mse / total_samples
+        # print_success(f"Final MSE of the model: {self.mse:.4f}")
+        all_errors = []
         self.model_f = self.model_f.to(self.device)
-        for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
-            y_pred = self.model_f(X_batch.float().to(self.device))
-            loss_fn = nn.MSELoss(reduction = 'sum')
-            batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
-            self.mse += batch_mse.item()
-            total_samples += X_batch.size(0)  
-        self.mse = self.mse / total_samples
-        print_success(f"Final MSE of the model: {self.mse:.4f}")
+        self.model_f.eval()
+        self.X_test = self.X_test.to(self.device)
+        self.y_test = self.y_test.to(self.device)
+        with torch.no_grad():
+            for X, y in zip(self.X_test, self.y_test):
+                pred = self.model_f(X.float())
+                error = (pred - y.float()).cpu().numpy()
+                error_norm = np.linalg.norm(error)  # L2 error for this sample
+                all_errors.append(error_norm)
+        all_errors = np.array(all_errors)
+        mse = np.mean(all_errors ** 2)
+        sd = np.std(all_errors)
+        print_success(f"S2-NNDS MSE: {mse:.6f}")
+        print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
+
 
     def update_config(self):
         # Construct the init_range value
@@ -619,33 +638,39 @@ if __name__ == "__main__":
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
     set_seed(seed)
-    print_info(f"Using seed: {seed}")
+    #print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
-    print_info("OBTAINING DEMO DATA")
+    #print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
-    print_info("DYNAMICAL SYSTEM TRAINING")
+    print("STARTING TIME")
+    start = time.time()
+    #print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
-    print_info("OBTAINING TRAINING DATA")
+    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+    #print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    print_info("CERTIFICATE TRAINING")
+    #print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
     mp.update_config()
     trial = 1
     max_trials = 250
     while trial < max_trials:
-        print_info("ADDING COUNTEREXAMPLES")
+        #print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print(f"Trial: {trial}")
+        # if trial % 10 == 1:
+        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      
         else:
-            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+            #print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
+                print("TOTAL TIME TAKEN FOR TRAINING AND VERIFICATION: %.2f seconds" % (time.time() - start))
+                print_success("VERIFICATION SUCCESSFUL")
                 mp.save_all_models()
                 mp.final_model_eval()
                 save_seed(seed,seed_filepath)
