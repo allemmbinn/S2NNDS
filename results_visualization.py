@@ -77,7 +77,7 @@ elif mp.dim_in == 3:
     plot = Plotter.final3DDSPlot(model_f, mp.demos, initial_set_center, config)
     plt.show()
 #Saving the plots
-fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'results', args.dataset_type)
+fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'new_plots', args.dataset_type)
 os.makedirs(fig_dir, exist_ok=True)
 plot.savefig(os.path.join(fig_dir, mp.name + '_main.svg'), format="svg", dpi=300)
 
