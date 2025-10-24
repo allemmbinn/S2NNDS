@@ -2,6 +2,7 @@ from common_header import *
 import Plotter
 import main
 from scipy.spatial.distance import cdist
+from dtaidistance import dtw
 
 @dataclass
 class ConfigFile:
@@ -102,6 +103,7 @@ if __name__ == "__main__":
     all_errors = np.array(all_errors)
     mse = np.mean(all_errors ** 2)
     sd = np.std(all_errors)
+    print_info(f"Evaluating S2-NNDS on Benchmark Dataset: {model_name}")
     print_success(f"S2-NNDS MSE: {mse:.6f}")
     print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
     # FOR DTW Distance
@@ -114,7 +116,8 @@ if __name__ == "__main__":
         for k in range(1, demo_traj.shape[1]):
             s2nnds_traj[:,k] = s2nnds_traj[:,k-1] + mp.dt * model_f(torch.tensor(s2nnds_traj[:,k-1], dtype=torch.float32)).detach().cpu().numpy()
         dist_matrix = cdist(demo_traj.T, s2nnds_traj.T, metric='euclidean')
-        rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
+        # rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
+        rssd = np.sqrt((dtw.distance(demo_traj[0], s2nnds_traj[0])**2)+ (dtw.distance(demo_traj[1], s2nnds_traj[1])**2))
         dtw_dist.append(rssd) 
     print_success(f"S2-NNDS DTW Distance: {np.mean(np.array(dtw_dist)):.6f}")
     # Area of Barrier Function
@@ -163,7 +166,8 @@ if __name__ == "__main__":
             abcds_traj[0,k] = abcds_traj[0,k-1] + mp.dt * fx_poly(abcds_traj[0,k-1], abcds_traj[1,k-1])
             abcds_traj[1,k] = abcds_traj[1,k-1] + mp.dt * fy_poly(abcds_traj[0,k-1], abcds_traj[1,k-1])
         dist_matrix = cdist(demo_traj.T, abcds_traj.T, metric='euclidean')
-        rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
+        rssd = np.sqrt((dtw.distance(demo_traj[0], abcds_traj[0])**2)+ (dtw.distance(demo_traj[1], abcds_traj[1])**2))
+        # rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
         dtw_dist.append(rssd) 
     print_success(f"ABC-DS DTW Distance: {np.mean(np.array(dtw_dist)):.6f}")
     # Area of Barrier Function

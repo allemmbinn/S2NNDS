@@ -638,6 +638,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
     set_seed(seed)
+    print_info(f"Benchmarking for LASA Dataset: {args.lasa_name}")
     #print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
     #print_info("OBTAINING DEMO DATA")
@@ -658,7 +659,7 @@ if __name__ == "__main__":
     while trial < max_trials:
         #print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
-        print(f"Trial: {trial}")
+        # print(f"Trial: {trial}")
         # if trial % 10 == 1:
         #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:

@@ -74,7 +74,7 @@ if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data)
     plt.show()
 elif mp.dim_in == 3:
-    plot = Plotter.final3DDSPlot(model_f, mp.demos, initial_set_center, config)
+    plot = Plotter.final3DDSPlot(model_f, mp.demos, initial_set_center, config, data_1=robot_data)
     plt.show()
 #Saving the plots
 fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'new_plots', args.dataset_type)

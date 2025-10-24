@@ -2,6 +2,7 @@ from common_header import *
 import Plotter
 import main
 from scipy.spatial.distance import cdist
+from dtaidistance import dtw
 
 @dataclass
 class ConfigFile:
@@ -114,7 +115,8 @@ if __name__ == "__main__":
         for k in range(1, demo_traj.shape[1]):
             s2nnds_traj[:,k] = s2nnds_traj[:,k-1] + mp.dt * model_f(torch.tensor(s2nnds_traj[:,k-1], dtype=torch.float32)).detach().cpu().numpy()
         dist_matrix = cdist(demo_traj.T, s2nnds_traj.T, metric='euclidean')
-        rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
+        # rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
+        rssd = np.sqrt((dtw.distance(demo_traj[0], s2nnds_traj[0])**2)+ (dtw.distance(demo_traj[1], s2nnds_traj[1])**2))
         dtw_dist.append(rssd) 
     print_success(f"S2-NNDS DTW Distance: {np.mean(np.array(dtw_dist)):.6f}")
     # Area of Barrier Function
