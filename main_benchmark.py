@@ -660,14 +660,14 @@ if __name__ == "__main__":
         #print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         # print(f"Trial: {trial}")
-        if trial % 20 == 1:
-            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+        # if trial % 20 == 1:
+        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      
         else:
-            #print_info("SAMPLING-BASED VERIFICATION COMPLETE")
-            # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+            print_info("SAMPLING-BASED VERIFICATION COMPLETE")
+            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
             mp.verifyCertificate()
             if mp.flag_verified:
                 print("TOTAL TIME TAKEN FOR TRAINING AND VERIFICATION: %.2f seconds" % (time.time() - start))

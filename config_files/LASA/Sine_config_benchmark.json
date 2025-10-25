@@ -2,7 +2,7 @@
     "model_f": {
         "activation_function": "Tanh",
         "hidden_neurons": 64,
-        "layers": 4,
+        "layers": 3,
         "epochs_warm": 150,
         "learning_rate": 0.01,
         "learning_rate_cert": 1e-08,
@@ -16,8 +16,8 @@
     "model_v": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 128,
-        "layers": 4,
+        "hidden_neurons": 64,
+        "layers": 3,
         "lr_factor": 0.99,
         "lr_patience": 30,
         "warmup": 50
@@ -25,7 +25,7 @@
     "model_b": {
         "activation_function": "eLU",
         "learning_rate": 0.01,
-        "hidden_neurons": 256,
+        "hidden_neurons": 128,
         "layers": 4,
         "lr_factor": 0.8,
         "lr_patience": 15,
@@ -100,8 +100,8 @@
                 0.02880046315276329
             ],
             [
-                -0.8892827033996582,
-                0.022320032119750977
+                -0.9419040679931641,
+                0.0784902572631836
             ]
         ],
         "dt": 0.005768861400492263,

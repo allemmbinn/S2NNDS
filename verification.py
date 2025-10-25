@@ -48,7 +48,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         lie_lyap_cex = filtered_input_domain[min_indices]
         
         # PRINT
-        # print(f"Lie_lyapunov CEs Values:\n {lie_lyap_cex.detach().cpu().numpy()}")
+        print(f"Lie_lyapunov CEs Values:\n {lie_lyap_cex.detach().cpu().numpy()}")
     else:
         lie_lyap_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
     
@@ -69,7 +69,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         V_pos_cex = filtered_input_domain[min_indices]
         
         # PRINT
-        # print(f"V_pos CEs Values:\n {V_pos_cex.detach().cpu().numpy()}")
+        print(f"V_pos CEs Values:\n {V_pos_cex.detach().cpu().numpy()}")
     else:
         V_pos_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 
@@ -99,7 +99,7 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
         lie_bar_cex = filtered_input_domain[min_indices]
         
         # PRINT
-        # print(f"Lie_barrier CEs Values:\n {lie_bar_cex.detach().cpu().numpy()}")
+        print(f"Lie_barrier CEs Values:\n {lie_bar_cex.detach().cpu().numpy()}")
     else:
         lie_bar_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 
