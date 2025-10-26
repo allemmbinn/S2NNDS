@@ -42,13 +42,13 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
     if filtered_lie_lyap.numel() > 0:  # Ensure there are valid values
         # Sample indices according to probabilities
         num_elements = filtered_lie_lyap.numel()
-        #print_warning(f"Number of elements in filtered_lie_lyap: {num_elements}")
+        print_warning(f"Number of elements in filtered_lie_lyap: {num_elements}")
         num_samples = min(N, num_elements)
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         lie_lyap_cex = filtered_input_domain[min_indices]
         
         # PRINT
-        print(f"Lie_lyapunov CEs Values:\n {lie_lyap_cex.detach().cpu().numpy()}")
+        print_warning(f"Lie_lyapunov CEs Values:\n {lie_lyap_cex.detach().cpu().numpy()}")
     else:
         lie_lyap_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
     
@@ -62,14 +62,14 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
 
     if filtered_V_Value.numel() > 0:  # Ensure there are valid values
         num_elements = filtered_V_Value.numel()
-        #print_warning(f"Number of elements in filtered_V_Value: {num_elements}")
+        print_warning(f"Number of elements in filtered_V_Value: {num_elements}")
         num_samples = min(N, num_elements)
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         # Select the corresponding counterexample points
         V_pos_cex = filtered_input_domain[min_indices]
         
         # PRINT
-        print(f"V_pos CEs Values:\n {V_pos_cex.detach().cpu().numpy()}")
+        print_warning(f"V_pos CEs Values:\n {V_pos_cex.detach().cpu().numpy()}")
     else:
         V_pos_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 
@@ -92,14 +92,14 @@ def verify_domain(model_v, model_b, model_f, input_domain, config):
 
     if filtered_lie_bar.numel() > 0:  # Ensure there are valid values
         num_elements = filtered_lie_bar.numel()
-        #print_warning(f"Number of elements in filtered_lie_bar: {num_elements}")
+        print_warning(f"Number of elements in filtered_lie_bar: {num_elements}")
         num_samples = min(N, num_elements)
         min_indices = torch.randperm(num_elements)[:num_samples]        # Select the corresponding counterexample points
         # Select the corresponding counterexample points
         lie_bar_cex = filtered_input_domain[min_indices]
         
         # PRINT
-        print(f"Lie_barrier CEs Values:\n {lie_bar_cex.detach().cpu().numpy()}")
+        print_warning(f"Lie_barrier CEs Values:\n {lie_bar_cex.detach().cpu().numpy()}")
     else:
         lie_bar_cex = torch.empty((0, filtered_input_domain.shape[1]), device=device)
 

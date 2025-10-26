@@ -388,16 +388,17 @@ class MotionPlanner:
                 self.optimizer_f.step()
                 total_loss += loss.item()
             self.model_f.eval()
+            mse = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
                 y_pred = self.model_f(X_batch.float().to(self.device))
-                mse = loss_fn(y_pred, y_batch.float().to(self.device))
-                mse = float(mse)
-                history.append(mse)
-                if loss < best_mse:
-                    best_mse = mse
-                    best_weights = copy.deepcopy(self.model_f.state_dict())
-                with torch.no_grad():
-                    torch.cuda.empty_cache()
+                mse += loss_fn(y_pred, y_batch.float().to(self.device))
+            mse = float(mse)
+            history.append(mse)
+            if mse < best_mse:
+                best_mse = mse
+                best_weights = copy.deepcopy(self.model_f.state_dict())
+            with torch.no_grad():
+                torch.cuda.empty_cache()
         # restore model and return best accuracy
         self.model_f.load_state_dict(best_weights)
         # Store the model state dictionary
@@ -659,7 +660,7 @@ if __name__ == "__main__":
     while trial < max_trials:
         #print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
-        # print(f"Trial: {trial}")
+        print_info(f"Trial: {trial}")
         # if trial % 20 == 1:
         #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
