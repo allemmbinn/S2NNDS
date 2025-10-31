@@ -255,7 +255,7 @@ class MotionPlanner:
             self.init_min = np.where(self.init_min < -1, -1, self.init_min)
             self.init_max = (np.max([self.demos[i].pos[:,0] for i in range(self.total_demos)], axis=0) + self.config["init"].get("radius", 0.01)).reshape(1,self.dim_in)
             self.init_max = np.where(self.init_max > 1, 1, self.init_max)
-
+            import pdb; pdb.set_trace()
             self.init_domain = self.domain[((self.domain >= torch.tensor(self.init_min)) & (self.domain <= torch.tensor(self.init_max))).all(dim=1)]
 
             if self.config["unsafe"]["shape"] == 'Rectangle':
@@ -740,9 +740,9 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
-        # if trial % 10 == 0:
-        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-        #     plt.show()
+        if trial % 10 == 1:
+            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
+            plt.show()
         if mp.counterexamples_added:
             mp.trainCertificate()
         else:
