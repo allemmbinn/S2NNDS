@@ -1,0 +1,132 @@
+{
+    "model_f": {
+        "activation_function": "Tanh",
+        "hidden_neurons": 64,
+        "layers": 4,
+        "epochs_warm": 100,
+        "learning_rate": 0.001,
+        "learning_rate_cert": 1e-06,
+        "train_f_cert": false,
+        "cert_train_factor": 0.45,
+        "batch_size": 64,
+        "lr_factor": 0.1,
+        "lr_patience": 5,
+        "init_decay": 0.1
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 0.01,
+        "hidden_neurons": 128,
+        "layers": 3,
+        "lr_factor": 0.2,
+        "lr_patience": 10,
+        "warmup": 10
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 0.01,
+        "hidden_neurons": 128,
+        "layers": 4,
+        "lr_factor": 0.2,
+        "lr_patience": 10,
+        "batch_size": 512,
+        "warmup": 10
+    },
+    "domain": {
+        "N": 5000,
+        "range": [
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ]
+        ]
+    },
+    "init": {
+        "radius": 0.02
+    },
+    "unsafe": {
+        "shape": "Custom",
+        "function": "torch.max(torch.max(y + 0.2 * torch.sin(9.5 * x - torch.pi/6) - 0.5, -0.2 * torch.sin(9.5 * x - torch.pi/6) + 0.28 - y),torch.max(x-0,-1-x))"
+    },
+    "counterex": {
+        "N_cex_domain": 200000,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.0,
+        "lb": 0,
+        "ub": 0
+    },
+    "verification": {
+        "N_conf": 250000,
+        "epsilon": 0.0001
+    },
+    "Barrier": true,
+    "plots": true,
+    "plotting": {
+        "range": [
+            [
+                -1.1,
+                0.2
+            ],
+            [
+                -0.3,
+                0.7
+            ]
+        ],
+        "contour": false,
+        "legend": false,
+        "name": "Sine",
+        "init_range": [
+            [
+                -1.0,
+                -0.8814084507042251
+            ],
+            [
+                -0.038779342723004505,
+                0.07164319248826274
+            ]
+        ],
+        "initial_conditions": [
+            [
+                -0.9396378059592285,
+                0.02883970425142531
+            ],
+            [
+                -0.9184128046035767,
+                -0.01222074031829834
+            ]
+        ],
+        "dt": 0.005768861400492263
+    },
+    "hyperparameters": {
+        "max_iters": 30,
+        "max_iters_ft": 30,
+        "decay_mse": 5,
+        "decay_lf": 0.0,
+        "decay_vpos": 1,
+        "decay_lv": 1.5,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_cut": 1,
+        "decay_lb": 1.5,
+        "alpha": 1,
+        "epi_bound": 0.05,
+        "eta": 0.0001,
+        "lyap_tol": 0.01,
+        "pos_tol": 0.01,
+        "bar_tol": 0.01,
+        "inun_tol": 0.0001,
+        "lie_tol": 0.005,
+        "reg_bar": 0.001,
+        "reg_v": 0.001
+    }
+}

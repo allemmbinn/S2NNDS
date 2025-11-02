@@ -17,7 +17,7 @@ def load_config_models(model_name):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(parent_dir, "config_files", "LASA", f"{model_name}_config_benchmark.json")
-    model_path = os.path.join(parent_dir, "models", "LASA", f"{model_name}_benchmark")
+    model_path = os.path.join(parent_dir, "models_verified", "LASA", f"{model_name}_benchmark")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -123,6 +123,13 @@ if __name__ == "__main__":
     # Area of Barrier Function
     x_min, x_max = -1, 1
     y_min, y_max = -1, 1
+    # x_min, x_max = mp.min_limit[0].item(), mp.max_limit[0].item()
+    # y_min, y_max = mp.min_limit[1].item(), mp.max_limit[1].item()
+    # # Change for the barrier function area calculation
+    # x_min = max(x_min-0.2, -1)
+    # x_max = min(x_max+0.2, 1)
+    # y_min = max(y_min-0.2, -1)
+    # y_max = min(y_max+0.2, 1)
     grid_resolution = 500
     x = np.linspace(x_min, x_max, grid_resolution)
     y = np.linspace(y_min, y_max, grid_resolution)

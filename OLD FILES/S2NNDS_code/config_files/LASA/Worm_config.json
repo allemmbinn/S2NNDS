@@ -1,0 +1,138 @@
+{
+    "model_f": {
+        "activation_function": "Tanh",
+        "hidden_neurons": 16,
+        "layers": 2,
+        "epochs_warm": 150,
+        "learning_rate": 0.001,
+        "learning_rate_cert": 1e-06,
+        "batch_size": 64,
+        "lr_factor": 0.1,
+        "lr_patience": 5,
+        "init_decay": 0.1,
+        "learn_rate_change": true
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 0.01,
+        "hidden_neurons": 64,
+        "layers": 3,
+        "lr_factor": 0.2,
+        "lr_patience": 10,
+        "warmup": 10
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 0.01,
+        "learning_rate_ft": 0.01,
+        "hidden_neurons": 64,
+        "layers": 3,
+        "lr_factor": 0.2,
+        "lr_patience": 10,
+        "batch_size": 256,
+        "warmup": 10
+    },
+    "domain": {
+        "N": 2500,
+        "range": [
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ]
+        ]
+    },
+    "init": {
+        "radius": 0.005
+    },
+    "unsafe": {
+        "shape": "Rectangle",
+        "range": [
+            [
+                -0.4,
+                -0.3
+            ],
+            [
+                -0.1,
+                0.05
+            ]
+        ]
+    },
+    "counterex": {
+        "N_cex_domain": 250000,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.001,
+        "lb": 0.0,
+        "ub": 0.0
+    },
+    "verification": {
+        "N_conf": 200000,
+        "epsilon": 0.01
+    },
+    "Barrier": true,
+    "plots": true,
+    "plotting": {
+        "range": [
+            [
+                -1.2,
+                0.2
+            ],
+            [
+                -0.4,
+                0.6
+            ]
+        ],
+        "contour": false,
+        "legend": false,
+        "name": "Worm",
+        "init_range": [
+            [
+                -1.0,
+                -0.9397674418604651
+            ],
+            [
+                -0.06604651162790695,
+                -0.006627906976744172
+            ]
+        ],
+        "initial_conditions": [
+            [
+                -0.965946822263226,
+                -0.037790696829730665
+            ],
+            [
+                -0.9550611972808838,
+                -0.03481626510620117
+            ]
+        ],
+        "dt": 0.005266017443299982
+    },
+    "hyperparameters": {
+        "max_iters": 30,
+        "decay_mse": 5,
+        "decay_lf": 0.0,
+        "decay_vpos": 1,
+        "decay_lv": 1,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_cut": 1,
+        "decay_lb": 1,
+        "alpha": 1,
+        "lyap_tol": 0.1,
+        "pos_tol": 0.1,
+        "bar_tol": 0.1,
+        "inun_tol": 0.01,
+        "lie_tol": 0.01,
+        "reg_bar": 0.001,
+        "reg_v": 0.001
+    }
+}

@@ -14,7 +14,7 @@ def load_config_models(model_name):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(parent_dir, "config_files", "LASA", f"{model_name}_config_benchmark.json")
-    model_path = os.path.join(parent_dir, "models", "LASA", f"{model_name}_benchmark")
+    model_path = os.path.join(parent_dir, "models_verified", "LASA", f"{model_name}_benchmark")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)

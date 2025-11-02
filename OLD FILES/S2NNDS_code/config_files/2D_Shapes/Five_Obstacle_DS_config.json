@@ -1,0 +1,141 @@
+{
+    "model_f": {
+        "activation_function": "Tanh",
+        "hidden_neurons": 64,
+        "layers": 3,
+        "epochs_warm": 400,
+        "learning_rate": 0.01,
+        "learning_rate_cert": 0.0001,
+        "train_f_cert": true,
+        "cert_train_factor": 0.5,
+        "batch_size": 1024,
+        "lr_factor": 0.1,
+        "lr_patience": 5,
+        "init_decay": 0.1
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 0.005,
+        "hidden_neurons": 128,
+        "layers": 4,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "warmup": 30
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 0.005,
+        "hidden_neurons": 128,
+        "layers": 5,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "batch_size": 1024,
+        "warmup": 30
+    },
+    "Barrier": true,
+    "domain": {
+        "N": 5000,
+        "range": [
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ]
+        ]
+    },
+    "init": {
+        "radius": 0.05
+    },
+    "unsafe": {
+        "shape": "Circle",
+        "center": [
+            [
+                0.25,
+                -0.2
+            ],
+            [
+                0.8,
+                -0.2
+            ],
+            [
+                0.5,
+                -0.55
+            ]
+        ],
+        "radius": 0.06
+    },
+    "counterex": {
+        "N_cex_domain": 100000,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.0,
+        "lb": 0.0,
+        "ub": 0.0
+    },
+    "verification": {
+        "N_conf": 250000,
+        "epsilon": 0.0001
+    },
+    "hyperparameters": {
+        "max_iters": 50,
+        "decay_mse": 20,
+        "decay_vpos": 15,
+        "decay_lv": 20.5,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_lb": 3.5,
+        "alpha": 1e-35,
+        "lyap_tol": 0.05,
+        "pos_tol": 0.05,
+        "bar_tol": 0.05,
+        "inun_tol": 0.0001,
+        "lie_tol": 0.01,
+        "reg_bar": 0.001,
+        "reg_v": 0.001,
+        "subsample": 6
+    },
+    "plotting": {
+        "init_range": [
+            [
+                0.9164130375553238,
+                1.0
+            ],
+            [
+                -0.059441649642284614,
+                0.05893719946463559
+            ]
+        ],
+        "initial_conditions": [
+            [
+                0.9743298487807251,
+                0.0016333897116882292
+            ],
+            [
+                0.9469892978668213,
+                0.006909489631652832
+            ]
+        ],
+        "dt": 0.01,
+        "range": [
+            [
+                -0.5,
+                1.2
+            ],
+            [
+                -1.0,
+                0.45
+            ]
+        ],
+        "contour": false,
+        "legend": false,
+        "name": "W Shape from Robot Demonstration"
+    }
+}

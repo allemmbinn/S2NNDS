@@ -281,7 +281,7 @@ def lyapunovBarrierPlot(model_v, model_b, model_f, demos, config, x_data=None, y
 
     # Plotting the robot trajectory
     if x_data is not None and y_data is not None:
-        ax.plot(x_data, y_data, "#49332b", label="Robot Trajectory")   
+        ax.plot(x_data, y_data, "#49332b", label="Robot Trajectory", linewidth=3)   
     
     if flag_barrier:
         plt.contour(X, Y, bout[:,:,0], levels=[0], colors='#cdebc5')

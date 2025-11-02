@@ -237,7 +237,9 @@ class MotionPlanner:
         self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
         self.test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0, worker_init_fn=self.seed_worker, generator=self.g)
         self.initial_set_center = (self.initial_set_center/self.pos_scaling).reshape(1,self.dim_in)
-
+        # Setting the limits of the demonstrations
+        self.min_limit = torch.min(torch.concatenate([self.X_train, self.X_test]), dim=0).values
+        self.max_limit = torch.max(torch.concatenate([self.X_train, self.X_test]), dim=0).values
         # Rescaling the images
         for i in range(len(self.demos)):
             self.demos[i].pos = self.demos[i].pos/self.pos_scaling.cpu().detach().numpy()
