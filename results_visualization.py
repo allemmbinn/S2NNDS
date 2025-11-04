@@ -9,7 +9,7 @@ from NNModels import DyanmicsNet, LyapunovNet, BarrierNet
 @dataclass
 class ConfigFile:
     lasa_name : str = "NShape"
-    dataset_type : str = "LASA" # This can also be 3D_Shapes
+    dataset_type : str = "LASA" # ["LASA", "2D_Shapes", "3D_Shapes"]
     name_3d: str = "Cshape_bottom"
     name_2d: str = "Five_Obstacle_DS"
     real_time: bool = False  # Set to True for real-time plotting
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     os.makedirs(fig_dir, exist_ok=True)
     plot.savefig(os.path.join(fig_dir, mp.name + '_main.svg'), format="svg", dpi=300)
     if args.real_time:
-        save_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'results', 'Videos',args.dataset_type)
+        save_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'results', 'Videos', args.dataset_type)
         step = 10  # Downsampling step for real-time plotting
         x_data = robot_data['x'].to_numpy()[::step]
         y_data = robot_data['y'].to_numpy()[::step]
