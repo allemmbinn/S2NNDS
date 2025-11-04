@@ -121,7 +121,7 @@ The benchmarking has been performed for the followign LASA Datasets:
 - Sshape
 - Sine
 ### ABC-DS Polynomials
-We use the best results reported in the [code](https://github.com/martinschonger/abc-ds). The config file containing these polynomials are stored in the folder `abc_ds_config`.
+We use this [code](https://github.com/martinschonger/abc-ds) using [PENBMI](http://www.penopt.com/penbmi.html) solver (obtained official license) for fair comparisions. All the experiments were run on the same PC with  Ubuntu 20.04LTS system with 16GB RAM equipped with NVIDIA GeForce RTX 4050 - 6GB GPU. The config file containing these polynomials are stored in the folder `abc_ds_config`.
 
 ### Validating the Results
 
