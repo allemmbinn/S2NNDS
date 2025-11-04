@@ -189,10 +189,3 @@ if __name__ == "__main__":
         region_mask = (b_values < 0)
         area = np.sum(region_mask) * area_per_cell
         print_success(f"ABC-DS Safe Region Area: {area:.6f}")
-        
-    # DO CONFORMAL PREDICTION
-    mp.model_f = model_f
-    mp.model_b = model_b
-    mp.model_v = model_v
-    mp.generate_domain_data()
-    mp.verifyCertificate()

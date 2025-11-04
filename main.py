@@ -145,7 +145,7 @@ class MotionPlanner:
                 dataset = lasa.DataSet.GShape
             elif self.args.lasa_name == "Sshape":
                 dataset = lasa.DataSet.Sshape
-            elif self.args.lasa_name == "Sine":
+            elif self.args.lasa_name == "Sine" or self.args.lasa_name == "Sine_new":
                 dataset = lasa.DataSet.Sine
             elif self.args.lasa_name == "PShape":
                 dataset = lasa.DataSet.PShape
