@@ -125,18 +125,12 @@ class MotionPlanner:
                 dataset = lasa.DataSet.Worm
             elif self.args.lasa_name == "CShape":
                 dataset = lasa.DataSet.CShape
-            elif self.args.lasa_name == "DoubleBendedLine":
-                dataset = lasa.DataSet.DoubleBendedLine
             elif self.args.lasa_name == "GShape":
                 dataset = lasa.DataSet.GShape
             elif self.args.lasa_name == "Sshape":
                 dataset = lasa.DataSet.Sshape
-            elif self.args.lasa_name == "Leaf_2":
-                dataset = lasa.DataSet.Leaf_2
             elif self.args.lasa_name == "Sine":
                 dataset = lasa.DataSet.Sine
-            elif self.args.lasa_name == "heee":
-                dataset = lasa.DataSet.heee
             elif self.args.lasa_name == "PShape":
                 dataset = lasa.DataSet.PShape
             elif self.args.lasa_name == "NShape":
@@ -371,8 +365,7 @@ class MotionPlanner:
         self.optimizer_f = torch.optim.Adam( self.model_f.parameters(), lr=self.config["model_f"]["learning_rate"],betas=(0.9, 0.999))
         self.scheduler_f = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer_f, mode='min', factor=self.config["model_f"]["lr_factor"], 
                                                                     patience=self.config["model_f"]["lr_patience"])
-        # for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
-        for epoch in range(self.config["model_f"]["epochs_warm"]):
+        for epoch in tqdm(range(self.config["model_f"]["epochs_warm"])):
             total_loss = 0
             for batch_idx, (X_batch, y_batch) in enumerate(self.train_loader):
                 self.model_f.train()
@@ -404,7 +397,7 @@ class MotionPlanner:
         # Store the model state dictionary
         self.model_f_state_dict = best_weights
         self.optimizer_f_state_dict = self.optimizer_f.state_dict()
-        #print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
+        print_info("MSE of Initial Estimate of Dynamical System: %.4f" % best_mse)
 
     def trainCertificate(self):
         if self.config["Barrier"]:
@@ -445,8 +438,7 @@ class MotionPlanner:
             # Start Training
             max_iter = self.config["hyperparameters"]["max_iters"]
 
-            # for epoch in tqdm(range(max_iter)):
-            for epoch in range(max_iter):
+            for epoch in tqdm(range(max_iter)):
                 cert_loss_b = 0
                 cert_loss_v = 0
                 dyn_loss = 0
@@ -567,18 +559,6 @@ class MotionPlanner:
             print_error(f"Verification failed with marginal safety error: {q}")
 
     def final_model_eval(self):
-        # self.model_f.eval()
-        # self.mse = 0
-        # total_samples = 0
-        # self.model_f = self.model_f.to(self.device)
-        # for batch_idx, (X_batch, y_batch) in enumerate(self.test_loader):
-        #     y_pred = self.model_f(X_batch.float().to(self.device))
-        #     loss_fn = nn.MSELoss(reduction = 'sum')
-        #     batch_mse = loss_fn(y_pred, y_batch.float().to(self.device))
-        #     self.mse += batch_mse.item()
-        #     total_samples += X_batch.size(0)  
-        # self.mse = self.mse / total_samples
-        # print_success(f"Final MSE of the model: {self.mse:.4f}")
         all_errors = []
         self.model_f = self.model_f.to(self.device)
         self.model_f.eval()
@@ -640,29 +620,27 @@ if __name__ == "__main__":
        seed = random.randint(0, 100)  # seed value
     set_seed(seed)
     print_info(f"Benchmarking for LASA Dataset: {args.lasa_name}")
-    #print_info(f"Using seed: {seed}")
+    print_info(f"Using seed: {seed}")
     mp = MotionPlanner(args)
-    #print_info("OBTAINING DEMO DATA")
+    print_info("OBTAINING DEMO DATA")
     mp.generate_demo_data()
     print("STARTING TIME")
     start = time.time()
-    #print_info("DYNAMICAL SYSTEM TRAINING")
+    print_info("DYNAMICAL SYSTEM TRAINING")
     mp.trainInitialDynamics()
-    # Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
-    #print_info("OBTAINING TRAINING DATA")
+    Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config)
+    print_info("OBTAINING TRAINING DATA")
     mp.generate_domain_data()
     iters = 1
-    #print_info("CERTIFICATE TRAINING")
+    print_info("CERTIFICATE TRAINING")
     mp.trainCertificate()
     mp.update_config()
     trial = 1
     max_trials = 250
     while trial < max_trials:
-        #print_info("ADDING COUNTEREXAMPLES")
+        print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
-        # if trial % 20 == 1:
-        #     Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
         if mp.counterexamples_added:
             mp.trainCertificate()
             trial += 1      

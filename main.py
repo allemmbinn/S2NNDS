@@ -758,7 +758,6 @@ if __name__ == "__main__":
                 end_time = time.time()
                 elapsed_time = end_time - start_time
                 print_info(f"Total time taken: {elapsed_time:.2f} seconds")
-                # mp.evaluate_new_models()
                 print_info("Motion Planning Completed Successfully")
                 mp.save_all_models()
                 mp.final_model_eval()
