@@ -1,6 +1,6 @@
 # Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning
 
-Official implementation of Safe and Stable Neural Network Dynamical Systems for Robot Motion
+Official implementation of Safe and Stable Neural Network Dynamical Systems(S$^2$-NNDS) for Robot Motion
 Planning with stability and safety certificates.
 
 ## Installation
@@ -70,18 +70,6 @@ python main.py --dataset_type=3DShapes
 
 ## Running the Code
 
-### Visualising the Plots
-
-The plots of the dynamical systems are stored in the `results` folder.
-
-Use the arguments for `--dataset_type` and the name of the dataset as per shown above. Run the following command
-
-```bash
-python results_visualisation.py 
-```
-
-The models for these visulisation is found in the `models_verified` folder. Plese edit these models carefully. 
-
 ### Training new models
 For training the models for the dynamical system and the certificates we can run the following command.
 
@@ -100,18 +88,32 @@ For training the models for the dynamical system and the certificates we can run
     python main.py --dataset_type=3D_Shapes --name_3d=<name_from_dataset>
     ```
 
-The hyperparameters for the config files can be changed by changing the parameters in the `config_files/`<dataset_type>`/`<dataset_name>`_config.json`
+The hyperparameters for the config files can be changed by changing the parameters in the `config_files/<dataset_type>/<dataset_name>_config.json`
 
 The verified models are stored in the `models` folder. We also have the `models_onnx` folder to store the onnx models for the dynamical system to be implemented on a Franka Panda robot arm.
+
+### Visualising the Plots
+
+The plots of the dynamical systems are stored in the `results` folder.
+
+Use the arguments for `--dataset_type` and the name of the dataset as per shown above. Run the following command
+
+```bash
+python results_visualisation.py 
+```
+
+The models for these visulisation is found in the `models_verified` folder. Plese edit these models carefully. 
+
+
 
 ### Validating the Results
 
 For obtaining the MSE and SD for the errors, you can run the following command with the arguments corresponding to the dataset
 
 ```bash
-python evaluate_results.py
+python evaluate_s2nnds_results.py --dataset_type=<data_set>
 ```
-
+As shown in the paper, the comparisions between *S$^2$-NNDS* and *ABC-DS* are observable for some of the shapes in the LASA dataset. For all the datasets, you will obtain the statistical measurements of MSE, SD, DTW and Safe Area in Workspace corresponding to *S$^2$-NNDS*.
 ## Benchmarking Results
 The benchmarking has been performed for the followign LASA Datasets:
 - Worm
@@ -123,17 +125,17 @@ We use the best results reported in the [code](https://github.com/martinschonger
 
 ### Validating the Results
 
-For obtaining the MSE and SD for the errors, you can run the following command with the arguments corresponding to the dataset
+For obtaining the MSE and SD for the errors, the DTW or the safe area computation in the workspace and compare it with the results with *ABC-DS*, you can run the following command with the arguments corresponding to the dataset
 
 ```bash
-python evaluate_benchmark.py
+python evaluate_benchmark_results.py --lasa_name=<name_of_dataset>
 ```
 
 ### Plotting the Results
 
-The plots of the trajectories of $S^2NN-DS$  and $ABC-DS$ are stored in the `results` folder.
+The plots of the trajectories of *S$^2$-NNDS*  and *ABC-DS* are stored in the `results` folder.
 
 To plot theses results, run the following code with the required arguments:
 ```bash
-python benchmark_plot.py
+python benchmark_plot.py --lasa_name=<name_of_dataset>
 ```
