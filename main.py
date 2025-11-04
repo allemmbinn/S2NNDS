@@ -741,9 +741,6 @@ if __name__ == "__main__":
         print_info("ADDING COUNTEREXAMPLES")
         mp.generate_counterexample_data()
         print_info(f"Trial: {trial}")
-        if trial % 10 == 1:
-            Plotter.initialDSPlot(mp.model_f, mp.demos, mp.initial_set_center, mp.dim_in, mp.config, mp.model_b)
-            plt.show()
         if mp.counterexamples_added:
             mp.trainCertificate()
         else:

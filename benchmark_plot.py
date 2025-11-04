@@ -44,7 +44,7 @@ if __name__ == "__main__":
     model_b = model_b.cpu().to(device)
     model_f = model_f.cpu().to(device)
     # Obtain the polynomials of ABC-DS
-    abc_result_path = os.path.join(parent_dir, 'abc_ds_config', f"{model_name}_result_config.json")
+    abc_result_path = os.path.join(parent_dir, 'abc_ds_config', 'benchmark', f"{model_name}_result_config.json")
     try:
         with open(abc_result_path, 'r') as result_file:
             abc_data = json.load(result_file)

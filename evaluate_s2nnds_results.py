@@ -19,7 +19,7 @@ def load_config_models(model_name, dataset_type="LASA"):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(parent_dir, "config_files", dataset_type, f"{model_name}_config.json")
-    model_path = os.path.join(parent_dir, "models", dataset_type, f"{model_name}")
+    model_path = os.path.join(parent_dir, "models_verified", dataset_type, f"{model_name}")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     model_b = model_b.to('cpu')
     model_f = model_f.to('cpu')
     # Obtain the polynomials of ABC-DS
-    abc_result_path = os.path.join(parent_dir, 'abc_ds_config', "s2nnds", "INIT_CIRCLE", f"{model_name}_result_config.json")
+    abc_result_path = os.path.join(parent_dir, 'abc_ds_config', "init_circle", f"{model_name}_result_config.json")
     evaluate_ABC = True
     # Get the datasets
     if args.dataset_type == "LASA":

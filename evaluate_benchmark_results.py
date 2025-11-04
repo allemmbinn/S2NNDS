@@ -1,6 +1,9 @@
 from common_header import *
 import Plotter
 import main_benchmark
+from scipy.spatial.distance import cdist
+from dtaidistance import dtw
+
 @dataclass
 class ConfigFile:
     lasa_name : str = "Sine"
@@ -14,7 +17,7 @@ def load_config_models(model_name):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(parent_dir, "config_files", "LASA", f"{model_name}_config_benchmark.json")
-    model_path = os.path.join(parent_dir, "model", "LASA", f"{model_name}_benchmark")
+    model_path = os.path.join(parent_dir, "models_verified", "LASA", f"{model_name}_benchmark")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -44,6 +47,21 @@ if __name__ == "__main__":
     args = pyrallis.parse(ConfigFile, args=filtered_args)
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     model_name = args.lasa_name
+    seed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'seeds', args.dataset_type, model_name + '_seed.json')
+    #Check if the seed file exists
+    try:
+       seed = main_benchmark.load_seed(seed_filepath)
+    except FileNotFoundError:
+       seed = random.randint(0, 100)  # seed value
+    main_benchmark.set_seed(seed)
+    # Get the dt time and test demo points
+    mp = main_benchmark.MotionPlanner(args)
+    mp.generate_demo_data()
+    # For Initi Set Centers of Test Trajectories
+    train_size = int(5/7 * mp.total_demos)
+    train_indices = random.sample(range(mp.total_demos), train_size)
+    test_indices = list(set(range(mp.total_demos)) - set(train_indices))
+    initial_set_center_test = np.array([mp.demos[i].pos[:,0]/np.array(mp.pos_scaling) for i in test_indices])
     # Obtain the models for S2-NNDS
     config, model_v, model_b, model_f = load_config_models(model_name)
     model_v = model_v.to('cpu')
@@ -70,7 +88,9 @@ if __name__ == "__main__":
     except json.JSONDecodeError as e:
         print(f"Error: Failed to parse JSON file '{abc_result_path}'. {e}")
         sys.exit(1)
-    # For S2-NNDS
+    """
+        For S2NNDS
+    """
     model_f.eval()
     model_f = model_f.to('cpu')    
     all_errors = []
@@ -83,10 +103,44 @@ if __name__ == "__main__":
     all_errors = np.array(all_errors)
     mse = np.mean(all_errors ** 2)
     sd = np.std(all_errors)
+    print_info(f"Evaluating S2-NNDS on Benchmark Dataset: {model_name}")
     print_success(f"S2-NNDS MSE: {mse:.6f}")
     print_success(f"S2-NNDS Standard Deviation: {sd:.6f}")
-    
-    # For ABC-DS
+    # FOR DTW Distance
+    dtw_dist = []
+    for i in range(len(test_indices)):
+        start_pos = initial_set_center_test[i]
+        demo_traj = mp.demos[test_indices[i]].pos / np.array(mp.pos_scaling)
+        s2nnds_traj = np.zeros_like(demo_traj)
+        s2nnds_traj[:,0] = start_pos
+        for k in range(1, demo_traj.shape[1]):
+            s2nnds_traj[:,k] = s2nnds_traj[:,k-1] + mp.dt * model_f(torch.tensor(s2nnds_traj[:,k-1], dtype=torch.float32)).detach().cpu().numpy()
+        dist_matrix = cdist(demo_traj.T, s2nnds_traj.T, metric='euclidean')
+        # rssd = np.sqrt(np.sum(np.min(np.square(dist_matrix),axis=1)))
+        rssd = np.sqrt((dtw.distance(demo_traj[0], s2nnds_traj[0])**2)+ (dtw.distance(demo_traj[1], s2nnds_traj[1])**2))
+        dtw_dist.append(rssd) 
+    print_success(f"S2-NNDS DTW Distance: {np.mean(np.array(dtw_dist)):.6f}")
+    # Area of Barrier Function
+    x_min, x_max = -1, 1
+    y_min, y_max = -1, 1
+    grid_resolution = 500
+    x = np.linspace(x_min, x_max, grid_resolution)
+    y = np.linspace(y_min, y_max, grid_resolution)
+    X, Y = np.meshgrid(x, y)
+    grid_points = np.vstack([X.ravel(), Y.ravel()]).T 
+    with torch.no_grad():
+        inputs = torch.tensor(grid_points, dtype=torch.float32)
+        outputs = model_b(inputs).detach().cpu().numpy().flatten()
+    region_mask = outputs < 0
+    # Calculate area per grid cell
+    delta_x = (x_max - x_min) / (grid_resolution - 1)
+    delta_y = (y_max - y_min) / (grid_resolution - 1)
+    area_per_cell = delta_x * delta_y
+    area = np.sum(region_mask) * area_per_cell
+    print_success(f"S2-NNDS Safe Region Area: {area:.6f}")
+    """
+        For ABC-DS
+    """
     f1_str, f2_str = abc_data["f_fh_str_arr"]
     fx_poly, fy_poly = map(compile_poly, (f1_str, f2_str))
     abc_mse_test = 0
@@ -101,3 +155,25 @@ if __name__ == "__main__":
     sd = np.std(all_errors)
     print_success(f"ABC-DS MSE: {mse:.6f}")
     print_success(f"ABC-DS Standard Deviation: {sd:.6f}")
+    # FOR DTW Distance
+    dtw_dist = []
+    for i in range(len(test_indices)):
+        start_pos = initial_set_center_test[i]
+        demo_traj = mp.demos[test_indices[i]].pos / np.array(mp.pos_scaling)
+        abcds_traj = np.zeros_like(demo_traj)
+        abcds_traj[:,0] = start_pos
+        for k in range(1, demo_traj.shape[1]):
+            abcds_traj[0,k] = abcds_traj[0,k-1] + mp.dt * fx_poly(abcds_traj[0,k-1], abcds_traj[1,k-1])
+            abcds_traj[1,k] = abcds_traj[1,k-1] + mp.dt * fy_poly(abcds_traj[0,k-1], abcds_traj[1,k-1])
+        dist_matrix = cdist(demo_traj.T, abcds_traj.T, metric='euclidean')
+        rssd = np.sqrt((dtw.distance(demo_traj[0], abcds_traj[0])**2)+ (dtw.distance(demo_traj[1], abcds_traj[1])**2))
+        dtw_dist.append(rssd) 
+    print_success(f"ABC-DS DTW Distance: {np.mean(np.array(dtw_dist)):.6f}")
+    # Area of Barrier Function
+    b_str = abc_data["B_fh_str_arr"]
+    b_poly = compile_poly(b_str)
+    inputs = np.array(grid_points)
+    b_values = b_poly(inputs[:,0], inputs[:,1])
+    region_mask = (b_values < 0)
+    area = np.sum(region_mask) * area_per_cell
+    print_success(f"ABC-DS Safe Region Area: {area:.6f}")
