@@ -75,7 +75,7 @@
     },
     "verification": {
         "N_conf": 200000,
-        "epsilon": 0.01
+        "epsilon": 0.0001
     },
     "Barrier": true,
     "plots": true,

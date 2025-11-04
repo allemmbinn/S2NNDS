@@ -1,9 +1,9 @@
 {
     "model_f": {
         "activation_function": "Tanh",
-        "hidden_neurons": 256,
-        "layers": 4,
-        "epochs_warm": 700,
+        "hidden_neurons": 64,
+        "layers": 5,
+        "epochs_warm": 300,
         "learning_rate": 0.01,
         "learning_rate_cert": 1e-05,
         "train_f_cert": true,
@@ -87,7 +87,7 @@
     },
     "Barrier": true,
     "hyperparameters": {
-        "max_iters": 50,
+        "max_iters": 100,
         "decay_mse": 30,
         "decay_lf": 0.0,
         "decay_vpos": 1,
@@ -128,11 +128,12 @@
                 -0.08754174553075451
             ],
             [
-                -0.013706326484680176,
-                0.9034037590026855,
-                -0.15471601486206055
+                0.23969495296478271,
+                0.9940972328186035,
+                -0.12229526042938232
             ]
         ],
-        "dt": 0.01
+        "dt": 0.01,
+        "name": "3D Shape SINK"
     }
 }

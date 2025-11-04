@@ -30,7 +30,7 @@ def load_config_models(args):
     # Construct the path to the configuration file
     config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config_files')
     config_path = os.path.join(config_dir, args.dataset_type, f"{model_name}_config.json")
-    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models_verified')
+    model_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'models')
     os.makedirs(model_dir, exist_ok=True)  # Ensure the directory exists
     model_path = os.path.join(model_dir, args.dataset_type, model_name) 
     data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Robot_Data')
@@ -45,10 +45,11 @@ def load_config_models(args):
             model_v = torch.load(model_v_path, map_location=torch.device('cpu'))
             model_b = torch.load(model_b_path, map_location=torch.device('cpu'))
             model_f = torch.load(model_f_path, map_location=torch.device('cpu'))
-            if args.perturbed:
-                    robot_data = pd.read_csv(os.path.join(data_path, model_name+'_perturbed.csv'), header=1)
-            else:
-                    robot_data = pd.read_csv(os.path.join(data_path,model_name+'.csv'), header=1)
+            # if args.perturbed:
+            #         robot_data = pd.read_csv(os.path.join(data_path, model_name+'_perturbed.csv'), header=1)
+            # else:
+            #         robot_data = pd.read_csv(os.path.join(data_path,model_name+'.csv'), header=1)
+            robot_data = None
             return model_name, config, model_v, model_b, model_f, robot_data
             
     except FileNotFoundError:
@@ -67,9 +68,13 @@ mp.generate_demo_data()
 model_name, config, model_v, model_b, model_f, robot_data = load_config_models(args)
 # data_1 = pd.read_csv(name_file, header=1)
 # plot = Plotter.finalDSPlot(model_f, model_v, model_b, mp.demos, mp.initial_set_center, mp.dim_in, config, data_1)
-initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[3].pos[:, 0])])
-x_data = robot_data['x'].to_numpy()
-y_data = robot_data['y'].to_numpy()
+initial_set_center = torch.tensor(config['plotting']['initial_conditions'])
+# import pdb; pdb.set_trace()
+# initial_set_center = torch.vstack([mp.initial_set_center, torch.tensor(mp.demos[3].pos[:, 0])])
+# x_data = robot_data['x'].to_numpy()
+# y_data = robot_data['y'].to_numpy()
+x_data = None
+y_data = None
 if mp.dim_in == 2:
     plot = Plotter.lyapunovBarrierPlot(model_v, model_b, model_f, mp.demos, config, x_data, y_data)
     plt.show()

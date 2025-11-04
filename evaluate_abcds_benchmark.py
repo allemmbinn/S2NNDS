@@ -9,15 +9,17 @@ class ConfigFile:
     lasa_name : str = "Sine"
     dataset_type : str = "LASA"  
     name_2d: str = "Five_Obstacle_DS"
+    name_3d: str = "Cshape_bottom"
+    
 def filter_args(args):
     known_args = ['--lasa_name', '--dataset_type']
     return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
 
-def load_config_models(model_name):
+def load_config_models(model_name, dataset_type="LASA"):
     # Construct the path to the configuration file
     parent_dir = os.path.dirname(os.path.realpath(__file__))
-    config_path = os.path.join(parent_dir, "config_files", "LASA", f"{model_name}_config.json")
-    model_path = os.path.join(parent_dir, "models_verified", "LASA", f"{model_name}")
+    config_path = os.path.join(parent_dir, "config_files", dataset_type, f"{model_name}_config.json")
+    model_path = os.path.join(parent_dir, "models", dataset_type, f"{model_name}")
     try:
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
@@ -46,7 +48,12 @@ if __name__ == "__main__":
     filtered_args = filter_args(sys.argv[1:])
     args = pyrallis.parse(ConfigFile, args=filtered_args)
     parent_dir = os.path.dirname(os.path.realpath(__file__))
-    model_name = args.lasa_name
+    if args.dataset_type == "3D_Shapes":
+        model_name = args.name_3d
+    elif args.dataset_type == "2D_Shapes":
+        model_name = args.name_2d
+    else:
+        model_name = args.lasa_name
     seed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'seeds', args.dataset_type, model_name + '_seed.json')
     #Check if the seed file exists
     try:
@@ -63,7 +70,7 @@ if __name__ == "__main__":
     test_indices = list(set(range(mp.total_demos)) - set(train_indices))
     initial_set_center_test = np.array([mp.demos[i].pos[:,0]/np.array(mp.pos_scaling) for i in test_indices])
     # Obtain the models for S2-NNDS
-    config, model_v, model_b, model_f = load_config_models(model_name)
+    config, model_v, model_b, model_f = load_config_models(model_name, args.dataset_type)
     model_v = model_v.to('cpu')
     model_b = model_b.to('cpu')
     model_f = model_f.to('cpu')
@@ -71,15 +78,21 @@ if __name__ == "__main__":
     abc_result_path = os.path.join(parent_dir, 'abc_ds_config', "s2nnds", "INIT_CIRCLE", f"{model_name}_result_config.json")
     evaluate_ABC = True
     # Get the datasets
-    dataset_path = os.path.join(parent_dir, 'Datasets', 'LASA', f"{model_name}")
-    X_test_tensor = torch.load(os.path.join(dataset_path, "X_test.pt"))
-    y_test_tensor = torch.load(os.path.join(dataset_path, "y_test.pt"))
-    X_test = X_test_tensor.cpu().numpy()
-    y_test = y_test_tensor.cpu().numpy()
-    X_train_tensor = torch.load(os.path.join(dataset_path, "X_train.pt"))
-    y_train_tensor = torch.load(os.path.join(dataset_path, "y_train.pt"))
-    X_train = X_train_tensor.numpy()
-    y_train = y_train_tensor.numpy()
+    if args.dataset_type == "LASA":
+        dataset_path = os.path.join(parent_dir, 'Datasets', 'LASA', f"{model_name}")
+        X_test_tensor = torch.load(os.path.join(dataset_path, "X_test.pt"))
+        y_test_tensor = torch.load(os.path.join(dataset_path, "y_test.pt"))
+        X_test = X_test_tensor.cpu().numpy()
+        y_test = y_test_tensor.cpu().numpy()
+        X_train_tensor = torch.load(os.path.join(dataset_path, "X_train.pt"))
+        y_train_tensor = torch.load(os.path.join(dataset_path, "y_train.pt"))
+        X_train = X_train_tensor.numpy()
+        y_train = y_train_tensor.numpy()
+    else:
+        X_test_tensor = torch.tensor(mp.X_test, dtype=torch.float32)
+        y_test_tensor = torch.tensor(mp.y_test, dtype=torch.float32)
+        X_train_tensor = torch.tensor(mp.X_train, dtype=torch.float32)
+        y_train_tensor = torch.tensor(mp.y_train, dtype=torch.float32)
     try:
         with open(abc_result_path, 'r') as result_file:
             abc_data = json.load(result_file)
@@ -119,24 +132,25 @@ if __name__ == "__main__":
         rssd = np.sqrt((dtw.distance(demo_traj[0], s2nnds_traj[0])**2)+ (dtw.distance(demo_traj[1], s2nnds_traj[1])**2))
         dtw_dist.append(rssd) 
     print_success(f"S2-NNDS DTW Distance: {np.mean(np.array(dtw_dist)):.6f}")
-    # Area of Barrier Function
-    x_min, x_max = -1, 1
-    y_min, y_max = -1, 1
-    grid_resolution = 500
-    x = np.linspace(x_min, x_max, grid_resolution)
-    y = np.linspace(y_min, y_max, grid_resolution)
-    X, Y = np.meshgrid(x, y)
-    grid_points = np.vstack([X.ravel(), Y.ravel()]).T 
-    with torch.no_grad():
-        inputs = torch.tensor(grid_points, dtype=torch.float32)
-        outputs = model_b(inputs).detach().cpu().numpy().flatten()
-    region_mask = outputs < 0
-    # Calculate area per grid cell
-    delta_x = (x_max - x_min) / (grid_resolution - 1)
-    delta_y = (y_max - y_min) / (grid_resolution - 1)
-    area_per_cell = delta_x * delta_y
-    area = np.sum(region_mask) * area_per_cell
-    print_success(f"S2-NNDS Safe Region Area: {area:.6f}")
+    if mp.dim_in ==2:
+        # Area of Barrier Function
+        x_min, x_max = -1, 1
+        y_min, y_max = -1, 1
+        grid_resolution = 500
+        x = np.linspace(x_min, x_max, grid_resolution)
+        y = np.linspace(y_min, y_max, grid_resolution)
+        X, Y = np.meshgrid(x, y)
+        grid_points = np.vstack([X.ravel(), Y.ravel()]).T 
+        with torch.no_grad():
+            inputs = torch.tensor(grid_points, dtype=torch.float32)
+            outputs = model_b(inputs).detach().cpu().numpy().flatten()
+        region_mask = outputs < 0
+        # Calculate area per grid cell
+        delta_x = (x_max - x_min) / (grid_resolution - 1)
+        delta_y = (y_max - y_min) / (grid_resolution - 1)
+        area_per_cell = delta_x * delta_y
+        area = np.sum(region_mask) * area_per_cell
+        print_success(f"S2-NNDS Safe Region Area: {area:.6f}")
     # For ABC-DS
     if evaluate_ABC:
         f1_str, f2_str = abc_data["f_fh_str_arr"]
@@ -175,3 +189,10 @@ if __name__ == "__main__":
         region_mask = (b_values < 0)
         area = np.sum(region_mask) * area_per_cell
         print_success(f"ABC-DS Safe Region Area: {area:.6f}")
+        
+    # DO CONFORMAL PREDICTION
+    mp.model_f = model_f
+    mp.model_b = model_b
+    mp.model_v = model_v
+    mp.generate_domain_data()
+    mp.verifyCertificate()

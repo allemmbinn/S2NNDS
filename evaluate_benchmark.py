@@ -1,6 +1,6 @@
 from common_header import *
 import Plotter
-import main
+import main_benchmark
 from scipy.spatial.distance import cdist
 from dtaidistance import dtw
 
@@ -50,12 +50,12 @@ if __name__ == "__main__":
     seed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'seeds', args.dataset_type, model_name + '_seed.json')
     #Check if the seed file exists
     try:
-       seed = main.load_seed(seed_filepath)
+       seed = main_benchmark.load_seed(seed_filepath)
     except FileNotFoundError:
        seed = random.randint(0, 100)  # seed value
-    main.set_seed(seed)
+    main_benchmark.set_seed(seed)
     # Get the dt time and test demo points
-    mp = main.MotionPlanner(args)
+    mp = main_benchmark.MotionPlanner(args)
     mp.generate_demo_data()
     # For Initi Set Centers of Test Trajectories
     train_size = int(5/7 * mp.total_demos)
@@ -185,3 +185,9 @@ if __name__ == "__main__":
     region_mask = (b_values < 0)
     area = np.sum(region_mask) * area_per_cell
     print_success(f"ABC-DS Safe Region Area: {area:.6f}")
+    # DO CONFORMAL PREDICTION
+    mp.model_f = model_f
+    mp.model_b = model_b
+    mp.model_v = model_v
+    mp.generate_domain_data()
+    mp.verifyCertificate()
