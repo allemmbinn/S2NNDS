@@ -1,7 +1,16 @@
 # Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning
 
-Official implementation of Safe and Stable Neural Network Dynamical Systems(S$^2$-NNDS) for Robot Motion
-Planning with stability and safety certificates.
+Official implementation accompanying the paper **Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning** (*S2-NNDS*) accepted at IEEE Robotics and Automation Letters(RA-L).
+![comparison](resources/RAL_overview.svg)
+> [**Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning**](https://arxiv.org/abs/2511.20593),  
+> Allen Emmanuel Binny<sup>\*</sup>, Mahathi Anand<sup>\*</sup>, Hugo T. M. Kussaba, Lingyun Chen, Shreenabh Agrawal, Fares J. Abu-Dakka, Abdalla Swikir  
+> *IEEE Robotics and Automation Letters (RA-L)*  
+> *Preprint available on arXiv ([arXiv:2511.20593](https://arxiv.org/abs/2511.20593))*
+
+### [Paper](https://arxiv.org/abs/2511.20593) | [YouTube](https://www.youtube.com/watch?v=qMAGGjSJt9Q) 
+
+## Abstract
+Learning safe and stable robot motions from demonstrations remains a challenge, especially in complex, nonlinear tasks involving dynamic, obstacle-rich environments. In this paper, we propose Safe and Stable Neural Network Dynamical Systems S2-NNDS, a learning-from-demonstration framework that simultaneously learns expressive neural dynamical systems alongside neural Lyapunov stability and barrier safety certificates. Unlike traditional approaches with restrictive polynomial parameterizations, S2-NNDS leverages neural networks to capture complex robot motions providing probabilistic guarantees through split conformal prediction in learned certificates. Experimental results on various 2D and 3D datasets—including LASA handwriting and demonstrations recorded kinesthetically from the Franka Emika Panda robot— validate S2-NNDS effectiveness in learning robust, safe, and stable motions from potentially unsafe demonstrations.
 
 ## Installation
 
@@ -113,7 +122,7 @@ For obtaining the MSE and SD for the errors, you can run the following command w
 ```bash
 python evaluate_s2nnds_results.py --dataset_type=<data_set>
 ```
-As shown in the paper, the comparisions between *S$^2$-NNDS* and *ABC-DS* are observable for some of the shapes in the LASA dataset. For all the datasets, you will obtain the statistical measurements of MSE, SD, DTW and Safe Area in Workspace corresponding to *S$^2$-NNDS*.
+As shown in the paper, the comparisions between *S2NN-DS* and *ABC-DS* are observable for some of the shapes in the LASA dataset. For all the datasets, you will obtain the statistical measurements of MSE, SD, DTW and Safe Area in Workspace corresponding to *S2NN-DS*.
 ## Benchmarking Results
 The benchmarking has been performed for the followign LASA Datasets:
 - Worm
@@ -133,9 +142,31 @@ python evaluate_benchmark_results.py --lasa_name=<name_of_dataset>
 
 ### Plotting the Results
 
-The plots of the trajectories of *S$^2$-NNDS*  and *ABC-DS* are stored in the `results` folder.
+The plots of the trajectories of *S2NN-DS*  and *ABC-DS* are stored in the `results` folder.
 
 To plot theses results, run the following code with the required arguments:
 ```bash
 python benchmark_plot.py --lasa_name=<name_of_dataset>
+```
+
+## Additional Files
+Please find in `resources\training_parameters.pdf` the document containing dataset description, initial set parameters, training parameters, training time and obstacle configurations used for *S2NN-DS*, *ABC-DS*.
+## Contact
+If there are any comments or questions please do feel to reach out to us!
+
+Allen Emmanuel Binny : allenebinny@kgpian.iitkgp.ac.in
+
+## Citations
+
+If you found this project useful or relevant to your research, please consider citing :)
+```
+@misc{binny2025safestableneuralnetwork,
+      title={Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning}, 
+      author={Allen Emmanuel Binny and Mahathi Anand and Hugo T. M. Kussaba and Lingyun Chen and Shreenabh Agrawal and Fares J. Abu-Dakka and Abdalla Swikir},
+      year={2025},
+      eprint={2511.20593},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2511.20593}, 
+}
 ```
