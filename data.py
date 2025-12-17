@@ -1,20 +1,19 @@
 from common_header import *
 
-def generateRectangularData(N, RANGE):
-    return torch.cat([torch.Tensor(N, 1).uniform_(RANGE[i][0],RANGE[i][1]) for i in range(len(RANGE))],1)    
-    
-def generateCircularData(N, r, centre):
-    border_batch = int(N / 10)
-    internal_batch = N - border_batch
-    angle = (2 * np.pi) * torch.rand(internal_batch, 1)
-    radius = r * torch.rand(internal_batch, 1)
-    x_coord = radius * np.cos(angle)
-    y_coord = radius * np.sin(angle)
-    offset = torch.cat([x_coord, y_coord], dim=1)
+def generateRandomData(N, RANGE, dim_in=2):
+    if dim_in == 2:
+        x = (RANGE[0][1] - RANGE[0][0])*torch.rand(N) + RANGE[0][0]
+        y = (RANGE[1][1] - RANGE[1][0])*torch.rand(N) + RANGE[1][0]
+        input_data = torch.stack([x, y], dim=1)
+    elif dim_in == 3:
+        x = (RANGE[0][1] - RANGE[0][0])*torch.rand(N) + RANGE[0][0]
+        y = (RANGE[1][1] - RANGE[1][0])*torch.rand(N) + RANGE[1][0]
+        z = (RANGE[2][1] - RANGE[2][0])*torch.rand(N) + RANGE[2][0]
+        input_data = torch.stack([x, y, z], dim=1)
+    return input_data, N
 
-    angle = (2 * np.pi) * torch.rand(border_batch, 1)
-    x_coord = r * np.cos(angle)
-    y_coord = r * np.sin(angle)
-    offset_border = torch.cat([x_coord, y_coord], dim=1)
-    offset = torch.cat([offset, offset_border])
-    return torch.tensor(centre) + offset
+# Trajectory Data Class
+class TrajectoryData:
+    def __init__(self, pos, vel):
+        self.pos = pos
+        self.vel = vel

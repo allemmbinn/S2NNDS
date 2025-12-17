@@ -1,0 +1,137 @@
+{
+    "model_f": {
+        "activation_function": "Tanh",
+        "hidden_neurons": 64,
+        "layers": 3,
+        "epochs_warm": 150,
+        "learning_rate": 0.01,
+        "learning_rate_cert": 1e-08,
+        "train_f_cert": false,
+        "cert_train_factor": 0.6,
+        "batch_size": 1024,
+        "lr_factor": 0.5,
+        "lr_patience": 20,
+        "init_decay": 0.1
+    },
+    "model_v": {
+        "activation_function": "eLU",
+        "learning_rate": 0.01,
+        "hidden_neurons": 64,
+        "layers": 3,
+        "lr_factor": 0.99,
+        "lr_patience": 30,
+        "warmup": 50
+    },
+    "model_b": {
+        "activation_function": "eLU",
+        "learning_rate": 0.01,
+        "hidden_neurons": 128,
+        "layers": 4,
+        "lr_factor": 0.8,
+        "lr_patience": 15,
+        "batch_size": 512,
+        "warmup": 30
+    },
+    "domain": {
+        "N": 5000,
+        "range": [
+            [
+                -1,
+                1
+            ],
+            [
+                -1,
+                1
+            ]
+        ]
+    },
+    "init": {
+        "radius": 0.07
+    },
+    "unsafe": {
+        "shape": "Custom",
+        "function": "-(-4.37331042835-102.652674111*x-0.578737807402*y-598.803195658*x**2-89.6494640322*y**2-112.45337034*y**3-654.556409433*y**4+65.7476057344*x*y-695.267147441*x*y**2+45.3633297733*x*y**3+137.99206574*x**2*y-740.166068978*x**2*y**2-1077.2838158*x**3+69.9624712496*x**3*y-597.983006982*x**4)"
+    },
+    "counterex": {
+        "N_cex_domain": 150000,
+        "N": 1,
+        "no_min": 10,
+        "radius": 0.001,
+        "lyap_tol": 0.0,
+        "pos_tol": 0.0,
+        "bar_tol": 0.0,
+        "inun_tol": 0.0,
+        "lb": 0,
+        "ub": 0
+    },
+    "verification": {
+        "N_conf": 200000,
+        "epsilon": 0.0001
+    },
+    "Barrier": true,
+    "plots": true,
+    "plotting": {
+        "range": [
+            [
+                -1.1,
+                0.15
+            ],
+            [
+                -0.65,
+                0.45
+            ]
+        ],
+        "contour": false,
+        "legend": false,
+        "name": "Sine - S2DS",
+        "init_range": [
+            [
+                -1.0,
+                -0.8814084305561762
+            ],
+            [
+                -0.038779342303253486,
+                0.07164319133394743
+            ]
+        ],
+        "initial_conditions": [
+            [
+                -0.9383592762097986,
+                0.02880046315276329
+            ],
+            [
+                -0.9419040679931641,
+                0.0784902572631836
+            ]
+        ],
+        "dt": 0.005768861400492263,
+        "init_center": [
+            -0.9383592762097986,
+            0.02880046315276329
+        ],
+        "init_rad": 0.07
+    },
+    "hyperparameters": {
+        "max_iters": 50,
+        "decay_mse": 35,
+        "decay_lf": 0.0,
+        "decay_vpos": 1,
+        "decay_lv": 1.1,
+        "decay_v0": 1,
+        "decay_init": 1,
+        "decay_unsafe": 1,
+        "decay_cut": 1,
+        "decay_lb": 1.2,
+        "decay_tune": 5,
+        "alpha": 1,
+        "epi_bound": 0.05,
+        "eta": 0.0001,
+        "lyap_tol": 0.01,
+        "pos_tol": 0.01,
+        "bar_tol": 0.01,
+        "inun_tol": 0.0001,
+        "lie_tol": 0.005,
+        "reg_bar": 0.001,
+        "reg_v": 0.001
+    }
+}
