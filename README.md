@@ -1,6 +1,6 @@
 # Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning
 
-Official implementation accompanying the paper **Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning** (*S2-NNDS*) accepted at IEEE Robotics and Automation Letters(RA-L).
+Official implementation accompanying the paper **Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning** (*S2-NNDS*) accepted for publication at IEEE Robotics and Automation Letters(RA-L).
 ![comparison](resources/RAL_overview.png)
 > [**Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning**](https://arxiv.org/abs/2511.20593),  
 > Allen Emmanuel Binny<sup>\*</sup>, Mahathi Anand<sup>\*</sup>, Hugo T. M. Kussaba, Lingyun Chen, Shreenabh Agrawal, Fares J. Abu-Dakka, Abdalla Swikir  
@@ -95,7 +95,7 @@ The hyperparameters for the config files can be changed by changing the paramete
 
 The verified models are stored in the `models` folder. We also have the `models_onnx` folder to store the onnx models for the dynamical system to be implemented on a Franka Panda robot arm.
 
-### Visualising the Plots
+### Visualizing the Results
 
 The plots of the dynamical systems are stored in the `results` folder.
 
@@ -107,16 +107,11 @@ python results_visualisation.py
 
 The models for these visulisation is found in the `models_verified` folder. Plese edit these models carefully. 
 
-
-
-### Validating the Results
-
-For obtaining the MSE and SD for the errors, you can run the following command with the arguments corresponding to the dataset
+For obtaining the MSE and SD for the errors, the DTW or the safe area computation in the workspace and compare it with the results with *ABC-DS*, you can run the following command with the arguments corresponding to the dataset
 
 ```bash
 python evaluate_s2nnds_results.py --dataset_type=<data_set>
 ```
-As shown in the paper, the comparisions between *S2NN-DS* and *ABC-DS* are observable for some of the shapes in the LASA dataset. For all the datasets, you will obtain the statistical measurements of MSE, SD, DTW and Safe Area in Workspace corresponding to *S2NN-DS*.
 ## Benchmarking Results
 
 Benchmarking is performed on the following LASA datasets:
@@ -135,21 +130,19 @@ All experiments are conducted on the same machine:
 
 The config file containing these polynomials are stored in the folder `abc_ds_config`.
 
-### Validating the Results
-
-For obtaining the MSE and SD for the errors, the DTW or the safe area computation in the workspace and compare it with the results with *ABC-DS*, you can run the following command with the arguments corresponding to the dataset
-
-```bash
-python evaluate_benchmark_results.py --lasa_name=<name_of_dataset>
-```
-
-### Plotting the Results
+### Visualizing the Results
 
 The plots of the trajectories of *S2NN-DS*  and *ABC-DS* are stored in the `results` folder.
 
 To plot theses results, run the following code with the required arguments:
 ```bash
 python benchmark_plot.py --lasa_name=<name_of_dataset>
+```
+
+For obtaining the MSE and SD for the errors, the DTW or the safe area computation in the workspace and compare it with the results with *ABC-DS*, you can run the following command with the arguments corresponding to the dataset
+
+```bash
+python evaluate_benchmark_results.py --lasa_name=<name_of_dataset>
 ```
 
 ## Additional Files
