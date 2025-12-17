@@ -7,7 +7,7 @@ Official implementation accompanying the paper **Safe and Stable Neural Network 
 > *IEEE Robotics and Automation Letters (RA-L)*  
 > *Preprint available on arXiv ([arXiv:2511.20593](https://arxiv.org/abs/2511.20593))*
 
-### [Paper](https://arxiv.org/abs/2511.20593) | [YouTube](https://www.youtube.com/watch?v=qMAGGjSJt9Q) 
+### [Paper](https://arxiv.org/abs/2511.20593) | [YouTube](https://youtu.be/YJjCOua2puA) 
 
 ## Abstract
 Learning safe and stable robot motions from demonstrations remains a challenge, especially in complex, nonlinear tasks involving dynamic, obstacle-rich environments. In this paper, we propose Safe and Stable Neural Network Dynamical Systems S2-NNDS, a learning-from-demonstration framework that simultaneously learns expressive neural dynamical systems alongside neural Lyapunov stability and barrier safety certificates. Unlike traditional approaches with restrictive polynomial parameterizations, S2-NNDS leverages neural networks to capture complex robot motions providing probabilistic guarantees through split conformal prediction in learned certificates. Experimental results on various 2D and 3D datasets—including LASA handwriting and demonstrations recorded kinesthetically from the Franka Emika Panda robot— validate S2-NNDS effectiveness in learning robust, safe, and stable motions from potentially unsafe demonstrations.
