@@ -4,18 +4,38 @@ import data
 import Loss_Functions
 import opt 
 import Plotter
-import smt_verification
-from dreal import *
+import verification
+import time
+@dataclass
+class ConfigFile:
+    lasa_name : str = "CShape"
+    dataset_type : str = "LASA" # This can also be 3D_Shapes
+    name_3d: str = "Cshape_bottom"
+    name_2d: str = "Five_Obstacle_DS"
+    
+def filter_args(args):
+    known_args = ['--lasa_name', '--dataset_type', '--name_3d', '--name_2d']
+    return [arg for arg in args if any(arg.startswith(known) for known in known_args)]
 
-# Load the configuration file
-config_file = os.environ.get('CONFIG_FILE', 'config.json')
-with open(config_file) as file:
-    config = json.load(file)
-if config["wandb"] == "None":
-    wandb_name = "LASA"
-else:
-    wandb_name = config["wandb"]["name"]
-wandb.init(project=wandb_name, config=config)
+def save_seed(seed, seed_filepath):
+    os.makedirs(os.path.dirname(seed_filepath), exist_ok=True)
+    with open(seed_filepath, 'w') as file:
+        json.dump({'seed': seed}, file)
+
+def load_seed(seed_filepath):
+    with open(seed_filepath, 'r') as file:
+        seed_data = json.load(file)
+    return seed_data['seed']    
+
+def set_seed(seed):
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 class MotionPlanner:
     def __init__(self, args):
         self.args = args
