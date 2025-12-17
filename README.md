@@ -1,7 +1,7 @@
 # Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning
 
 Official implementation accompanying the paper **Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning** (*S2-NNDS*) accepted at IEEE Robotics and Automation Letters(RA-L).
-![comparison](resources/RAL_overview.svg)
+![comparison](resources/RAL_overview.png)
 > [**Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning**](https://arxiv.org/abs/2511.20593),  
 > Allen Emmanuel Binny<sup>\*</sup>, Mahathi Anand<sup>\*</sup>, Hugo T. M. Kussaba, Lingyun Chen, Shreenabh Agrawal, Fares J. Abu-Dakka, Abdalla Swikir  
 > *IEEE Robotics and Automation Letters (RA-L)*  
