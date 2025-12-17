@@ -15,47 +15,41 @@ Learning safe and stable robot motions from demonstrations remains a challenge, 
 ## Installation
 
 ### System Requirements
-- Ubuntu 20.04/22.04 or Windows 10/11
-- NVIDIA GPU with CUDA 11.8+ (optional but recommended)
-
-
-## Install
+- Ubuntu 20.04 / 22.04 (recommended)
+- Python 3.8
+- NVIDIA GPU with CUDA ≥ 11.8 (optional, required for faster training)
 
 ### Create Conda Environment
- ```sh
-conda create --name <your_env_name> python=3.8
-
-conda activate <your_env_name>
- ```
+```sh
+conda create -n s2nnds python=3.8
+conda activate s2nnds
+``` 
 
 ### Install Dependencies
 ``` sh
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-
-pip install termcolor scipy matplotlib onnx numpy pandas pyrallis pyLasaDataset tqdm 
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install termcolor scipy matplotlib onnx numpy pandas pyrallis pyLasaDataset tqdm
 ```
-
 ## Datasets
+The experiments in the paper are conducted on the following datasets:
+### 1. LASA Dataset
+Obtained via [pyLasaDataset](https://github.com/justagist/pyLasaDataset).
 
-1. **LASA Dataset**: This dataset is obtained directly from [pyLasaDataset](https://github.com/justagist/pyLasaDataset)
+Evaluated shapes:
+- Angle, CShape, GShape, NShape
+- Sine, Sshape, Worm, PShape
 
-    We have tested and stored the models for the following datasets:
-    
-    - Angle
-    - CShape
-    - GShape
-    - NShape
-    - Sine
-    - Sshape
-    - Worm
-    - PShape
+### 2. 2D Robot Demonstration Dataset
+Collected from kinesthetic demonstrations on a **Franka Emika Panda** robot.
+Evaluated task:
+- Five_Obstacle_DS
 
-2. **2D Dataset**: This 2D-dataset is robot trajectory directly obtained from robot demonstration of a Franka Emika Panda. This dataset has the following type which has been tested:
-    - Five_Obstacle_DS
-3. **3D Dataset**: This 3D-dataset is obtained directly from [ds-opt](https://github.com/nbfigueroa/ds-opt) 
+### 3. 3D Dataset
+Obtained from [ds-opt](https://github.com/nbfigueroa/ds-opt).
 
-    We have tested for the following datasets: 
-    - 3D_CShape_bottom
+Evaluated task:
+- 3D_CShape_bottom
+
 
 ## Quick Start
 
@@ -124,13 +118,22 @@ python evaluate_s2nnds_results.py --dataset_type=<data_set>
 ```
 As shown in the paper, the comparisions between *S2NN-DS* and *ABC-DS* are observable for some of the shapes in the LASA dataset. For all the datasets, you will obtain the statistical measurements of MSE, SD, DTW and Safe Area in Workspace corresponding to *S2NN-DS*.
 ## Benchmarking Results
-The benchmarking has been performed for the followign LASA Datasets:
+
+Benchmarking is performed on the following LASA datasets:
 - Worm
 - PShape
 - Sshape
 - Sine
+
 ### ABC-DS Polynomials
-We use this [code](https://github.com/martinschonger/abc-ds) using [PENBMI](http://www.penopt.com/penbmi.html) solver (obtained official license) for fair comparisions. All the experiments were run on the same PC with  Ubuntu 20.04LTS system with 16GB RAM equipped with NVIDIA GeForce RTX 4050 - 6GB GPU. The config file containing these polynomials are stored in the folder `abc_ds_config`.
+ABC-DS baselines are generated using the official implementation [abc-ds](https://github.com/martinschonger/abc-ds) with the PENBMI solver (official license).
+
+All experiments are conducted on the same machine:
+- Ubuntu 20.04 LTS
+- 16 GB RAM
+- NVIDIA GeForce RTX 4050 (6 GB)
+
+The config file containing these polynomials are stored in the folder `abc_ds_config`.
 
 ### Validating the Results
 
