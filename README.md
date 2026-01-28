@@ -2,12 +2,10 @@
 
 Official implementation accompanying the paper **Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning** (*S2-NNDS*) accepted for publication at IEEE Robotics and Automation Letters(RA-L).
 ![comparison](resources/RAL_overview.png)
-> [**Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning**](https://arxiv.org/abs/2511.20593),  
+> [**Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning**](https://ieeexplore.ieee.org/abstract/document/11358683),  
 > Allen Emmanuel Binny<sup>\*</sup>, Mahathi Anand<sup>\*</sup>, Hugo T. M. Kussaba, Lingyun Chen, Shreenabh Agrawal, Fares J. Abu-Dakka, Abdalla Swikir  
-> *IEEE Robotics and Automation Letters (RA-L)*  
-> *Preprint available on arXiv ([arXiv:2511.20593](https://arxiv.org/abs/2511.20593))*
-
-### [Paper](https://arxiv.org/abs/2511.20593) | [YouTube](https://youtu.be/YJjCOua2puA) 
+> *IEEE Robotics and Automation Letters (RA-L)* > *DOI: [10.1109/LRA.2025.3533860](https://doi.org/10.1109/LRA.2025.3533860)* | *Preprint available on [arXiv:2511.20593](https://arxiv.org/abs/2511.20593)*
+### [PAPER (IEEE Xplore)](https://ieeexplore.ieee.org/abstract/document/11358683) | [ARXIV](https://arxiv.org/abs/2511.20593) | [YouTube](https://youtu.be/YJjCOua2puA)
 
 ## Abstract
 Learning safe and stable robot motions from demonstrations remains a challenge, especially in complex, nonlinear tasks involving dynamic, obstacle-rich environments. In this paper, we propose Safe and Stable Neural Network Dynamical Systems S2-NNDS, a learning-from-demonstration framework that simultaneously learns expressive neural dynamical systems alongside neural Lyapunov stability and barrier safety certificates. Unlike traditional approaches with restrictive polynomial parameterizations, S2-NNDS leverages neural networks to capture complex robot motions providing probabilistic guarantees through split conformal prediction in learned certificates. Experimental results on various 2D and 3D datasets—including LASA handwriting and demonstrations recorded kinesthetically from the Franka Emika Panda robot— validate S2-NNDS effectiveness in learning robust, safe, and stable motions from potentially unsafe demonstrations.
@@ -156,6 +154,17 @@ Allen Emmanuel Binny : allenebinny@kgpian.iitkgp.ac.in
 
 If you found this project useful or relevant to your research, please consider citing :)
 ```
+@ARTICLE{11358683,
+  author={Binny, Allen Emmanuel and Anand, Mahathi and Kussaba, Hugo T.M. and Chen, Lingyun and Agrawal, Shreenabh and Abu-Dakka, Fares J. and Swikir, Abdalla},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning}, 
+  year={2026},
+  volume={11},
+  number={3},
+  pages={3111-3118},
+  keywords={Safety;Asymptotic stability;Robots;Polynomials;Artificial neural networks;Optimization;Lyapunov methods;Dynamical systems;Robot motion;Power system stability;Learning from demonstration;motion and path planning;formal methods in robotics and automation},
+  doi={10.1109/LRA.2026.3655207}}
+
 @misc{binny2025safestableneuralnetwork,
       title={Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning}, 
       author={Allen Emmanuel Binny and Mahathi Anand and Hugo T. M. Kussaba and Lingyun Chen and Shreenabh Agrawal and Fares J. Abu-Dakka and Abdalla Swikir},
