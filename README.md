@@ -164,7 +164,8 @@ If you found this project useful or relevant to your research, please consider c
   pages={3111-3118},
   keywords={Safety;Asymptotic stability;Robots;Polynomials;Artificial neural networks;Optimization;Lyapunov methods;Dynamical systems;Robot motion;Power system stability;Learning from demonstration;motion and path planning;formal methods in robotics and automation},
   doi={10.1109/LRA.2026.3655207}}
-
+```
+```
 @misc{binny2025safestableneuralnetwork,
       title={Safe and Stable Neural Network Dynamical Systems for Robot Motion Planning}, 
       author={Allen Emmanuel Binny and Mahathi Anand and Hugo T. M. Kussaba and Lingyun Chen and Shreenabh Agrawal and Fares J. Abu-Dakka and Abdalla Swikir},
